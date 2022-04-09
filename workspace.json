@@ -1,6 +1,10 @@
 {
   "version": 2,
   "projects": {
-    "server": "apps/server"
+    "app": "apps/app",
+    "core": "libs/core",
+    "front": "apps/front",
+    "server": "apps/server",
+    "shared": "libs/shared"
   }
 }
