@@ -2,6 +2,7 @@
   "version": 2,
   "projects": {
     "app": "apps/app",
+    "backend-database": "libs/backend/database",
     "core": "libs/core",
     "front": "apps/front",
     "server": "apps/server",

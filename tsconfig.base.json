@@ -16,6 +16,7 @@
     "baseUrl": ".",
     "paths": {
       "@bella/core": ["libs/core/src/index.ts"],
+      "@bella/db": ["libs/backend/database/src/index.ts"],
       "@bella/shared": ["libs/shared/src/index.ts"]
     }
   },
