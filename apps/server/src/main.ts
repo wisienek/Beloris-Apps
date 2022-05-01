@@ -3,6 +3,10 @@ import { Logger, ValidationPipe } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { NestFactory } from '@nestjs/core';
 
+import * as session from 'express-session';
+import * as passport from 'passport';
+import * as cookieParser from 'cookie-parser';
+
 import { AppModule } from './app/app.module';
 
 async function bootstrap() {
@@ -11,6 +15,7 @@ async function bootstrap() {
   const globalPrefix = 'api';
   app.setGlobalPrefix(globalPrefix);
   app.enableCors();
+  app.use(cookieParser());
   app.useGlobalPipes(
     new ValidationPipe({
       transform: true,
@@ -19,6 +24,18 @@ async function bootstrap() {
       forbidNonWhitelisted: true,
     })
   );
+  app.use(
+    session({
+      cookie: {
+        maxAge: 86400000,
+      },
+      secret: 'secret',
+      resave: false,
+      saveUninitialized: false,
+    })
+  );
+  app.use(passport.initialize());
+  app.use(passport.session());
 
   const docsConfig = new DocumentBuilder()
     .setTitle('BelorisRP Documentation')
@@ -32,7 +49,8 @@ async function bootstrap() {
 
   await app.listen(port);
   Logger.log(
-    `🚀 Application is running on: http://localhost:${port}/${globalPrefix}`
+    `🚀 Application is running on: http://localhost:${port}/${globalPrefix}`,
+    AppModule.name
   );
 }
 

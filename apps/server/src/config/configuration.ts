@@ -14,8 +14,8 @@ export default (): Configuration => ({
     database: process.env.DB_DATABASE,
   },
   bot: {
-    id: process.env.BOT_CLEINTID,
+    id: process.env.BOT_CLIENTID,
     callback: process.env.BOT_CALLBACK,
-    secret: process.env.BOT_CLEINTSECRET,
+    secret: process.env.BOT_CLIENTSECRET,
   },
 });
