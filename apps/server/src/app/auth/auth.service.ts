@@ -13,7 +13,7 @@ import * as crypto from 'crypto';
 import * as _ from 'lodash';
 
 import { TokenDto, ServerListEnum, Cookies } from '@bella/shared';
-import { BotConfiguration } from '../../config';
+import { BotConfiguration } from '@bella/config';
 
 @Injectable()
 export class AuthService {

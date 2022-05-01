@@ -1,6 +1,7 @@
-import { ServerListEnum } from '@bella/shared';
 import { Injectable, CanActivate, ExecutionContext } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
+
+import { ServerListEnum } from '@bella/shared';
 import { AuthService } from '../auth.service';
 
 @Injectable()

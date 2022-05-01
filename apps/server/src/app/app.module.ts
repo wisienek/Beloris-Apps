@@ -5,8 +5,8 @@ import { Module } from '@nestjs/common';
 
 import { join } from 'path';
 
-import configuration from '../config/configuration';
-import { configurationSchema } from '../config';
+import { configurationSchema } from '@bella/config';
+import configuration from '@bella/configuration';
 import { AuthModule } from './auth';
 
 @Module({

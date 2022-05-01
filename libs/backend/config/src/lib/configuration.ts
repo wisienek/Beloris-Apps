@@ -1,7 +1,7 @@
 import 'dotenv/config';
+
 import { Configuration } from './configuration.type';
 
-// TODO: add validation schema (joi)
 export default (): Configuration => ({
   app: {
     port: parseInt(process.env.PORT || '3333'),
