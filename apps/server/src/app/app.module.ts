@@ -7,6 +7,7 @@ import { join } from 'path';
 
 import { configurationSchema } from '@bella/config';
 import configuration from '@bella/configuration';
+import { DataBaseModule } from '@bella/db';
 import { AuthModule } from './auth';
 
 @Module({
@@ -23,6 +24,7 @@ import { AuthModule } from './auth';
       session: true,
       defaultStrategy: 'local',
     }),
+    DataBaseModule,
     AuthModule,
   ],
 })

@@ -2,9 +2,10 @@ import { DataSourceOptions } from 'typeorm';
 import { join } from 'path';
 
 import configuration from '@bella/configuration';
+import { GameDCLink } from './entities';
 
 const getDefaultConfig = (): DataSourceOptions => {
-  const dbconfig = configuration().database;
+  const dbconfig = configuration().db;
 
   return {
     type: 'mysql',
@@ -15,7 +16,9 @@ const getDefaultConfig = (): DataSourceOptions => {
 export const getConfig = (): DataSourceOptions => {
   return {
     ...getDefaultConfig(),
-    entities: [],
+    entities: [
+      GameDCLink
+    ],
   };
 };
 
