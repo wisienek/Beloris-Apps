@@ -1,3 +1,5 @@
+import { EnvEnum } from '@bella/shared';
+
 export type DatabaseConfiguration = {
   host: string;
   port: number;
@@ -20,4 +22,5 @@ export type Configuration = {
   app: AppConfiguration;
   db: DatabaseConfiguration;
   bot: BotConfiguration;
+  envType: EnvEnum | string;
 };

@@ -2,6 +2,8 @@
   "version": 2,
   "projects": {
     "app": "apps/app",
+    "backend-config": "libs/backend/config",
+    "backend-database": "libs/backend/database",
     "core": "libs/core",
     "front": "apps/front",
     "server": "apps/server",

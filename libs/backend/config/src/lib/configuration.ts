@@ -1,7 +1,7 @@
 import 'dotenv/config';
+
 import { Configuration } from './configuration.type';
 
-// TODO: add validation schema (joi)
 export default (): Configuration => ({
   app: {
     port: parseInt(process.env.PORT || '3333'),
@@ -14,8 +14,9 @@ export default (): Configuration => ({
     database: process.env.DB_DATABASE,
   },
   bot: {
-    id: process.env.BOT_CLEINTID,
+    id: process.env.BOT_CLIENTID,
     callback: process.env.BOT_CALLBACK,
-    secret: process.env.BOT_CLEINTSECRET,
+    secret: process.env.BOT_CLIENTSECRET,
   },
+  envType: process.env.ENV_TYPE,
 });

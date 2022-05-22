@@ -1,5 +1,5 @@
 /**
- * This module is responsible on handling all the setup events that is submitted by squirrel.
+ * This module is responsible on handling all the setup services that is submitted by squirrel.
  */
 
 import { app } from 'electron';

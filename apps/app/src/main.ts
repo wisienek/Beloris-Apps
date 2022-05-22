@@ -26,7 +26,7 @@ export default class Main {
   }
 }
 
-// handle setup events as quickly as possible
+// handle setup services as quickly as possible
 Main.initialize();
 
 // bootstrap app
