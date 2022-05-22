@@ -43,7 +43,7 @@ async function bootstrap() {
     .setVersion('1.0')
     .build();
   const document = SwaggerModule.createDocument(app, docsConfig);
-  SwaggerModule.setup(`docs`, app, document);
+  SwaggerModule.setup(`${globalPrefix}/docs`, app, document);
 
   const { port } = await app.get(ConfigService).get('app');
 
