@@ -95,9 +95,7 @@ export class DiscordService extends Client {
       });
     });
 
-    await Promise.all(promises).then((pr) =>
-      this.logger.log(pr.map((command) => command.toString()))
-    ).catch(er => this.logger.error(er));
+    await Promise.all(promises).catch(er => this.logger.error(er));
 
     this.logger.debug(`Finished registering commands !`);
   }
