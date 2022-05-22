@@ -89,13 +89,10 @@ export class AuthService {
     return await this.oauth.getGuildMember(token.access_token, server);
   }
 
-  public verify(token: TokenDto | Request): TokenDto {
+  public verify(token: TokenDto | Request): Promise<DiscordOauth2.User> {
     if (!token) return null;
 
-    if ('headers' in token)
-      return AuthService.getTokenFromRequest(token as Request);
-
-    return token as TokenDto;
+    return this.fetchUser('headers' in token ? AuthService.getTokenFromRequest(token as Request): token);
   }
 
   public static getTokenFromRequest(request: Request): TokenDto {

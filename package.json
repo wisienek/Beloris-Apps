@@ -3,7 +3,7 @@
   "version": "0.0.1",
   "license": "MIT",
   "scripts": {
-    "server": "nx server:serve",
+    "server": "nx serve",
     "build": "nx build",
     "test": "nx test",
     "lint": "yarn run nx affected:lint",

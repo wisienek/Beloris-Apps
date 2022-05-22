@@ -8,12 +8,13 @@
 
     <script>
       const saveUrl = 'http://localhost:3333/api/auth/save';
+      const redirectUrl = 'http://localhost:3333/api/me';
 
       console.log(`sending fetch!`);
 
       (async () => {
         try {
-          const response = await fetch(saveUrl, {
+          fetch(saveUrl, {
             method: 'POST',
             mode: 'cors',
             cache: 'no-cache',
@@ -26,12 +27,17 @@
             body: JSON.stringify({
               hash: new URL(document.URL).hash,
             }),
-          });
-          if (response) {
-            window.close();
-          }
+          }).then(res => res.json())
+            .then(result => {
+              console.log(`Got user: `, result);
+
+              if(result.username) {
+                alert(`Logged in as: ${result.username}`);
+              }
+            })
+            .catch(er => console.error(er));
         } catch (err) {
-          console.err(err);
+          console.error(err);
         }
       })();
     </script>
