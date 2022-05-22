@@ -18,4 +18,5 @@ export default (): Configuration => ({
     callback: process.env.BOT_CALLBACK,
     secret: process.env.BOT_CLIENTSECRET,
   },
+  envType: process.env.ENV_TYPE,
 });

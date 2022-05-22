@@ -7,8 +7,12 @@ import { GameDCLink } from './entities';
 const getDefaultConfig = (): DataSourceOptions => {
   const dbconfig = configuration().db;
 
+  // FIXME: add env var
+  const synchronize = true;
+
   return {
-    type: 'mysql',
+    type: 'mariadb',
+    synchronize,
     ...dbconfig,
   };
 };
@@ -16,9 +20,7 @@ const getDefaultConfig = (): DataSourceOptions => {
 export const getConfig = (): DataSourceOptions => {
   return {
     ...getDefaultConfig(),
-    entities: [
-      GameDCLink
-    ],
+    entities: [GameDCLink],
   };
 };
 

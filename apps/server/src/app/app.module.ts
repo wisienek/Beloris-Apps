@@ -8,6 +8,7 @@ import { join } from 'path';
 import { configurationSchema } from '@bella/config';
 import configuration from '@bella/configuration';
 import { DataBaseModule } from '@bella/db';
+import { DiscordModule } from './discord';
 import { AuthModule } from './auth';
 
 @Module({
@@ -26,6 +27,7 @@ import { AuthModule } from './auth';
     }),
     DataBaseModule,
     AuthModule,
+    DiscordModule,
   ],
 })
 export class AppModule {}
