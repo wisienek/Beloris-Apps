@@ -5,10 +5,9 @@ import configuration from '@bella/configuration';
 import { GameDCLink } from './entities';
 
 const getDefaultConfig = (): DataSourceOptions => {
-  const dbconfig = configuration().db;
-
-  // FIXME: add env var
-  const synchronize = true;
+  const defConfig = configuration();
+  const dbconfig = defConfig.db;
+  const synchronize = defConfig.envType === 'dev';
 
   return {
     type: 'mariadb',
