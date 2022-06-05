@@ -44,3 +44,5 @@ Thumbs.db
 .docker/
 ormconfig.json
 *.js.map
+
+*.pem

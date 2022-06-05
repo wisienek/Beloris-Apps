@@ -13,6 +13,12 @@ export default (): Configuration => ({
     password: process.env.DB_PASSWORD,
     database: process.env.DB_DATABASE,
   },
+  aws: {
+    region: process.env.AWS_REGION,
+    bucket: process.env.AWS_UPLOADER_DATA_BUCKET,
+    accessKey: process.env.AWS_SECRET_ACCESS_KEY,
+    accessKeyId: process.env.AWS_ACCESS_KEY_ID,
+  },
   bot: {
     id: process.env.BOT_CLIENTID,
     callback: process.env.BOT_CALLBACK,

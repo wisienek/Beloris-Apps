@@ -2,6 +2,7 @@
   "version": 2,
   "projects": {
     "app": "apps/app",
+    "backend-aws": "libs/backend/aws",
     "backend-config": "libs/backend/config",
     "backend-database": "libs/backend/database",
     "core": "libs/core",
