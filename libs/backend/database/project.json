@@ -4,19 +4,31 @@
   "targets": {
     "lint": {
       "executor": "@nrwl/linter:eslint",
-      "outputs": ["{options.outputFile}"],
+      "outputs": [
+        "{options.outputFile}"
+      ],
       "options": {
-        "lintFilePatterns": ["libs/backend/database/**/*.ts"]
+        "lintFilePatterns": [
+          "libs/backend/database/**/*.ts"
+        ]
       }
     },
     "test": {
       "executor": "@nrwl/jest:jest",
-      "outputs": ["coverage/libs/backend/database"],
+      "outputs": [
+        "coverage/libs/backend/database"
+      ],
       "options": {
         "jestConfig": "libs/backend/database/jest.config.js",
         "passWithNoTests": true
       }
     }
   },
-  "tags": ["server", "db", "database", "backend", "be"]
+  "tags": [
+    "server",
+    "db",
+    "database",
+    "backend",
+    "be"
+  ]
 }

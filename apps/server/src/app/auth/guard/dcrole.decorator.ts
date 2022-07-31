@@ -19,9 +19,7 @@ export class RolesGuard implements CanActivate {
       [context.getHandler(), context.getClass()]
     );
 
-    if (!requiredRoles || !inServer) {
-      return true;
-    }
+    if (!requiredRoles || !inServer) return true;
 
     const member = await this.authService.fetchMember(
       AuthService.getTokenFromRequest(context.switchToHttp().getRequest()),

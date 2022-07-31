@@ -5,7 +5,9 @@
   "targets": {
     "build": {
       "executor": "@nrwl/web:webpack",
-      "outputs": ["{options.outputPath}"],
+      "outputs": [
+        "{options.outputPath}"
+      ],
       "defaultConfiguration": "production",
       "options": {
         "compiler": "babel",
@@ -15,7 +17,10 @@
         "main": "apps/front/src/main.tsx",
         "polyfills": "apps/front/src/polyfills.ts",
         "tsConfig": "apps/front/tsconfig.app.json",
-        "assets": ["apps/front/src/favicon.ico", "apps/front/src/assets"],
+        "assets": [
+          "apps/front/src/favicon.ico",
+          "apps/front/src/assets"
+        ],
         "styles": [],
         "scripts": [],
         "webpackConfig": "@nrwl/react/plugins/webpack"
@@ -53,19 +58,28 @@
     },
     "lint": {
       "executor": "@nrwl/linter:eslint",
-      "outputs": ["{options.outputFile}"],
+      "outputs": [
+        "{options.outputFile}"
+      ],
       "options": {
-        "lintFilePatterns": ["apps/front/**/*.{ts,tsx,js,jsx}"]
+        "lintFilePatterns": [
+          "apps/front/**/*.{ts,tsx,js,jsx}"
+        ]
       }
     },
     "test": {
       "executor": "@nrwl/jest:jest",
-      "outputs": ["coverage/apps/front"],
+      "outputs": [
+        "coverage/apps/front"
+      ],
       "options": {
         "jestConfig": "apps/front/jest.config.js",
         "passWithNoTests": true
       }
     }
   },
-  "tags": ["web", "frontend"]
+  "tags": [
+    "web",
+    "frontend"
+  ]
 }

@@ -1,4 +1,5 @@
 import {
+  BaseEntity,
   Column,
   CreateDateColumn,
   Entity,
@@ -10,7 +11,7 @@ import { DownloaderFile } from '@bella/db';
 import { Exclude } from 'class-transformer';
 
 @Entity()
-export class Version {
+export class Version extends BaseEntity {
   @Exclude()
   @PrimaryGeneratedColumn('uuid')
   uuid: string;
@@ -25,9 +26,7 @@ export class Version {
   })
   minor: number;
 
-  @Column({
-    default: false,
-  })
+  @Column('boolean')
   isCurrent = false;
 
   @CreateDateColumn()

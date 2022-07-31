@@ -1,11 +1,11 @@
 {
   "version": 2,
   "projects": {
-    "app": "apps/app",
     "backend-aws": "libs/backend/aws",
     "backend-config": "libs/backend/config",
     "backend-database": "libs/backend/database",
     "core": "libs/core",
+    "desktop-app": "apps/desktop-app",
     "front": "apps/front",
     "server": "apps/server",
     "shared": "libs/shared"

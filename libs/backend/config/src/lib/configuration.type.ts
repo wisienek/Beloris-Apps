@@ -20,7 +20,7 @@ export type BotConfiguration = {
 
 export type AwsConfig = {
   region: string;
-  bucket: string;
+  fileBucket: string;
   accessKey: string;
   accessKeyId: string;
 };

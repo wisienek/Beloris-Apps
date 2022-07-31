@@ -7,6 +7,6 @@ export function TransformBoolean() {
     if (value === false || value === 'false' || value === 0 || value === '0')
       return false;
 
-    return;
+    return null;
   });
 }

@@ -49,7 +49,7 @@ export class AuthService {
 
   public async validate(
     request: Request,
-    response: Response
+    response: Response,
   ): Promise<DiscordOauth2.User> {
     if (!request.body || _.isEmpty(request.body) || !request.body.hash)
       throw new BadRequestException(`No request provided!`);
@@ -81,7 +81,7 @@ export class AuthService {
 
   public async fetchMember(
     token: TokenDto,
-    server: ServerListEnum
+    server: ServerListEnum,
   ): Promise<DiscordOauth2.Member> {
     if (!token) throw new UnauthorizedException(`No token!`);
     if (!server) throw new BadRequestException(`No ServerID provided!`);
@@ -92,7 +92,17 @@ export class AuthService {
   public verify(token: TokenDto | Request): Promise<DiscordOauth2.User> {
     if (!token) return null;
 
-    return this.fetchUser('headers' in token ? AuthService.getTokenFromRequest(token as Request): token);
+    return this.fetchUser(
+      'headers' in token
+        ? AuthService.getTokenFromRequest(token as Request)
+        : token,
+    );
+  }
+
+  public async verifyAccessToken(token: string) {
+    if (!token) return null;
+
+    return await this.fetchUser({ access_token: token } as TokenDto);
   }
 
   public static getTokenFromRequest(request: Request): TokenDto {

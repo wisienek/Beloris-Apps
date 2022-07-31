@@ -15,7 +15,7 @@ export default (): Configuration => ({
   },
   aws: {
     region: process.env.AWS_REGION,
-    bucket: process.env.AWS_UPLOADER_DATA_BUCKET,
+    fileBucket: process.env.AWS_UPLOADER_DATA_BUCKET,
     accessKey: process.env.AWS_SECRET_ACCESS_KEY,
     accessKeyId: process.env.AWS_ACCESS_KEY_ID,
   },

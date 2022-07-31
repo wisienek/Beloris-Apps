@@ -1,7 +1,9 @@
-import { DownloaderFileDto, VersionDto } from '../../entities';
 import { ApiProperty } from '@nestjs/swagger';
 import { IsBoolean } from 'class-validator';
+
+import { DownloaderFileDto } from './downloader-file.dto';
 import { TransformBoolean } from '../../utils';
+import { VersionDto } from './version.dto';
 
 export class FileListDto {
   constructor(currentVersion: VersionDto, files: DownloaderFileDto[]) {

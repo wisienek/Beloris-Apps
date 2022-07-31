@@ -4,8 +4,9 @@ import { ApiOkResponse, ApiTags } from '@nestjs/swagger';
 import { Request, Response } from 'express';
 import { join } from 'path';
 
-import { AuthService } from './auth.service';
 import { TokenDto } from '@bella/shared';
+
+import { AuthService } from './auth.service';
 import { Auth, DcUser } from './guard';
 
 @ApiTags('Auth')
