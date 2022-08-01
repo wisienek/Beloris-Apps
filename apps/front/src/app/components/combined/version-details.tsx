@@ -8,7 +8,7 @@ import InsertDriveFileIcon from '@mui/icons-material/InsertDriveFile';
 import CloudDoneIcon from '@mui/icons-material/CloudDone';
 import DownloadIcon from '@mui/icons-material/Download';
 
-import { VersionDto } from '@bella/shared';
+import { DownloaderFileDto, VersionDto } from '@bella/shared';
 
 const AvatarSuccess = styled(Avatar)(
   ({ theme }) => `
@@ -33,6 +33,7 @@ const ThemedGrid = styled(Grid)(({ theme }) => ({
 export interface VersionDetailsArgs {
   fetchedVersion: VersionDto;
   downloadedVersion: VersionDto;
+  fetchedFilesToDownload: DownloaderFileDto[];
   isSameVersion: boolean;
 }
 
@@ -74,6 +75,7 @@ const ComponentBox = (args: ComponentBoxArgs) => {
 
 const VersionDetails = ({
   fetchedVersion,
+  fetchedFilesToDownload,
   downloadedVersion,
   isSameVersion,
 }: VersionDetailsArgs) => {
@@ -93,6 +95,7 @@ const VersionDetails = ({
         <ComponentBox
           fetchedVersion={fetchedVersion}
           downloadedVersion={downloadedVersion}
+          fetchedFilesToDownload={fetchedFilesToDownload}
           isSameVersion={isSameVersion}
           primaryText={`Wersja ${downloadedVersion?.major ?? 0}.${
             downloadedVersion?.minor ?? 0
@@ -114,9 +117,10 @@ const VersionDetails = ({
       <Grid item>
         <ComponentBox
           isSameVersion={isSameVersion}
+          fetchedFilesToDownload={fetchedFilesToDownload}
           fetchedVersion={fetchedVersion}
           downloadedVersion={downloadedVersion}
-          primaryText={`${fetchedVersion.files.length}`}
+          primaryText={`${fetchedFilesToDownload.length}`}
           secondaryText="Zmian"
           icon={() => <InsertDriveFileIcon fontSize="large" />}
         />
@@ -126,6 +130,7 @@ const VersionDetails = ({
           isSameVersion={isSameVersion}
           fetchedVersion={fetchedVersion}
           downloadedVersion={downloadedVersion}
+          fetchedFilesToDownload={fetchedFilesToDownload}
           primaryText={synthesizeVersionDate(
             new Date(fetchedVersion.updatedAt),
           )}

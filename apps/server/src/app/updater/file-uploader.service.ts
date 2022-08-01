@@ -1,7 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { ConfigService } from '@nestjs/config';
-import { Repository } from 'typeorm';
+import { Raw, Repository } from 'typeorm';
 import { createHash } from 'crypto';
 
 import { MulterFile } from './typings';
@@ -49,6 +49,41 @@ export class FileUploaderService {
   ) {
     this.fileBucket = this.configService.get('aws.fileBucket');
     this.awsRegion = this.configService.get('aws.region');
+  }
+
+  public async getFilesToUpdate(major: number, minor: number) {
+    const currentVersion = await this.versionRepository.findOne({
+      where: {
+        isCurrent: true,
+      },
+    });
+
+    if (currentVersion.major === major && currentVersion.minor === minor)
+      return new FileListDto(currentVersion, null);
+
+    const sameMajor = currentVersion.major === major;
+
+    const files = await this.filesRepository.find({
+      where: {
+        version: {
+          major: currentVersion.major,
+          minor: Raw(
+            (alias) =>
+              `${alias} > ${sameMajor ? minor : 0} and ${alias} <= ${
+                currentVersion.minor
+              }`,
+          ),
+        },
+      },
+      order: {
+        version: {
+          minor: 'ASC',
+        },
+        isPrimaryBundle: 'DESC',
+      },
+    });
+
+    return new FileListDto(currentVersion, files);
   }
 
   public async getFileList(
@@ -137,7 +172,7 @@ export class FileUploaderService {
       this.fileBucket,
       this.awsRegion,
     );
-    const fileType = determineFileType(file);
+    // const fileType = determineFileType(file);
 
     if (fileRecord.hash === hash)
       throw new FileHashConflictException(

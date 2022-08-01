@@ -12,11 +12,28 @@ export const readUserSettings = (): IpcEventDto<UserSettings> => {
 
   try {
     if (!existsSync(UserSettingsFilePath))
-      throw new Error(`No settings file at ${UserSettingsFilePath}`);
+      throw new Error(`Brak ustawień: ${UserSettingsFilePath}`);
 
     const file = readFileSync(UserSettingsFilePath, { encoding: 'utf-8' });
 
-    replyMessage = JSON.parse(file);
+    const parsed: UserSettings = JSON.parse(file);
+    parsed.version = parsed.version ?? {
+      currentVersion: {
+        major: 0,
+        minor: 0,
+        uuid: null,
+        isCurrent: null,
+        createdAt: null,
+        updatedAt: null,
+      },
+      downloadedDate: null,
+      omittedFilesUUIDS: null,
+    };
+
+    replyMessage = {
+      failed: false,
+      data: parsed,
+    };
   } catch (err) {
     replyMessage = {
       failed: true,

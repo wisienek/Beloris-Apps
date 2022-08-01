@@ -1,5 +1,4 @@
 import React, { FC, ChangeEvent, useState } from 'react';
-import useFetch from 'react-fetch-hook';
 import * as _ from 'lodash';
 import {
   Tooltip,
@@ -27,11 +26,10 @@ import FileDownloadOutlinedIcon from '@mui/icons-material/FileDownloadOutlined';
 import MoreHorizOutlinedIcon from '@mui/icons-material/MoreHorizOutlined';
 import DeleteForeverOutlinedIcon from '@mui/icons-material/DeleteForeverOutlined';
 
-import { DownloaderFileDto, FileListDto, VersionDto } from '@bella/shared';
-import { ApiRoutes } from '../../api/api-routes.enum';
+import { DownloaderFileDto, FileListDto } from '@bella/shared';
 
 interface FileTableV2WrapperProps {
-  version: VersionDto;
+  filesdto: FileListDto;
   filesToDownload: DownloaderFileDto[];
   setFilesToDownload: (files: DownloaderFileDto[]) => void;
   toggleFileToDownload: (
@@ -103,33 +101,28 @@ const applyPagination = (
 };
 
 function FileTableV2Container({
-  version,
+  filesdto,
   filesToDownload,
   setFilesToDownload,
   toggleFileToDownload,
 }: FileTableV2WrapperProps) {
-  const filesFetch = useFetch<FileListDto>(
-    ApiRoutes.FILE_LIST(version?.major, version?.minor),
-  );
-
   const rows = React.useMemo(
-    () => filesFetch?.data ?? { version: null, files: [] },
-    [filesFetch.data],
+    () => filesdto ?? { version: null, files: [] },
+    [filesdto],
   );
 
   React.useEffect(() => {
-    setFilesToDownload(filesFetch.data?.files ?? []);
-  }, [filesFetch.data]);
+    setFilesToDownload(filesdto?.files ?? []);
+  }, [filesdto]);
 
   return (
     <>
-      {filesFetch?.isLoading && (
+      {!filesdto ? (
         <>
           <Skeleton variant="text" />
           <Skeleton variant="rectangular" />
         </>
-      )}
-      {filesFetch?.isLoading === false && filesFetch?.data && (
+      ) : (
         <FileTableV2
           data={rows}
           filesToDownload={filesToDownload}

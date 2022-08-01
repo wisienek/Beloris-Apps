@@ -4,7 +4,7 @@ import * as _ from 'lodash';
 
 import { Skeleton, Container, Grid, Paper } from '@mui/material';
 
-import { DownloaderFileDto, VersionDto } from '@bella/shared';
+import { DownloaderFileDto, FileListDto } from '@bella/shared';
 
 import LinearProgressWithLabel from '../components/single/linear-progress-with-label';
 import VersionDetails from '../components/combined/version-details';
@@ -21,16 +21,30 @@ function DashboardContent() {
   const [filesToDownload, setFilesToDownload] = React.useState<
     DownloaderFileDto[]
   >([]);
-  const versionFetch = useFetch<VersionDto>(ApiRoutes.VERSION);
+  const filesToDownloadFetch = useFetch<FileListDto>(
+    ApiRoutes.GET_UPDATE_FILES(
+      settings?.version?.currentVersion?.major ?? 0,
+      settings?.version?.currentVersion?.minor ?? 0,
+    ),
+    {
+      depends: [!!settings],
+    },
+  );
 
   const isSameVersion = React.useMemo<boolean>(() => {
-    if (!settings?.version?.currentVersion || !versionFetch?.data) return false;
+    if (
+      !settings?.version?.currentVersion ||
+      !filesToDownloadFetch?.data?.version
+    )
+      return false;
 
     return (
-      settings.version.currentVersion.minor === versionFetch.data.minor &&
-      settings.version.currentVersion.major === versionFetch.data.major
+      settings.version.currentVersion.minor ===
+        filesToDownloadFetch.data.version.minor &&
+      settings.version.currentVersion.major ===
+        filesToDownloadFetch.data.version.major
     );
-  }, [settings?.version?.currentVersion, versionFetch.data]);
+  }, [settings?.version?.currentVersion, filesToDownloadFetch.data]);
 
   const toggleFileToDownload = (
     event: React.ChangeEvent<HTMLInputElement>,
@@ -65,12 +79,13 @@ function DashboardContent() {
               height: '100%',
             }}
           >
-            {versionFetch.isLoading && <Skeleton animation="wave" />}
-            {versionFetch.data && (
+            {filesToDownloadFetch.isLoading && <Skeleton animation="wave" />}
+            {filesToDownloadFetch.data && (
               <>
                 <Title>Podsumowanie wersji serwerowej</Title>
                 <VersionDetails
-                  fetchedVersion={versionFetch.data}
+                  fetchedVersion={filesToDownloadFetch.data.version}
+                  fetchedFilesToDownload={filesToDownloadFetch.data.files}
                   downloadedVersion={settings?.version?.currentVersion}
                   isSameVersion={isSameVersion}
                 />
@@ -89,10 +104,10 @@ function DashboardContent() {
             }}
           >
             <Title>Menu wersji</Title>
-            {versionFetch.isLoading && <Skeleton animation="wave" />}
+            {filesToDownloadFetch.isLoading && <Skeleton animation="wave" />}
             <br />
             <VersionMenu
-              isLoading={versionFetch.isLoading}
+              isLoading={filesToDownloadFetch.isLoading}
               chooserToggle={toggleFileContainer}
               isSameVersion={isSameVersion}
             />
@@ -109,12 +124,12 @@ function DashboardContent() {
                 marginBottom: '1rem',
               }}
             >
-              {versionFetch.isLoading ? (
+              {filesToDownloadFetch.isLoading ? (
                 <Skeleton variant="rectangular" />
               ) : (
                 <>
                   <FileTableV2Container
-                    version={versionFetch.data}
+                    filesdto={filesToDownloadFetch.data}
                     filesToDownload={filesToDownload}
                     setFilesToDownload={setFilesToDownload}
                     toggleFileToDownload={toggleFileToDownload}

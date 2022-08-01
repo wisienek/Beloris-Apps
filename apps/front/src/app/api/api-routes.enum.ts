@@ -11,6 +11,9 @@ export class ApiRoutes {
   public static FILE_LIST_UPLOAD = (major: number, minor: number) =>
     `${ApiRoutes.FILE_LIST(major, minor)}/file`;
 
+  public static GET_UPDATE_FILES = (major: number, minor: number) =>
+    `${ApiRoutes.SERVER_URL}/uploader/${major}/${minor}/update-files`;
+
   // Packages
   public static PACKAGE = (major: number, minor: number) =>
     `${ApiRoutes.SERVER_URL}/uploader/${major}/${minor}/package`;

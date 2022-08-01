@@ -35,6 +35,17 @@ import { MulterFile } from './typings';
 export class FileUploaderController {
   constructor(private fileUploaderService: FileUploaderService) {}
 
+  @Get('update-files')
+  @ApiOkResponse({
+    description: 'List of changes from last version',
+  })
+  async getUpdateFiles(
+    @Param('major', ParseIntPipe) major: number,
+    @Param('minor', ParseIntPipe) minor: number,
+  ) {
+    return await this.fileUploaderService.getFilesToUpdate(major, minor);
+  }
+
   @Get('file-list')
   @ApiOkResponse({
     description: 'List of files to download',
