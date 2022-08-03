@@ -30,4 +30,7 @@ export interface WindowApi {
     ) => Promise<IpcEventDto<boolean>>;
     openFileDialog: () => Promise<IpcEventDto<string>>;
   };
+  utilities: {
+    openExternalLink: (link: string) => Promise<IpcEventDto<boolean>>;
+  };
 }

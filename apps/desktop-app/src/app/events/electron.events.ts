@@ -17,6 +17,7 @@ import {
   readUserSettings,
   saveUserSettings,
 } from '../api/user-settings';
+import { openExternalLink } from '../api/external-links';
 
 export default class ElectronEvents {
   static bootstrapElectronEvents(): Electron.IpcMain {
@@ -38,6 +39,9 @@ ipcMain.handle(IPCChannels.SET_DOWNLOAD_VERSION, setDownloadVersionData);
 ipcMain.handle(IPCChannels.GET_USER_SETTINGS, readUserSettings);
 ipcMain.handle(IPCChannels.SAVE_USER_SETTINGS, saveUserSettings);
 ipcMain.handle(IPCChannels.OPEN_FILE_DIALOG, openFileDialog);
+
+// external link
+ipcMain.handle(IPCChannels.OPEN_EXTERNAL_LINK, openExternalLink);
 
 // Handle App termination
 ipcMain.on('quit', (event, code) => {

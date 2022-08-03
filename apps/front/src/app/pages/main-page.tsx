@@ -14,6 +14,7 @@ import Title from '../components/single/title';
 import { ApiRoutes } from '../api/api-routes.enum';
 import FileTableV2Container from '../components/combined/files-table-v2';
 import { SettingsContext, SettingsContextValue } from '../settings/settings';
+import NoVersionModal from '../components/single/no-version-modal';
 
 function DashboardContent() {
   const { settings } = React.useContext<SettingsContextValue>(SettingsContext);
@@ -69,6 +70,8 @@ function DashboardContent() {
         marginBottom: 'auto',
       }}
     >
+      {settings?.version?.currentVersion?.major === 0 && <NoVersionModal />}
+
       <Grid container spacing={3}>
         <Grid item xs={12} md={8} lg={9}>
           <Paper
@@ -107,6 +110,7 @@ function DashboardContent() {
             {filesToDownloadFetch.isLoading && <Skeleton animation="wave" />}
             <br />
             <VersionMenu
+              settings={settings}
               isLoading={filesToDownloadFetch.isLoading}
               chooserToggle={toggleFileContainer}
               isSameVersion={isSameVersion}

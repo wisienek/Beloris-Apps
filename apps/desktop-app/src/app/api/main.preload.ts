@@ -28,6 +28,12 @@ const windowApi: WindowApi = {
       ipcRenderer.invoke(IPCChannels.SAVE_USER_SETTINGS, data),
     openFileDialog: () => ipcRenderer.invoke(IPCChannels.OPEN_FILE_DIALOG),
   },
+  utilities: {
+    openExternalLink: (link: string) =>
+      ipcRenderer.invoke(IPCChannels.OPEN_EXTERNAL_LINK, link) as Promise<
+        IpcEventDto<boolean>
+      >,
+  },
 };
 
 contextBridge.exposeInMainWorld('api', windowApi);
