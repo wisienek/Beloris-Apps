@@ -7,6 +7,7 @@ import Label from '../components/single/label';
 import { SettingsContext } from '../settings/settings';
 import { ErrorContext } from '../components/combined/error-box';
 import { ErrorSeverity } from '../components/single/error-message';
+import DiscordLogin from '../components/single/discord-login';
 
 const SettingsPage = () => {
   const { settings, saveSettings } = React.useContext(SettingsContext);
@@ -56,6 +57,9 @@ const SettingsPage = () => {
           spacing={3}
           flexDirection="column"
           alignItems="stretch"
+          sx={{
+            mt: 1,
+          }}
         >
           <LocationSettings
             id="mainLocation"
@@ -80,6 +84,20 @@ const SettingsPage = () => {
       </Grid>
       <Grid item sx={{ width: '30%' }}>
         <Title>Ustawienia personalne</Title>
+
+        <Grid
+          container
+          columns={1}
+          columnSpacing={3}
+          spacing={3}
+          flexDirection="column"
+          alignItems="stretch"
+          sx={{
+            mt: 1,
+          }}
+        >
+          <DiscordLogin />
+        </Grid>
       </Grid>
     </Grid>
   );

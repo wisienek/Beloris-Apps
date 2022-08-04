@@ -9,6 +9,23 @@
     "lint": "yarn run nx affected:lint",
     "format": "nx format:write"
   },
+  "build": {
+    "appId": "beloris.updater",
+    "productName": "beloris updater",
+    "mac": {
+      "category": "public.app-category.games"
+    },
+    "protocols": [
+      {
+        "name": "beloris",
+        "role": "Viewer",
+        "schemes": [
+          "bella",
+          "beloris"
+        ]
+      }
+    ]
+  },
   "private": true,
   "dependencies": {
     "@emotion/react": "^11.9.0",
@@ -45,6 +62,7 @@
     "joi": "^17.6.0",
     "lodash": "^4.17.21",
     "luxon": "^3.0.1",
+    "mdi-material-ui": "^7.4.0",
     "mysql2": "^2.3.3",
     "node-polyfill-webpack-plugin": "^2.0.0",
     "passport": "^0.5.2",
@@ -104,6 +122,8 @@
     "babel-jest": "27.2.3",
     "babel-plugin-styled-components": "1.10.7",
     "electron": "^17.0.0",
+    "electron-builder": "^23.3.3",
+    "electron-packager": "^15.5.1",
     "eslint": "~8.7.0",
     "eslint-config-prettier": "8.1.0",
     "eslint-plugin-import": "2.25.4",

@@ -18,8 +18,8 @@ export class AuthController {
   @ApiOkResponse({
     description: 'Login url - redirects to discord auth page',
   })
-  async getUserFromDiscordLogin(@Res() res: Response) {
-    return this.authService.login(res);
+  async getUserFromDiscordLogin() {
+    return this.authService.login();
   }
 
   @Get('callback')

@@ -9,15 +9,14 @@ import { IPCChannels } from '@bella/shared';
 
 import { environment } from '../../environments/environment';
 import {
-  getDownloadVersionData,
-  setDownloadVersionData,
-} from '../api/version-read';
-import {
   openFileDialog,
   readUserSettings,
   saveUserSettings,
-} from '../api/user-settings';
-import { openExternalLink } from '../api/external-links';
+  openExternalLink,
+  openLoginLink,
+  getDownloadVersionData,
+  setDownloadVersionData,
+} from '../api/handlers';
 
 export default class ElectronEvents {
   static bootstrapElectronEvents(): Electron.IpcMain {
@@ -42,6 +41,7 @@ ipcMain.handle(IPCChannels.OPEN_FILE_DIALOG, openFileDialog);
 
 // external link
 ipcMain.handle(IPCChannels.OPEN_EXTERNAL_LINK, openExternalLink);
+ipcMain.handle(IPCChannels.OPEN_LOGIN_LINK, openLoginLink);
 
 // Handle App termination
 ipcMain.on('quit', (event, code) => {

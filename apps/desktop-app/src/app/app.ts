@@ -1,4 +1,4 @@
-import { BrowserWindow, shell, screen } from 'electron';
+import { BrowserWindow, shell, screen, protocol } from 'electron';
 import { rendererAppName, rendererAppPort } from './constants';
 import { environment } from '../environments/environment';
 import { join } from 'path';
@@ -44,8 +44,20 @@ export default class App {
     // This method will be called when Electron has finished
     // initialization and is ready to create browser windows.
     // Some APIs can only be used after this event occurs.
+    App.initProtocol();
+
     App.initMainWindow();
     App.loadMainWindow();
+  }
+
+  private static initProtocol(): void {
+    console.log(`Registering Protocol bella::`);
+    App.application.setAsDefaultProtocolClient('bella');
+    protocol.registerFileProtocol('bella', (req, call) => {
+      console.log(`bella file protocol`, req);
+
+      call({});
+    });
   }
 
   private static onActivate() {
@@ -117,6 +129,10 @@ export default class App {
     }
   }
 
+  static onOpenUrl(event: Event, url: string) {
+    console.log(`OnOpenUrl: `, event, url);
+  }
+
   static handleSecondInstance() {
     if (App.mainWindow) {
       if (App.mainWindow.isMinimized()) App.mainWindow.restore();
@@ -133,9 +149,15 @@ export default class App {
     App.BrowserWindow = browserWindow;
     App.application = app;
 
-    App.application.on('second-instance', App.handleSecondInstance);
+    const gotLock = app.requestSingleInstanceLock();
+
+    if (gotLock)
+      App.application.on('second-instance', App.handleSecondInstance);
+    else App.application.quit();
+
     App.application.on('window-all-closed', App.onWindowAllClosed); // Quit when all windows are closed.
     App.application.on('ready', App.onReady); // App is ready to load data
     App.application.on('activate', App.onActivate); // App is activated
+    App.application.on('open-url', App.onOpenUrl);
   }
 }

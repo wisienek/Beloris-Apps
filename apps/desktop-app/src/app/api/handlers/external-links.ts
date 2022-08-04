@@ -25,3 +25,10 @@ export const openExternalLink = async (
 
   return replyMessage;
 };
+
+export const openLoginLink = async (
+  event: IpcMainEvent,
+  link: string,
+): Promise<void> => {
+  return;
+};

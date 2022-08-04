@@ -14,12 +14,12 @@ export const mainListItems = (
     <ListSubheader component="div" inset>
       Funkcjonalność ogólna
     </ListSubheader>
-    <Link to="/" component={ListItemButton}>
+    <ListItemButton component={Link} to="/">
       <ListItemIcon>
         <DashboardIcon />
       </ListItemIcon>
       <ListItemText primary="Pobieralnia" />
-    </Link>
+    </ListItemButton>
 
     <ListItemButton>
       <ListItemIcon>

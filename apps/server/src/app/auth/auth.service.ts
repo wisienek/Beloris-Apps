@@ -12,7 +12,7 @@ import * as DiscordOauth2 from 'discord-oauth2';
 import * as crypto from 'crypto';
 import * as _ from 'lodash';
 
-import { TokenDto, ServerListEnum, Cookies } from '@bella/shared';
+import { Cookies, ServerListEnum, TokenDto } from '@bella/shared';
 import { BotConfiguration } from '@bella/config';
 
 @Injectable()
@@ -37,14 +37,12 @@ export class AuthService {
     });
   }
 
-  public async login(res: Response) {
-    const url = this.oauth.generateAuthUrl({
+  public async login() {
+    return this.oauth.generateAuthUrl({
       responseType: 'token',
       scope: AuthService.UserScope,
       state: crypto.randomBytes(16).toString('hex'),
     });
-
-    return res.redirect(url);
   }
 
   public async validate(

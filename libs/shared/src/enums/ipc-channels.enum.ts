@@ -6,4 +6,5 @@ export enum IPCChannels {
   SAVE_USER_SETTINGS = 'save-user-settings',
   OPEN_FILE_DIALOG = 'open-file-dialog',
   OPEN_EXTERNAL_LINK = 'open-external-link',
+  OPEN_LOGIN_LINK = 'open-login-link',
 }
