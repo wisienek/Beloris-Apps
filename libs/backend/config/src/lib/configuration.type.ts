@@ -14,7 +14,7 @@ export type AppConfiguration = {
 
 export type BotConfiguration = {
   id: string;
-  callback: string;
+  redirectUri: string;
   secret: string;
 };
 

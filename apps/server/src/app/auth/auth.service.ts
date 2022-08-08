@@ -33,12 +33,13 @@ export class AuthService {
     this.oauth = new DiscordOauth2({
       clientId: this.discordConfig.id,
       clientSecret: this.discordConfig.secret,
-      redirectUri: this.discordConfig.callback,
+      redirectUri: this.discordConfig.redirectUri,
     });
   }
 
   public async login() {
     return this.oauth.generateAuthUrl({
+      redirectUri: this.discordConfig.redirectUri,
       responseType: 'token',
       scope: AuthService.UserScope,
       state: crypto.randomBytes(16).toString('hex'),

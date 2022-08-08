@@ -3,5 +3,17 @@
   "compilerOptions": {
     "types": ["node"]
   },
-  "include": ["**/*.ts"]
+  "include": ["**/*.ts"],
+  "target": "es5",
+  "module": "commonjs",
+  "sourceMap": true,
+  "strict": true,
+  "homepage": ".",
+  "outDir": "../../build",
+  "rootDir": "../../",
+  "noEmitOnError": true,
+  "main": "build/electron/main.js",
+  "typeRoots": [
+    "../../node_modules/@types"
+  ]
 }

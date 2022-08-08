@@ -2,6 +2,7 @@ import { contextBridge, ipcRenderer } from 'electron';
 import {
   IPCChannels,
   IpcEventDto,
+  TokenDto,
   UserSettings,
   VersionDto,
   WindowApi,
@@ -33,6 +34,15 @@ const windowApi: WindowApi = {
       ipcRenderer.invoke(IPCChannels.OPEN_EXTERNAL_LINK, link) as Promise<
         IpcEventDto<boolean>
       >,
+    getSession: () =>
+      ipcRenderer.invoke(IPCChannels.GET_SESSION) as Promise<
+        IpcEventDto<TokenDto>
+      >,
+    receiveSession: (func) => {
+      ipcRenderer.on(IPCChannels.SET_SESSION, (event, ...args) =>
+        func(...args),
+      );
+    },
   },
 };
 

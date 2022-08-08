@@ -10,6 +10,12 @@ const DiscordLogin = () => {
     const { data: loginUrl } = await axios.get(ApiRoutes.LOGIN);
 
     console.log(`Login will be on:`, loginUrl);
+
+    window.api.utilities.receiveSession((cookie) => {
+      console.log(`Got cookie!`, cookie);
+    });
+
+    await window.api.utilities.openExternalLink(loginUrl);
   };
 
   return (

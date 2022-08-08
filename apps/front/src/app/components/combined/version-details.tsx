@@ -35,9 +35,11 @@ export interface VersionDetailsArgs {
   downloadedVersion: VersionDto;
   fetchedFilesToDownload: DownloaderFileDto[];
   isSameVersion: boolean;
+  error: Error;
+  isLoading: boolean;
 }
 
-interface ComponentBoxArgs extends VersionDetailsArgs {
+interface ComponentBoxArgs {
   icon: React.FC;
   primaryText: string;
   secondaryText: string;
@@ -78,6 +80,8 @@ const VersionDetails = ({
   fetchedFilesToDownload,
   downloadedVersion,
   isSameVersion,
+  error,
+  isLoading,
 }: VersionDetailsArgs) => {
   const synthesizeVersionDate = (date: Date) =>
     DateTime.fromJSDate(date).setLocale('pl').toFormat('dd LLL yyyy');
@@ -92,51 +96,51 @@ const VersionDetails = ({
       marginBottom="auto"
     >
       <Grid item>
-        <ComponentBox
-          fetchedVersion={fetchedVersion}
-          downloadedVersion={downloadedVersion}
-          fetchedFilesToDownload={fetchedFilesToDownload}
-          isSameVersion={isSameVersion}
-          primaryText={`Wersja ${downloadedVersion?.major ?? 0}.${
-            downloadedVersion?.minor ?? 0
-          }`}
-          secondaryText={
-            isSameVersion
-              ? 'Aktualna'
-              : `Nowa: ${fetchedVersion.major}.${fetchedVersion.minor}`
-          }
-          icon={() => {
-            return isSameVersion ? (
-              <CloudDoneIcon fontSize="large" />
-            ) : (
-              <DownloadIcon fontSize="large" />
-            );
-          }}
-        />
+        {isLoading ?? error ? (
+          <></>
+        ) : (
+          <ComponentBox
+            primaryText={`Wersja ${downloadedVersion?.major ?? 0}.${
+              downloadedVersion?.minor ?? 0
+            }`}
+            secondaryText={
+              isSameVersion
+                ? 'Aktualna'
+                : `Nowa: ${fetchedVersion.major}.${fetchedVersion.minor}`
+            }
+            icon={() => {
+              return isSameVersion ? (
+                <CloudDoneIcon fontSize="large" />
+              ) : (
+                <DownloadIcon fontSize="large" />
+              );
+            }}
+          />
+        )}
       </Grid>
       <Grid item>
-        <ComponentBox
-          isSameVersion={isSameVersion}
-          fetchedFilesToDownload={fetchedFilesToDownload}
-          fetchedVersion={fetchedVersion}
-          downloadedVersion={downloadedVersion}
-          primaryText={`${fetchedFilesToDownload.length}`}
-          secondaryText="Zmian"
-          icon={() => <InsertDriveFileIcon fontSize="large" />}
-        />
+        {isLoading ?? error ? (
+          <></>
+        ) : (
+          <ComponentBox
+            primaryText={`${fetchedFilesToDownload.length}`}
+            secondaryText="Zmian"
+            icon={() => <InsertDriveFileIcon fontSize="large" />}
+          />
+        )}
       </Grid>
       <Grid item>
-        <ComponentBox
-          isSameVersion={isSameVersion}
-          fetchedVersion={fetchedVersion}
-          downloadedVersion={downloadedVersion}
-          fetchedFilesToDownload={fetchedFilesToDownload}
-          primaryText={synthesizeVersionDate(
-            new Date(fetchedVersion.updatedAt),
-          )}
-          secondaryText="Ostatnia zmiana"
-          icon={() => <CalendarMonthIcon fontSize="large" />}
-        />
+        {isLoading ?? error ? (
+          <></>
+        ) : (
+          <ComponentBox
+            primaryText={synthesizeVersionDate(
+              new Date(fetchedVersion.updatedAt),
+            )}
+            secondaryText="Ostatnia zmiana"
+            icon={() => <CalendarMonthIcon fontSize="large" />}
+          />
+        )}
       </Grid>
     </ThemedGrid>
   );

@@ -3,7 +3,7 @@
  * between the frontend to the electron backend.
  */
 
-import { app, ipcMain } from 'electron';
+import { app, ipcMain, ipcRenderer } from 'electron';
 
 import { IPCChannels } from '@bella/shared';
 
@@ -16,6 +16,7 @@ import {
   openLoginLink,
   getDownloadVersionData,
   setDownloadVersionData,
+  getSession,
 } from '../api/handlers';
 
 export default class ElectronEvents {
@@ -42,6 +43,13 @@ ipcMain.handle(IPCChannels.OPEN_FILE_DIALOG, openFileDialog);
 // external link
 ipcMain.handle(IPCChannels.OPEN_EXTERNAL_LINK, openExternalLink);
 ipcMain.handle(IPCChannels.OPEN_LOGIN_LINK, openLoginLink);
+
+// session
+ipcMain.handle(IPCChannels.GET_SESSION, getSession);
+
+ipcMain.handle(IPCChannels.SET_SESSION, (event, cookie) =>
+  ipcRenderer.invoke(IPCChannels.SET_SESSION, cookie),
+);
 
 // Handle App termination
 ipcMain.on('quit', (event, code) => {

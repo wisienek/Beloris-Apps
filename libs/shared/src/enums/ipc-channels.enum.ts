@@ -7,4 +7,6 @@ export enum IPCChannels {
   OPEN_FILE_DIALOG = 'open-file-dialog',
   OPEN_EXTERNAL_LINK = 'open-external-link',
   OPEN_LOGIN_LINK = 'open-login-link',
+  GET_SESSION = 'get-session',
+  SET_SESSION = 'set-session',
 }

@@ -1,4 +1,4 @@
-import { IpcEventDto, VersionDto } from '../dto';
+import { IpcEventDto, TokenDto, VersionDto } from '../dto';
 import { UserSettings } from './user-settings.schema';
 
 type Platform =
@@ -32,5 +32,7 @@ export interface WindowApi {
   };
   utilities: {
     openExternalLink: (link: string) => Promise<IpcEventDto<boolean>>;
+    getSession: () => Promise<IpcEventDto<TokenDto>>;
+    receiveSession: (func: (...args: any) => void) => void;
   };
 }

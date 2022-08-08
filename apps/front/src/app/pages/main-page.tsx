@@ -87,6 +87,8 @@ function DashboardContent() {
               <>
                 <Title>Podsumowanie wersji serwerowej</Title>
                 <VersionDetails
+                  isLoading={filesToDownloadFetch.isLoading}
+                  error={filesToDownloadFetch?.error}
                   fetchedVersion={filesToDownloadFetch.data.version}
                   fetchedFilesToDownload={filesToDownloadFetch.data.files}
                   downloadedVersion={settings?.version?.currentVersion}

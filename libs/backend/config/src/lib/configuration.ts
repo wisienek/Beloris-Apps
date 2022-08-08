@@ -21,7 +21,7 @@ export default (): Configuration => ({
   },
   bot: {
     id: process.env.BOT_CLIENTID,
-    callback: process.env.BOT_CALLBACK,
+    redirectUri: process.env.BOT_REDIRECT_URI,
     secret: process.env.BOT_CLIENTSECRET,
   },
   envType: process.env.ENV_TYPE,

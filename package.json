@@ -1,5 +1,7 @@
 {
   "name": "bella",
+  "author": "Wisienek",
+  "description": "Apps made for Beloris server group",
   "version": "0.0.1",
   "license": "MIT",
   "scripts": {
@@ -7,11 +9,54 @@
     "build": "nx build",
     "test": "nx test",
     "lint": "yarn run nx affected:lint",
-    "format": "nx format:write"
+    "format": "nx format:write",
+    "affected:apps": "nx affected:apps",
+    "affected:libs": "nx affected:libs",
+    "affected:build": "nx affected:build",
+    "affected:e2e": "nx affected:e2e",
+    "affected:test": "nx affected:test",
+    "affected:lint": "nx affected:lint",
+    "affected:dep-graph": "nx affected:dep-graph",
+    "affected": "nx affected",
+    "format:write": "nx format:write",
+    "format:check": "nx format:check",
+    "workspace-schematic": "nx workspace-schematic",
+    "dep-graph": "nx dep-graph",
+    "web:start:dev": "nx serve react",
+    "electron:ext-install": "yarn run electron:start --ext-install",
+    "electron:start": "yarn run build:desktop-app && npx electron .",
+    "electron:start:dev": "npx wait-on http-get://localhost:4200/ && yarn run electron:start --serve",
+    "electron:start:prod": "yarn run build:prod && npx electron .",
+    "build:dev": "yarn run build:desktop-app && yarn run build:front && node tools/builders/postbuild.js",
+    "build:prod": "yarn run build:front --prod && node tools/builders/postbuild.js && yarn run build:desktop-app --prod",
+    "build:desktop-app": "nx build desktop-app",
+    "build:front": "nx build front --base-href ./",
+    "test:front": "nx test browser",
+    "test:desktop-app": "nx test desktop-app",
+    "package:windows": "yarn exec electron-builder build --windows",
+    "package:linux": "yarn exec electron-builder build --linux",
+    "package:mac": "yarn exec electron-builder build --mac",
+    "electron:windows": "yarn run build:prod && yarn run package:windows",
+    "electron:linux": "yarn run build:prod && yarn run package:linux",
+    "electron:mac": "yarn run build:prod && yarn run package:mac"
   },
   "build": {
     "appId": "beloris.updater",
     "productName": "beloris updater",
+    "asar": true,
+    "files": ["./dist/apps/**/*", {
+      "from": "./dist/apps/front",
+      "to": "./dist/apps/desktop-app/front"
+    }],
+    "directories": {
+      "buildResources": "./resources"
+    },
+    "extraMetadata": {
+      "main": "dist/apps/desktop-app/main.js"
+    },
+    "win": {
+      "target": "nsis"
+    },
     "mac": {
       "category": "public.app-category.games"
     },

@@ -1,8 +1,9 @@
-import { BrowserWindow, shell, screen, protocol } from 'electron';
+import { BrowserWindow, shell, screen, session, ipcMain } from 'electron';
 import { rendererAppName, rendererAppPort } from './constants';
 import { environment } from '../environments/environment';
 import { join } from 'path';
 import { format } from 'url';
+import { Cookies, IPCChannels } from '@bella/shared';
 
 export default class App {
   // Keep a global reference of the window object, if you don't, the window will
@@ -53,11 +54,6 @@ export default class App {
   private static initProtocol(): void {
     console.log(`Registering Protocol bella::`);
     App.application.setAsDefaultProtocolClient('bella');
-    protocol.registerFileProtocol('bella', (req, call) => {
-      console.log(`bella file protocol`, req);
-
-      call({});
-    });
   }
 
   private static onActivate() {
@@ -121,7 +117,7 @@ export default class App {
     } else {
       App.mainWindow.loadURL(
         format({
-          pathname: join(__dirname, '..', rendererAppName, 'index.html'),
+          pathname: join(__dirname, rendererAppName, 'index.html'),
           protocol: 'file:',
           slashes: true,
         }),
@@ -130,7 +126,22 @@ export default class App {
   }
 
   static onOpenUrl(event: Event, url: string) {
-    console.log(`OnOpenUrl: `, event, url);
+    if (url.includes('?cookie')) {
+      try {
+        const cookie = JSON.parse(decodeURIComponent(url.split('?cookie=')[1]));
+        console.log(`Cookie`, cookie);
+
+        session.defaultSession.cookies.set({
+          url: 'http://localhost',
+          name: Cookies.DISCORD_TOKEN,
+          value: JSON.stringify(cookie),
+        });
+
+        ipcMain.emit(IPCChannels.SET_SESSION, cookie);
+      } catch (error) {
+        console.error(`Error while decoding cookie`, error);
+      }
+    }
   }
 
   static handleSecondInstance() {

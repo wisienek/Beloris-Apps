@@ -13,7 +13,7 @@
 
       (async () => {
         try {
-          const response = await fetch(saveUrl, {
+          await fetch(saveUrl, {
             method: 'POST',
             mode: 'cors',
             cache: 'no-cache',
@@ -27,11 +27,8 @@
               hash: new URL(document.URL).hash,
             }),
           });
-          if (response) {
-            window.close();
-          }
         } catch (err) {
-          console.err(err);
+          console.error(err);
         }
       })();
     </script>
