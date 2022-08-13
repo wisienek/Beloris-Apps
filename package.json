@@ -44,10 +44,13 @@
     "appId": "beloris.updater",
     "productName": "beloris updater",
     "asar": true,
-    "files": ["./dist/apps/**/*", {
-      "from": "./dist/apps/front",
-      "to": "./dist/apps/desktop-app/front"
-    }],
+    "files": [
+      "./dist/apps/**/*",
+      {
+        "from": "./dist/apps/front",
+        "to": "./dist/apps/desktop-app/front"
+      }
+    ],
     "directories": {
       "buildResources": "./resources"
     },
@@ -129,6 +132,7 @@
     "swagger-ui-express": "^4.3.0",
     "tslib": "^2.0.0",
     "typeorm": "^0.3.6",
+    "universal-cookie": "^4.0.4",
     "uuid": "^8.3.2",
     "uuidv4": "^6.2.13"
   },

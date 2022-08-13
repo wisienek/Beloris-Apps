@@ -11,7 +11,7 @@ export default function Title(props: TitleProps) {
     <Typography
       id={props.id}
       component="h2"
-      variant="h6"
+      variant="h5"
       color="primary"
       gutterBottom
     >

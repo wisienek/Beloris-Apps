@@ -1,36 +1,67 @@
 import * as React from 'react';
-import { ErrorContext, ErrorContextValue } from './error-box';
+import * as _ from 'lodash';
+import Cookies from 'universal-cookie';
+import axios from 'axios';
+
+import { ApiRoutes } from '../../api/api-routes.enum';
+
+export interface User {
+  id: string;
+  username: string;
+  avatar: string | null;
+  avatar_decoration: string | null;
+  discriminator: string;
+  public_flags: number;
+  flags: number;
+  banner: string | null;
+  banner_color: string | null;
+  accent_color: string | null;
+  locale: string;
+  mfa_enabled: boolean;
+  premium_type: number;
+}
 
 export interface UserContextValue {
-  user: any;
-  loadingUser: boolean;
+  user: User;
+  verifyUser: (user: User) => void;
 }
 
 export const UserContext = React.createContext<UserContextValue>({
   user: null,
-  loadingUser: false,
+  verifyUser: (user: User) => null,
 });
 
 export const UserProvider = ({ children }: { children?: React.ReactNode }) => {
-  const [loadingUser, setLoadingUser] = React.useState<boolean>(false);
-  const [user, setUser] = React.useState(null);
-  const { addError } = React.useContext<ErrorContextValue>(ErrorContext);
+  const cookies = new Cookies();
 
-  // React.useEffect(() => {
-  //   fetch(ApiRoutes.LOGIN, { method: 'GET', redirect: 'follow' }).catch(
-  //     (err) => {
-  //       console.log(`logging err`, err);
-  //       addError({
-  //         id: '',
-  //         message: err.message as string,
-  //         severity: ErrorSeverity.ERROR,
-  //       });
-  //     },
-  //   );
-  // }, []);
+  const [user, setUser] = React.useState<User>(null);
+
+  const verifyUser = (data: User) => {
+    if (!user || !_.isEqual(user, data)) setUser({ ...data });
+  };
+
+  React.useEffect(() => {
+    window.api.utilities
+      .getSession()
+      .then(async (res) => {
+        if (res.failed && res.error) throw res.error;
+
+        const userToken = res.data;
+        cookies.set('DISCORD_TOKEN', userToken, { path: '/' });
+
+        const { data: userData } = await axios.get(ApiRoutes.ME, {
+          withCredentials: true,
+        });
+
+        verifyUser(userData);
+      })
+      .catch((error) =>
+        console.error(`Error przy fetchowaniu usera (local)`, error),
+      );
+  }, []);
 
   return (
-    <UserContext.Provider value={{ user, loadingUser }}>
+    <UserContext.Provider value={{ user, verifyUser }}>
       {children}
     </UserContext.Provider>
   );

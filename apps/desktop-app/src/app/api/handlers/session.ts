@@ -9,9 +9,12 @@ export const getSession = async (): Promise<IpcEventDto<TokenDto>> => {
       name: Cookies.DISCORD_TOKEN,
     });
 
-    const cookieValue: TokenDto = JSON.parse(cookie.value);
+    if (!cookie) throw new Error(`Brak ciasteczka!`);
+    console.log(`Cookie`, cookie);
 
-    console.log(cookie, cookieValue);
+    const cookieValue: TokenDto = JSON.parse(decodeURIComponent(cookie.value));
+
+    console.log(`cookieValue`, cookieValue);
 
     returnValue = {
       failed: false,

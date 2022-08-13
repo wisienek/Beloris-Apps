@@ -129,7 +129,7 @@ export default class App {
     if (url.includes('?cookie')) {
       try {
         const cookie = JSON.parse(decodeURIComponent(url.split('?cookie=')[1]));
-        console.log(`Cookie`, cookie);
+        console.log(`Logged in from redirect`, cookie);
 
         session.defaultSession.cookies.set({
           url: 'http://localhost',
@@ -137,7 +137,8 @@ export default class App {
           value: JSON.stringify(cookie),
         });
 
-        ipcMain.emit(IPCChannels.SET_SESSION, cookie);
+        // ipcMain.emit(IPCChannels.SET_SESSION, cookie);
+        App.mainWindow.webContents.send(IPCChannels.SET_SESSION, cookie);
       } catch (error) {
         console.error(`Error while decoding cookie`, error);
       }
