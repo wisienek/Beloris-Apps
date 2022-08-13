@@ -129,7 +129,7 @@ export default class App {
     if (url.includes('?cookie')) {
       try {
         const cookie = JSON.parse(decodeURIComponent(url.split('?cookie=')[1]));
-        console.log(`Logged in from redirect`, cookie);
+        // console.log(`Logged in from redirect`, cookie);
 
         session.defaultSession.cookies.set({
           url: 'http://localhost',

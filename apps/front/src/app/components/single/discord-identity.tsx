@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Avatar, Box, Typography } from '@mui/material';
+import { Avatar, Box, Typography, useTheme } from '@mui/material';
 import { styled } from '@mui/material/styles';
 import { UserContext } from '../combined/use-user';
 
@@ -12,6 +12,7 @@ const AvatarWrapper = styled(Avatar)(
 
 const DiscordIdentity = () => {
   const { user } = React.useContext(UserContext);
+  const theme = useTheme();
 
   const getPremiumType = (type: number) => {
     switch (type) {
@@ -28,7 +29,19 @@ const DiscordIdentity = () => {
 
   return user.id ? (
     <Box>
-      <Box display="flex" alignItems="center" pb={1} mt={1}>
+      <Box
+        display="flex"
+        alignItems="center"
+        px={2}
+        py={2}
+        mt={1}
+        sx={{
+          backgroundColor: '#424549',
+          color: '#F6F6F6',
+          borderRadius: '2rem',
+          boxShadow: theme.shadows[10],
+        }}
+      >
         <AvatarWrapper
           alt={`${user.username}`}
           src={`https://cdn.discordapp.com/avatars/${user.id}/${user.avatar}`}
