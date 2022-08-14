@@ -18,18 +18,13 @@ import FileDownloadOutlinedIcon from '@mui/icons-material/FileDownloadOutlined';
 import QuestionMarkOutlinedIcon from '@mui/icons-material/QuestionMarkOutlined';
 
 import { FileListDto, VersionDto } from '@bella/dto';
+import { FileAction } from '@bella/enums';
 
 import { ApiRoutes } from '../../api/api-routes.enum';
 
 export interface FileTableArgs {
   version: VersionDto;
 }
-
-const FileActions = {
-  DOWNLOAD: 'download',
-  MODIFY: 'modify',
-  DELETE: 'delete',
-} as const;
 
 function FileTableContainer({ version }: FileTableArgs) {
   const filesFetch = useFetch<FileListDto>(
@@ -76,7 +71,7 @@ function FileTable({ columns, data }) {
 
   const renderCell = (cell: any) => {
     // console.log(cell.column.id);
-    if (Object.values(FileActions).includes(cell.value)) {
+    if (Object.values(FileAction).includes(cell.value)) {
       return renderFileAction(cell.value);
     }
 
@@ -90,14 +85,14 @@ function FileTable({ columns, data }) {
   };
 
   const renderFileAction = (
-    value: typeof FileActions[keyof typeof FileActions],
+    value: typeof FileAction[keyof typeof FileAction],
   ) => {
     switch (value) {
-      case FileActions.DOWNLOAD:
+      case FileAction.DOWNLOAD:
         return <FileDownloadOutlinedIcon color="info" />;
-      case FileActions.MODIFY:
+      case FileAction.MODIFY:
         return <MoreHorizOutlinedIcon color="warning" />;
-      case FileActions.DELETE:
+      case FileAction.DELETE:
         return <DeleteForeverOutlinedIcon color="error" />;
 
       default:

@@ -27,6 +27,7 @@ import MoreHorizOutlinedIcon from '@mui/icons-material/MoreHorizOutlined';
 import DeleteForeverOutlinedIcon from '@mui/icons-material/DeleteForeverOutlined';
 
 import { DownloaderFileDto, FileListDto } from '@bella/dto';
+import { FileAction } from '@bella/enums';
 
 interface FileTableV2WrapperProps {
   filesdto: FileListDto;
@@ -48,28 +49,22 @@ interface FileTableV2Props {
 }
 
 interface Filters {
-  status?: FileActionsType;
+  status?: FileActionType;
 }
 
-const FileActions = {
-  DOWNLOAD: 'download',
-  MODIFY: 'modify',
-  DELETE: 'delete',
-} as const;
+type FileActionType = typeof FileAction[keyof typeof FileAction];
 
-type FileActionsType = typeof FileActions[keyof typeof FileActions];
-
-const getStatusLabel = (status: FileActionsType): JSX.Element => {
+const getStatusLabel = (status: FileActionType): JSX.Element => {
   const map = {
-    [FileActions.DELETE]: {
+    [FileAction.DELETE]: {
       text: 'Usuń',
       element: <DeleteForeverOutlinedIcon color="error" />,
     },
-    [FileActions.DOWNLOAD]: {
+    [FileAction.DOWNLOAD]: {
       text: 'Pobierz',
       element: <FileDownloadOutlinedIcon color="info" />,
     },
-    [FileActions.MODIFY]: {
+    [FileAction.MODIFY]: {
       text: 'Modyfikuj',
       element: <MoreHorizOutlinedIcon color="warning" />,
     },
@@ -150,15 +145,15 @@ const FileTableV2: FC<FileTableV2Props> = ({
       name: 'Wszystkie',
     },
     {
-      id: FileActions.MODIFY,
+      id: FileAction.MODIFY,
       name: 'Modyfikacje',
     },
     {
-      id: FileActions.DELETE,
+      id: FileAction.DELETE,
       name: 'Usuwanie',
     },
     {
-      id: FileActions.DOWNLOAD,
+      id: FileAction.DOWNLOAD,
       name: 'Pobieranie',
     },
   ];

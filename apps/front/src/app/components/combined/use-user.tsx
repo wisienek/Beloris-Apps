@@ -4,22 +4,7 @@ import Cookies from 'universal-cookie';
 import axios from 'axios';
 
 import { ApiRoutes } from '../../api/api-routes.enum';
-
-export interface User {
-  id: string;
-  username: string;
-  avatar: string | null;
-  avatar_decoration: string | null;
-  discriminator: string;
-  public_flags: number;
-  flags: number;
-  banner: string | null;
-  banner_color: string | null;
-  accent_color: string | null;
-  locale: string;
-  mfa_enabled: boolean;
-  premium_type: number;
-}
+import { User } from '@bella/types';
 
 export interface UserContextValue {
   user: User;

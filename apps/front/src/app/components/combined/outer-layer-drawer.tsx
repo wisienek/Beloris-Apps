@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { Link } from 'react-router-dom';
 import {
   Box,
   Toolbar,
@@ -10,18 +11,18 @@ import {
   ThemeProvider,
 } from '@mui/material';
 import { Menu, ChevronLeft } from '@mui/icons-material/';
+import SettingsIcon from '@mui/icons-material/Settings';
+
 import { AppBar } from '../single/app-bar';
 import { Drawer } from '../single/drawer';
 import { mainListItems, secondaryListItems } from '../single/list-items';
 import Bg from '../../../assets/images/background.png';
-// import { UserContext } from './use-user';
-import { Link } from 'react-router-dom';
-import SettingsIcon from '@mui/icons-material/Settings';
+import { UserContext } from './use-user';
 
 const mdTheme = createTheme();
 
 const OuterLayerDrawer = ({ children }: { children: React.ReactNode }) => {
-  // const { user } = React.useContext(UserContext);
+  const { user } = React.useContext(UserContext);
 
   const [open, setOpen] = React.useState(false);
   const toggleDrawer = () => setOpen(!open);
