@@ -1,9 +1,10 @@
 import { homedir } from 'os';
 import { join } from 'path';
 import { existsSync, readFileSync, writeFileSync } from 'fs';
-
-import { IpcEventDto, UserSettings } from '@bella/shared';
 import { IpcMainEvent, dialog } from 'electron';
+
+import { IpcEventDto } from '@bella/dto';
+import { UserSettings } from '@bella/schema';
 
 export const UserSettingsFilePath = join(homedir(), 'bella-settings.json');
 

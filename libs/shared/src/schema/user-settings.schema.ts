@@ -1,4 +1,4 @@
-import { VersionDto } from '@bella/shared';
+import { VersionDto } from '../dto';
 
 export class UserSettings {
   version?: VersionSettings;

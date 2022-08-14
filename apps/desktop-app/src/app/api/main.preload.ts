@@ -1,12 +1,7 @@
 import { contextBridge, ipcRenderer } from 'electron';
-import {
-  IPCChannels,
-  IpcEventDto,
-  TokenDto,
-  UserSettings,
-  VersionDto,
-  WindowApi,
-} from '@bella/shared';
+import { IpcEventDto, TokenDto, VersionDto } from '@bella/dto';
+import { UserSettings, WindowApi } from '@bella/schema';
+import { IPCChannels } from '@bella/enums';
 
 const windowApi: WindowApi = {
   versioning: {

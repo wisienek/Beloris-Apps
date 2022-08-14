@@ -1,11 +1,12 @@
 import React from 'react';
 
-import { UserSettings } from '@bella/shared';
 import {
   ErrorContext,
   ErrorContextValue,
 } from '../components/combined/error-box';
 import { ErrorSeverity } from '../components/single/error-message';
+
+import { UserSettings } from '@bella/schema';
 
 const readUserSavedSettings = async () => {
   return await window?.api?.settings?.getUserSettings();

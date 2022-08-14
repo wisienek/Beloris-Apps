@@ -3,7 +3,7 @@ import { ConfigService } from '@nestjs/config';
 import { forwardRef, Inject, Injectable, Logger } from '@nestjs/common';
 
 import { BotConfiguration } from '@bella/config';
-import { ServerListEnum } from '@bella/shared';
+import { ServerListEnum } from '@bella/enums';
 import { EventManager } from './events';
 import { CommandManager } from './commands';
 
@@ -15,7 +15,7 @@ export class DiscordService extends Client {
     private readonly config: ConfigService,
     @Inject(forwardRef(() => EventManager))
     public readonly eventManager: EventManager,
-    public readonly commandManager: CommandManager // private readonly commandManager: CommandManager,
+    public readonly commandManager: CommandManager, // private readonly commandManager: CommandManager,
   ) {
     super({
       intents: [
@@ -29,16 +29,24 @@ export class DiscordService extends Client {
       ],
     });
 
-    this.login((this.config.get('bot') as BotConfiguration).secret).then(async () => {
-      const invite = this.generateInvite({
-        scopes: ['applications.commands', 'bot', 'email', 'identify', 'guilds'],
-        permissions: ['ADMINISTRATOR'],
-      });
+    this.login((this.config.get('bot') as BotConfiguration).secret).then(
+      async () => {
+        const invite = this.generateInvite({
+          scopes: [
+            'applications.commands',
+            'bot',
+            'email',
+            'identify',
+            'guilds',
+          ],
+          permissions: ['ADMINISTRATOR'],
+        });
 
-      this.logger.debug(`Logged in bot, invite: ${invite}`);
-      this.setupEvents();
-      await this.setupCommands();
-    });
+        this.logger.debug(`Logged in bot, invite: ${invite}`);
+        this.setupEvents();
+        await this.setupCommands();
+      },
+    );
   }
 
   public async getMember(server: ServerListEnum, memberId: string) {
@@ -49,7 +57,7 @@ export class DiscordService extends Client {
   public async hasRole(
     server: ServerListEnum,
     roleId: string,
-    memberId: string
+    memberId: string,
   ) {
     const guild = await this.guilds.fetch(server);
     if (!guild) return false;
@@ -66,10 +74,10 @@ export class DiscordService extends Client {
   public async hasAllRoles(
     server: ServerListEnum,
     roles: string[],
-    memberId: string
+    memberId: string,
   ) {
     return roles.every(
-      async (role) => await this.hasRole(server, role, memberId)
+      async (role) => await this.hasRole(server, role, memberId),
     );
   }
 
@@ -95,7 +103,7 @@ export class DiscordService extends Client {
       });
     });
 
-    await Promise.all(promises).catch(er => this.logger.error(er));
+    await Promise.all(promises).catch((er) => this.logger.error(er));
 
     this.logger.debug(`Finished registering commands !`);
   }

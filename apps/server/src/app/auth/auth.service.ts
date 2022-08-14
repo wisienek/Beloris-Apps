@@ -12,7 +12,8 @@ import * as DiscordOauth2 from 'discord-oauth2';
 import * as crypto from 'crypto';
 import * as _ from 'lodash';
 
-import { Cookies, ServerListEnum, TokenDto } from '@bella/shared';
+import { TokenDto } from '@bella/dto';
+import { Cookies, ServerListEnum } from '@bella/enums';
 import { BotConfiguration } from '@bella/config';
 
 @Injectable()

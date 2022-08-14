@@ -6,7 +6,7 @@ import {
   ManyToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
-import { FileAction, FileType } from '@bella/shared';
+import { FileAction, FileType } from '@bella/enums';
 import { Version } from './version.entity';
 
 @Entity()

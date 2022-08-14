@@ -3,7 +3,7 @@ import { Box, Skeleton } from '@mui/material';
 import { DataGrid, GridColDef } from '@mui/x-data-grid';
 import useFetch from 'react-fetch-hook';
 
-import { FileListDto, VersionDto } from '@bella/shared';
+import { FileListDto, VersionDto } from '@bella/dto';
 import { ApiRoutes } from '../../api/api-routes.enum';
 import Title from './title';
 

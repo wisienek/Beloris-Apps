@@ -2,7 +2,7 @@ import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, DeepPartial } from 'typeorm';
 
-import { CreateVersionDto, DeleteVersionDto, VersionDto } from '@bella/shared';
+import { CreateVersionDto, DeleteVersionDto, VersionDto } from '@bella/dto';
 import { Version } from '@bella/db';
 
 import { FileUploaderService } from './file-uploader.service';

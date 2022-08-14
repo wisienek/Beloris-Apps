@@ -1,7 +1,7 @@
 import { ApiOkResponse, ApiTags } from '@nestjs/swagger';
 import { VersionService } from './version.service';
 import { Body, Controller, Delete, Get, Patch, Post } from '@nestjs/common';
-import { CreateVersionDto, DeleteVersionDto } from '@bella/shared';
+import { CreateVersionDto, DeleteVersionDto } from '@bella/dto';
 
 @ApiTags('Uploader - Versions')
 @Controller('uploader/version')

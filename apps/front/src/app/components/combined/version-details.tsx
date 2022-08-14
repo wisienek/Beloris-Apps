@@ -8,7 +8,7 @@ import InsertDriveFileIcon from '@mui/icons-material/InsertDriveFile';
 import CloudDoneIcon from '@mui/icons-material/CloudDone';
 import DownloadIcon from '@mui/icons-material/Download';
 
-import { DownloaderFileDto, VersionDto } from '@bella/shared';
+import { DownloaderFileDto, VersionDto } from '@bella/dto';
 
 const AvatarSuccess = styled(Avatar)(
   ({ theme }) => `

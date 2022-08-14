@@ -1,9 +1,9 @@
-import { BrowserWindow, shell, screen, session, ipcMain } from 'electron';
+import { BrowserWindow, shell, screen, session } from 'electron';
 import { rendererAppName, rendererAppPort } from './constants';
 import { environment } from '../environments/environment';
 import { join } from 'path';
 import { format } from 'url';
-import { Cookies, IPCChannels } from '@bella/shared';
+import { Cookies, IPCChannels } from '@bella/enums';
 
 export default class App {
   // Keep a global reference of the window object, if you don't, the window will

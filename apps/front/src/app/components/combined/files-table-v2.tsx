@@ -26,7 +26,7 @@ import FileDownloadOutlinedIcon from '@mui/icons-material/FileDownloadOutlined';
 import MoreHorizOutlinedIcon from '@mui/icons-material/MoreHorizOutlined';
 import DeleteForeverOutlinedIcon from '@mui/icons-material/DeleteForeverOutlined';
 
-import { DownloaderFileDto, FileListDto } from '@bella/shared';
+import { DownloaderFileDto, FileListDto } from '@bella/dto';
 
 interface FileTableV2WrapperProps {
   filesdto: FileListDto;

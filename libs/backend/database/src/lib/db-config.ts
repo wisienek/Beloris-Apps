@@ -3,7 +3,7 @@ import { join } from 'path';
 
 import { Backpack, DownloaderFile, GameDCLink, Version } from './entities';
 import configuration from '@bella/configuration';
-import { EnvEnum } from '@bella/shared';
+import { EnvEnum } from '@bella/enums';
 
 const getDefaultConfig = (): DataSourceOptions => {
   const defConfig = configuration();

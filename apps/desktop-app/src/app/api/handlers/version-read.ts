@@ -3,7 +3,7 @@ import { homedir } from 'os';
 import { readFileSync, writeFileSync, existsSync } from 'fs';
 import { IpcMainEvent } from 'electron';
 
-import { IpcEventDto, VersionDto } from '@bella/shared';
+import { IpcEventDto, VersionDto } from '@bella/dto';
 
 export const UserVersionFilePath = join(homedir(), 'bella-version.json');
 

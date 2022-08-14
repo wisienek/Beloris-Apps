@@ -2,8 +2,9 @@ import * as React from 'react';
 
 import { Button, Grid } from '@mui/material';
 import SettingsIcon from '@mui/icons-material/Settings';
-import { UserSettings } from '@bella/shared';
 import { Link } from 'react-router-dom';
+
+import { UserSettings } from '@bella/schema';
 
 export interface VersionMenuArgs {
   isLoading: boolean;

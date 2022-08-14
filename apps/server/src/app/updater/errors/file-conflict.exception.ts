@@ -1,5 +1,5 @@
 import { ConflictException } from '@nestjs/common';
-import { FileAction } from '@bella/shared';
+import { FileAction } from '@bella/enums';
 
 export class FileConflictException extends ConflictException {
   constructor(

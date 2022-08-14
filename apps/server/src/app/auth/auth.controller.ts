@@ -1,10 +1,11 @@
-import { Controller, Get, Post, Req, Res } from '@nestjs/common';
-import { ApiOkResponse, ApiTags } from '@nestjs/swagger';
+import { Controller, Get, Param, Post, Req, Res } from '@nestjs/common';
+import { ApiOkResponse, ApiParam, ApiTags } from '@nestjs/swagger';
 
 import { Request, Response } from 'express';
 import { join } from 'path';
 
-import { TokenDto } from '@bella/shared';
+import { TokenDto } from '@bella/dto';
+import { ServerListEnum } from '@bella/enums';
 
 import { AuthService } from './auth.service';
 import { Auth, DcUser } from './guard';
@@ -41,10 +42,26 @@ export class AuthController {
   @Auth()
   @Get('me')
   @ApiOkResponse({
-    type: TokenDto,
     description: 'Manual check for authed user',
   })
   getMe(@DcUser() user: TokenDto) {
     return this.authService.verify(user);
+  }
+
+  @Auth()
+  @Get('me/:server')
+  @ApiParam({
+    name: 'server',
+    enum: ServerListEnum,
+    description: 'Which server to check',
+  })
+  @ApiOkResponse({
+    description: 'Get user data from server',
+  })
+  getMeOnServer(
+    @Param('server') server: ServerListEnum,
+    @DcUser() user: TokenDto,
+  ) {
+    return this.authService.fetchMember(user, server);
   }
 }

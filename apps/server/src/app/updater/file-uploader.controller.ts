@@ -27,7 +27,7 @@ import {
   FileUploadDto,
   UploadPackageInfo,
   UploadedS3FileDto,
-} from '@bella/shared';
+} from '@bella/dto';
 import { MulterFile } from './typings';
 
 @ApiTags('Uploader - files')

@@ -4,7 +4,7 @@ import * as _ from 'lodash';
 
 import { Skeleton, Container, Grid, Paper } from '@mui/material';
 
-import { DownloaderFileDto, FileListDto } from '@bella/shared';
+import { DownloaderFileDto, FileListDto } from '@bella/dto';
 
 import LinearProgressWithLabel from '../components/single/linear-progress-with-label';
 import VersionDetails from '../components/combined/version-details';

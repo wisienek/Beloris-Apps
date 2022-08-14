@@ -5,7 +5,7 @@
 
 import { app, ipcMain, ipcRenderer } from 'electron';
 
-import { IPCChannels } from '@bella/shared';
+import { IPCChannels } from '@bella/enums';
 
 import { environment } from '../../environments/environment';
 import {

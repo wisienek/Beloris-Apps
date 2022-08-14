@@ -1,3 +1,5 @@
+import { ServerListEnum } from '@bella/enums';
+
 export class ApiRoutes {
   private static SERVER_URL = 'http://localhost:3333/api';
 
@@ -23,4 +25,6 @@ export class ApiRoutes {
   // User
   public static LOGIN = `${ApiRoutes.SERVER_URL}/auth/login`;
   public static ME = `${ApiRoutes.SERVER_URL}/auth/me`;
+  public static ME_Main = `${ApiRoutes.SERVER_URL}/auth/me/${ServerListEnum.BELORIS}`;
+  public static ME_ADMIN = `${ApiRoutes.SERVER_URL}/auth/me/${ServerListEnum.BELORIS_ADMIN}`;
 }

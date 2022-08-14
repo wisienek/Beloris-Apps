@@ -5,7 +5,8 @@ import * as DiscordOauth2 from 'discord-oauth2';
 import { Strategy } from 'passport-local';
 import { Request } from 'express';
 
-import { Cookies, TokenDto } from '@bella/shared';
+import { TokenDto } from '@bella/dto';
+import { Cookies } from '@bella/enums';
 
 import { AuthService } from '../auth.service';
 import { NoTokenException, NoUserException } from '../errors';

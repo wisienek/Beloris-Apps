@@ -17,7 +17,7 @@ import MoreHorizOutlinedIcon from '@mui/icons-material/MoreHorizOutlined';
 import FileDownloadOutlinedIcon from '@mui/icons-material/FileDownloadOutlined';
 import QuestionMarkOutlinedIcon from '@mui/icons-material/QuestionMarkOutlined';
 
-import { FileListDto, VersionDto } from '@bella/shared';
+import { FileListDto, VersionDto } from '@bella/dto';
 
 import { ApiRoutes } from '../../api/api-routes.enum';
 

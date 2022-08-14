@@ -1,4 +1,4 @@
-import { EnvEnum } from '@bella/shared';
+import { EnvEnum } from '@bella/enums';
 
 export type DatabaseConfiguration = {
   host: string;

@@ -1,5 +1,5 @@
 import { IpcMainEvent, shell } from 'electron';
-import { IpcEventDto } from '@bella/shared';
+import { IpcEventDto } from '@bella/dto';
 
 export const openExternalLink = async (
   event: IpcMainEvent,

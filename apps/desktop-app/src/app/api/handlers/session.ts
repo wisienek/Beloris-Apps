@@ -1,5 +1,6 @@
 import { session } from 'electron';
-import { Cookies, IpcEventDto, TokenDto } from '@bella/shared';
+import { IpcEventDto, TokenDto } from '@bella/dto';
+import { Cookies } from '@bella/enums';
 
 export const getSession = async (): Promise<IpcEventDto<TokenDto>> => {
   let returnValue: IpcEventDto<TokenDto>;

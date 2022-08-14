@@ -5,12 +5,7 @@ import { Raw, Repository } from 'typeorm';
 import { createHash } from 'crypto';
 
 import { MulterFile } from './typings';
-import {
-  determineFileType,
-  getBucketDownloadPath,
-  getBundleKey,
-  getFileKey,
-} from './utils';
+import { getBucketDownloadPath, getBundleKey, getFileKey } from './utils';
 import {
   FileConflictException,
   FileDataNotFoundException,
@@ -21,13 +16,12 @@ import {
 
 import {
   DownloaderFileDto,
-  FileAction,
   FileListDto,
-  FileType,
   FileUploadDto,
   GetFileListDto,
   UploadPackageInfo,
-} from '@bella/shared';
+} from '@bella/dto';
+import { FileAction, FileType } from '@bella/enums';
 import { DownloaderFile, Version } from '@bella/db';
 import { S3Service } from '@bella/aws';
 import { FileHashConflictException } from './errors/file-hash-conflict.exception';
