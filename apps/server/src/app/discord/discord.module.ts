@@ -13,5 +13,6 @@ import { EventsModule } from './events';
     forwardRef(() => EventsModule),
   ],
   providers: [DiscordService],
+  exports: [DiscordService],
 })
 export class DiscordModule {}

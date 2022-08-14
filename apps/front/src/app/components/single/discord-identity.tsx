@@ -1,6 +1,8 @@
 import * as React from 'react';
-import { Avatar, Box, Typography, useTheme } from '@mui/material';
+import { Avatar, Box, Chip, Typography, useTheme } from '@mui/material';
 import { styled } from '@mui/material/styles';
+import LogoutIcon from '@mui/icons-material/Logout';
+
 import { UserContext } from '../combined/use-user';
 
 const AvatarWrapper = styled(Avatar)(
@@ -11,7 +13,13 @@ const AvatarWrapper = styled(Avatar)(
 );
 
 const DiscordIdentity = () => {
-  const { user } = React.useContext(UserContext);
+  const {
+    user,
+    belorisMember,
+    belorisAdminMember,
+    belorisMemberRoles,
+    belorisAdminRoles,
+  } = React.useContext(UserContext);
   const theme = useTheme();
 
   const getPremiumType = (type: number) => {
@@ -27,13 +35,21 @@ const DiscordIdentity = () => {
     }
   };
 
+  const getRoles = () => {
+    if (!belorisMemberRoles) return <></>;
+
+    return [...(belorisAdminRoles ?? []), ...(belorisMemberRoles ?? [])].map(
+      (role) => <Chip key={role.id} color="secondary" label={role.name} />,
+    );
+  };
+
   return user.id ? (
     <Box>
       <Box
         display="flex"
         alignItems="center"
-        px={2}
-        py={2}
+        px={1.5}
+        py={1}
         mt={1}
         sx={{
           backgroundColor: '#424549',
@@ -54,9 +70,17 @@ const DiscordIdentity = () => {
           <Typography variant="h5" noWrap>
             {user.username}
           </Typography>
-          <Typography variant="subtitle2" noWrap>
-            {getPremiumType(user.premium_type)}
+          <Typography variant="subtitle1" noWrap>
+            Technik | <span>{getPremiumType(user.premium_type)}</span>
           </Typography>
+        </Box>
+        <Box
+          ml="auto"
+          display="flex"
+          alignItems="center"
+          justifyContent="center"
+        >
+          <LogoutIcon />
         </Box>
       </Box>
     </Box>

@@ -24,7 +24,9 @@ export class ApiRoutes {
 
   // User
   public static LOGIN = `${ApiRoutes.SERVER_URL}/auth/login`;
-  public static ME = `${ApiRoutes.SERVER_URL}/auth/me`;
-  public static ME_Main = `${ApiRoutes.SERVER_URL}/auth/me/${ServerListEnum.BELORIS}`;
-  public static ME_ADMIN = `${ApiRoutes.SERVER_URL}/auth/me/${ServerListEnum.BELORIS_ADMIN}`;
+  public static USER = `${ApiRoutes.SERVER_URL}/auth/me`;
+  public static MEMBER_Main = `${ApiRoutes.SERVER_URL}/auth/me/${ServerListEnum.BELORIS}`;
+  public static MEMBER_ADMIN = `${ApiRoutes.SERVER_URL}/auth/me/${ServerListEnum.BELORIS_ADMIN}`;
+  public static MEMBER_Main_ROLES = `${ApiRoutes.MEMBER_Main}/roles`;
+  public static MEMBER_ADMIN_ROLES = `${ApiRoutes.MEMBER_ADMIN}/roles`;
 }

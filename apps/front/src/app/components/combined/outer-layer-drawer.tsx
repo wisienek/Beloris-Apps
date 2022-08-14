@@ -15,14 +15,14 @@ import SettingsIcon from '@mui/icons-material/Settings';
 
 import { AppBar } from '../single/app-bar';
 import { Drawer } from '../single/drawer';
-import { mainListItems, secondaryListItems } from '../single/list-items';
+import { MainListItems, SecondaryListItems } from '../single/list-items';
 import Bg from '../../../assets/images/background.png';
 import { UserContext } from './use-user';
 
 const mdTheme = createTheme();
 
 const OuterLayerDrawer = ({ children }: { children: React.ReactNode }) => {
-  const { user } = React.useContext(UserContext);
+  const { user, belorisAdminMember } = React.useContext(UserContext);
 
   const [open, setOpen] = React.useState(false);
   const toggleDrawer = () => setOpen(!open);
@@ -77,9 +77,16 @@ const OuterLayerDrawer = ({ children }: { children: React.ReactNode }) => {
           </Toolbar>
           <Divider />
           <List component="nav">
-            {mainListItems}
-            <Divider sx={{ my: 1 }} />
-            {secondaryListItems}
+            <MainListItems />
+            {user && (
+              <>
+                <Divider sx={{ my: 1 }} />
+                <SecondaryListItems
+                  user={user}
+                  adminMember={belorisAdminMember}
+                />
+              </>
+            )}
           </List>
         </Drawer>
 

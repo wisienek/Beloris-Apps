@@ -23,7 +23,7 @@ const DiscordLogin = () => {
 
       cookies.set('DISCORD_TOKEN', cookie, { path: '/' });
 
-      const { data: userData } = await axios.get(ApiRoutes.ME, {
+      const { data: userData } = await axios.get(ApiRoutes.USER, {
         withCredentials: true,
       });
 

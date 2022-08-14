@@ -64,4 +64,21 @@ export class AuthController {
   ) {
     return this.authService.fetchMember(user, server);
   }
+
+  @Auth()
+  @Get('me/:server/roles')
+  @ApiParam({
+    name: 'server',
+    enum: ServerListEnum,
+    description: 'Which server to check',
+  })
+  @ApiOkResponse({
+    description: 'Member roles',
+  })
+  getMineRolesOnServer(
+    @Param('server') server: ServerListEnum,
+    @DcUser() user: TokenDto,
+  ) {
+    return this.authService.fetchMemberRoles(user, server);
+  }
 }

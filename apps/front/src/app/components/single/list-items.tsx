@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { Link } from 'react-router-dom';
 import {
   ListItemButton,
   ListItemIcon,
@@ -7,33 +8,50 @@ import {
 } from '@mui/material';
 import DashboardIcon from '@mui/icons-material/Dashboard';
 import PeopleIcon from '@mui/icons-material/People';
-import { Link } from 'react-router-dom';
+import ImportExportRoundedIcon from '@mui/icons-material/ImportExportRounded';
 
-export const mainListItems = (
-  <React.Fragment>
-    <ListSubheader component="div" inset>
-      Funkcjonalność ogólna
-    </ListSubheader>
-    <ListItemButton component={Link} to="/">
-      <ListItemIcon>
-        <DashboardIcon />
-      </ListItemIcon>
-      <ListItemText primary="Pobieralnia" />
-    </ListItemButton>
+export const MainListItems = () => {
+  return (
+    <React.Fragment>
+      <ListSubheader component="div" inset>
+        Funkcjonalność ogólna
+      </ListSubheader>
+      <ListItemButton component={Link} to="/">
+        <ListItemIcon>
+          <DashboardIcon />
+        </ListItemIcon>
+        <ListItemText primary="Pobieralnia" />
+      </ListItemButton>
+    </React.Fragment>
+  );
+};
 
-    <ListItemButton>
-      <ListItemIcon>
-        <PeopleIcon />
-      </ListItemIcon>
-      <ListItemText primary="Skiny" />
-    </ListItemButton>
-  </React.Fragment>
-);
+export const SecondaryListItems = (user, adminMember) => {
+  return user ? (
+    <React.Fragment>
+      <ListSubheader component="div" inset>
+        Funkcjonalność użytkownika
+      </ListSubheader>
 
-export const secondaryListItems = (
-  <React.Fragment>
-    <ListSubheader component="div" inset>
-      Po zalogowaniu
-    </ListSubheader>
-  </React.Fragment>
-);
+      <ListItemButton>
+        <ListItemIcon>
+          <PeopleIcon />
+        </ListItemIcon>
+        <ListItemText primary="Skiny" />
+      </ListItemButton>
+
+      {adminMember && (
+        <>
+          <ListItemButton component={Link} to="/mods-wizard">
+            <ListItemIcon>
+              <ImportExportRoundedIcon />
+            </ListItemIcon>
+            <ListItemText primary="Edytowanie paczki" />
+          </ListItemButton>
+        </>
+      )}
+    </React.Fragment>
+  ) : (
+    <></>
+  );
+};

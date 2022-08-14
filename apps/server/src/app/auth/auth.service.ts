@@ -15,6 +15,8 @@ import * as _ from 'lodash';
 import { TokenDto } from '@bella/dto';
 import { Cookies, ServerListEnum } from '@bella/enums';
 import { BotConfiguration } from '@bella/config';
+import { DiscordService } from '../discord';
+import { Role } from 'discord.js';
 
 @Injectable()
 export class AuthService {
@@ -28,7 +30,10 @@ export class AuthService {
   private discordConfig: BotConfiguration;
   private oauth: DiscordOauth2;
 
-  constructor(private config: ConfigService) {
+  constructor(
+    private config: ConfigService,
+    private discordService: DiscordService,
+  ) {
     this.discordConfig = this.config.get('bot');
 
     this.oauth = new DiscordOauth2({
@@ -87,6 +92,27 @@ export class AuthService {
     if (!server) throw new BadRequestException(`No ServerID provided!`);
 
     return await this.oauth.getGuildMember(token.access_token, server);
+  }
+
+  public async fetchMemberRoles(token: TokenDto, server: ServerListEnum) {
+    const oauthMember = await this.fetchMember(token, server);
+    const guildMember = await this.discordService.getMember(
+      server,
+      oauthMember.user.id,
+    );
+
+    return guildMember.roles.cache.map((role) => {
+      const permissionsJson = role.permissions.toJSON();
+      const roleJson = role.toJSON() as unknown as Record<
+        keyof Role,
+        Role[keyof Role]
+      >;
+
+      return {
+        ...roleJson,
+        permissions: permissionsJson,
+      };
+    });
   }
 
   public verify(token: TokenDto | Request): Promise<DiscordOauth2.User> {
