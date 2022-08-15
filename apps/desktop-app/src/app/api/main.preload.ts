@@ -33,6 +33,8 @@ const windowApi: WindowApi = {
       ipcRenderer.invoke(IPCChannels.GET_SESSION) as Promise<
         IpcEventDto<TokenDto>
       >,
+    logout: () =>
+      ipcRenderer.invoke(IPCChannels.LOGOUT) as Promise<IpcEventDto<boolean>>,
     receiveSession: (func) => {
       ipcRenderer.on(IPCChannels.SET_SESSION, (event, ...args) =>
         func(...args),

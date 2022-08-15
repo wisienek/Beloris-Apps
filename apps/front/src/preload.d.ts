@@ -1,5 +1,5 @@
 import { IpcRenderer } from 'electron';
-import { WindowApi } from '@bella/shared';
+import { WindowApi } from '@bella/schema';
 
 declare global {
   interface Window {

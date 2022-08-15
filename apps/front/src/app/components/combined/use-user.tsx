@@ -1,14 +1,20 @@
 import * as React from 'react';
 import * as _ from 'lodash';
 import axios from 'axios';
+import { GuildMember, Role } from 'discord.js';
+
+import { User } from '@bella/types';
 
 import { ApiRoutes } from '../../api/api-routes.enum';
-import { User } from '@bella/types';
-import { GuildMember, Role } from 'discord.js';
+import Cookies from 'universal-cookie';
+import { CookiesEnum } from '@bella/enums';
+import { ErrorContext } from './error-box';
+import { ErrorSeverity } from '../single/error-message';
 
 export interface UserContextValue {
   user: User;
   verifyUser: (user: User) => void;
+  logout: () => void;
   belorisMember: GuildMember;
   belorisAdminMember: GuildMember;
   belorisMemberRoles: Role[];
@@ -18,6 +24,7 @@ export interface UserContextValue {
 export const UserContext = React.createContext<UserContextValue>({
   user: null,
   verifyUser: (user: User) => null,
+  logout: () => null,
   belorisMember: null,
   belorisAdminMember: null,
   belorisMemberRoles: null,
@@ -25,6 +32,7 @@ export const UserContext = React.createContext<UserContextValue>({
 });
 
 export const UserProvider = ({ children }: { children?: React.ReactNode }) => {
+  const { addError } = React.useContext(ErrorContext);
   const [user, setUser] = React.useState<User>(null);
 
   const [belorisMember, setBelorisMember] = React.useState<GuildMember>(null);
@@ -33,11 +41,27 @@ export const UserProvider = ({ children }: { children?: React.ReactNode }) => {
 
   const [belorisMemberRoles, setBelorisMemberRoles] =
     React.useState<Role[]>(null);
-  const [belorisAdminMemberRoles, setBelorisAdminMemberRoles] =
+  const [belorisAdminRoles, setBelorisAdminRoles] =
     React.useState<Role[]>(null);
 
   const verifyUser = (data: User) => {
     if (!user || !_.isEqual(user, data)) setUser({ ...data });
+  };
+
+  const logout = async () => {
+    const message = `Wylogowano z konta ${user.username}`;
+
+    await window.api.utilities.logout();
+    const cookies = new Cookies();
+    cookies.remove(CookiesEnum.DISCORD_TOKEN);
+
+    setUser(null);
+    setBelorisMember(null);
+    setBelorisAdminMember(null);
+    setBelorisMemberRoles(null);
+    setBelorisAdminRoles(null);
+
+    addError(ErrorSeverity.INFO, message, true);
   };
 
   React.useEffect(() => {
@@ -63,8 +87,13 @@ export const UserProvider = ({ children }: { children?: React.ReactNode }) => {
               { withCredentials: true },
             );
 
-            console.log(`AdminRoles: `, adminRoles);
-            if (adminRoles) setBelorisMemberRoles(adminRoles);
+            if (adminRoles) setBelorisAdminRoles(adminRoles);
+
+            addError(
+              ErrorSeverity.INFO,
+              `Załadowano dane z serwera adminów`,
+              true,
+            );
           }
 
           if (fetchedBelorisMember) {
@@ -75,8 +104,13 @@ export const UserProvider = ({ children }: { children?: React.ReactNode }) => {
               { withCredentials: true },
             );
 
-            console.log(`MainRoles: `, mainRoles);
             if (mainRoles) setBelorisMemberRoles(mainRoles);
+
+            addError(
+              ErrorSeverity.INFO,
+              `Załadowano dane z serwera DC Beloris`,
+              true,
+            );
           }
         }
       } catch (error) {
@@ -90,10 +124,11 @@ export const UserProvider = ({ children }: { children?: React.ReactNode }) => {
       value={{
         user,
         verifyUser,
+        logout,
         belorisMember,
         belorisAdminMember,
         belorisMemberRoles,
-        belorisAdminRoles: belorisAdminMemberRoles,
+        belorisAdminRoles,
       }}
     >
       {children}

@@ -3,43 +3,76 @@ import {
   Button,
   FormControl,
   Grid,
+  IconButton,
   InputAdornment,
   Typography,
+  Zoom,
 } from '@mui/material';
 import OutlinedInputWrapper from '../single/OutlinedInputWrapper';
 import DriveFileMoveIcon from '@mui/icons-material/DriveFileMove';
+import RestartAltIcon from '@mui/icons-material/RestartAlt';
+import Tooltip from '../single/tooltip';
 
 export interface LocationSettingsArgs {
   id: string;
   label: React.ReactNode | string;
   placeholder: string;
   value: string;
-  upload: (event: any, id: string) => void;
+  upload: (id: string) => void;
+  reset: (id: string) => void;
 }
 
-const LocationSettings = (args: LocationSettingsArgs) => {
+const LocationSettings = ({
+  id,
+  label,
+  placeholder,
+  value,
+  upload,
+  reset,
+}: LocationSettingsArgs) => {
   return (
     <>
       <Grid item sx={{ position: 'relative' }}>
         <FormControl variant="outlined" fullWidth>
-          <Typography variant="subtitle1">{args.label}</Typography>
+          <Typography variant="subtitle1">{label}</Typography>
           <OutlinedInputWrapper
             disabled
-            id={args.id}
-            name={args.id}
+            id={id}
+            name={id}
             type="text"
-            placeholder={args.placeholder}
-            value={args.value}
+            placeholder={placeholder}
+            value={value}
             fullWidth
             startAdornment={
               <InputAdornment position="start">
-                <Button
-                  variant="contained"
-                  size="small"
-                  onClick={() => args.upload(null, args.id)}
+                <Tooltip
+                  title="Wyszukaj lokację"
+                  arrow
+                  TransitionComponent={Zoom}
+                  placement="left"
                 >
-                  <DriveFileMoveIcon />
-                </Button>
+                  <Button
+                    variant="contained"
+                    size="small"
+                    onClick={() => upload(id)}
+                  >
+                    <DriveFileMoveIcon />
+                  </Button>
+                </Tooltip>
+              </InputAdornment>
+            }
+            endAdornment={
+              <InputAdornment position="end">
+                <Tooltip
+                  title="Resetuj"
+                  arrow
+                  TransitionComponent={Zoom}
+                  placement="top"
+                >
+                  <IconButton color="error" onClick={() => reset(id)}>
+                    <RestartAltIcon />
+                  </IconButton>
+                </Tooltip>
               </InputAdornment>
             }
           />

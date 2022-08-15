@@ -32,6 +32,7 @@ export interface WindowApi {
   };
   utilities: {
     openExternalLink: (link: string) => Promise<IpcEventDto<boolean>>;
+    logout: () => Promise<IpcEventDto<boolean>>;
     getSession: () => Promise<IpcEventDto<TokenDto>>;
     receiveSession: (func: (...args: any) => void) => void;
   };

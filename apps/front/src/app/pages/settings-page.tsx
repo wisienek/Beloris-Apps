@@ -13,7 +13,7 @@ const SettingsPage = () => {
   const { settings, saveSettings } = React.useContext(SettingsContext);
   const { addError } = React.useContext(ErrorContext);
 
-  const handleFile = async (e, id) => {
+  const handleFile = async (id: string) => {
     const response = await window.api.settings.openFileDialog();
 
     if (response.failed) {
@@ -29,6 +29,16 @@ const SettingsPage = () => {
       { ...settings?.downloadTo },
       id === 'mainLocation' && { mcFolder: response.data },
       id === 'modpackLocation' && { modpackFolder: response.data },
+    );
+
+    saveSettings({ downloadTo });
+  };
+
+  const resetSettings = (id: string) => {
+    const downloadTo = Object.assign(
+      { ...settings?.downloadTo },
+      id === 'mainLocation' && { mcFolder: null },
+      id === 'modpackLocation' && { modpackFolder: null },
     );
 
     saveSettings({ downloadTo });
@@ -66,6 +76,7 @@ const SettingsPage = () => {
             placeholder="/home/user/twoja/lokacja/.minecraft"
             value={settings?.downloadTo?.mcFolder ?? ''}
             upload={handleFile}
+            reset={resetSettings}
             label={
               <>
                 Lokacja głównego folderu <Label>.minecraft</Label>
@@ -79,9 +90,11 @@ const SettingsPage = () => {
             label="Lokacja modpacka"
             value={settings?.downloadTo?.modpackFolder ?? ''}
             upload={handleFile}
+            reset={resetSettings}
           />
         </Grid>
       </Grid>
+
       <Grid item sx={{ width: '30%' }}>
         <Title>Ustawienia personalne</Title>
 

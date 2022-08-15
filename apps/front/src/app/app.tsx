@@ -5,12 +5,15 @@ import axios from 'axios';
 
 import MainPage from './pages/main-page';
 import SettingsPage from './pages/settings-page';
-import { ErrorBox } from './components/combined/error-box';
+import { ErrorBox, ErrorContext } from './components/combined/error-box';
 import OuterLayerDrawer from './components/combined/outer-layer-drawer';
 import { ApiRoutes } from './api/api-routes.enum';
 import { UserContext } from './components/combined/use-user';
+import { ErrorSeverity } from './components/single/error-message';
+import PackageEditorPage from './pages/package-editor';
 
 export const App = () => {
+  const { addError } = React.useContext(ErrorContext);
   const { verifyUser } = React.useContext(UserContext);
   const cookies = new Cookies();
 
@@ -28,6 +31,12 @@ export const App = () => {
         });
 
         verifyUser(userData);
+
+        addError(
+          ErrorSeverity.SUCCESS,
+          `Zalogowano na konto: ${userData.username}`,
+          true,
+        );
       })
       .catch((error) =>
         console.error(`Error przy fetchowaniu usera (local)`, error),
@@ -40,6 +49,7 @@ export const App = () => {
       <OuterLayerDrawer>
         <Route path="/" exact component={MainPage} />
         <Route path="/settings" component={SettingsPage} />
+        <Route path="/mods-wizard" component={PackageEditorPage} />
       </OuterLayerDrawer>
     </>
   );

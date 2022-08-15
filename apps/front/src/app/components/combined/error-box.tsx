@@ -10,7 +10,7 @@ import { v4 } from 'uuid';
 export const ErrorBox = () => {
   const { errors } = React.useContext<ErrorContextValue>(ErrorContext);
 
-  return (
+  return errors.length !== 0 ? (
     <Stack
       justifyContent="flex-end"
       alignItems="stretch"
@@ -28,6 +28,8 @@ export const ErrorBox = () => {
         <ErrorMessage {...message} key={message.id} />
       ))}
     </Stack>
+  ) : (
+    <></>
   );
 };
 

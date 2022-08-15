@@ -9,4 +9,5 @@ export enum IPCChannels {
   OPEN_LOGIN_LINK = 'open-login-link',
   GET_SESSION = 'get-session',
   SET_SESSION = 'set-session',
+  LOGOUT = 'logout',
 }

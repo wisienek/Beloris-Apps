@@ -13,7 +13,7 @@ import * as crypto from 'crypto';
 import * as _ from 'lodash';
 
 import { TokenDto } from '@bella/dto';
-import { Cookies, ServerListEnum } from '@bella/enums';
+import { CookiesEnum, ServerListEnum } from '@bella/enums';
 import { BotConfiguration } from '@bella/config';
 import { DiscordService } from '../discord';
 import { Role } from 'discord.js';
@@ -68,7 +68,7 @@ export class AuthService {
 
     const user = await this.fetchUser(token);
 
-    response.cookie(Cookies.DISCORD_TOKEN, JSON.stringify(token), {
+    response.cookie(CookiesEnum.DISCORD_TOKEN, JSON.stringify(token), {
       maxAge: token.expires_in,
       signed: false,
     });
@@ -132,7 +132,7 @@ export class AuthService {
   }
 
   public static getTokenFromRequest(request: Request): TokenDto {
-    const cookie = request.cookies[Cookies.DISCORD_TOKEN];
+    const cookie = request.cookies[CookiesEnum.DISCORD_TOKEN];
     if (!cookie) return null;
 
     return JSON.parse(cookie) as TokenDto;

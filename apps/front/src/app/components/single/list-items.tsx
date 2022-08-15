@@ -13,9 +13,6 @@ import ImportExportRoundedIcon from '@mui/icons-material/ImportExportRounded';
 export const MainListItems = () => {
   return (
     <React.Fragment>
-      <ListSubheader component="div" inset>
-        Funkcjonalność ogólna
-      </ListSubheader>
       <ListItemButton component={Link} to="/">
         <ListItemIcon>
           <DashboardIcon />
@@ -30,7 +27,7 @@ export const SecondaryListItems = (user, adminMember) => {
   return user ? (
     <React.Fragment>
       <ListSubheader component="div" inset>
-        Funkcjonalność użytkownika
+        Użytkownik
       </ListSubheader>
 
       <ListItemButton>

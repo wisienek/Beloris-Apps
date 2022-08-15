@@ -6,7 +6,7 @@ import Cookies from 'universal-cookie';
 
 import { ApiRoutes } from '../../api/api-routes.enum';
 import { UserContext, UserContextValue } from '../combined/use-user';
-import DiscordIdentity from './discord-identity';
+import DiscordIdentity from '../combined/discord-identity';
 
 const DiscordLogin = () => {
   const cookies = new Cookies();

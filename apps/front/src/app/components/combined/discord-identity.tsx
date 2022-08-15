@@ -1,9 +1,19 @@
 import * as React from 'react';
-import { Avatar, Box, Chip, Typography, useTheme } from '@mui/material';
+import { Role } from 'discord.js';
+import {
+  Avatar,
+  Box,
+  Chip,
+  IconButton,
+  Typography,
+  useTheme,
+  Zoom,
+} from '@mui/material';
 import { styled } from '@mui/material/styles';
 import LogoutIcon from '@mui/icons-material/Logout';
 
-import { UserContext } from '../combined/use-user';
+import { UserContext } from './use-user';
+import Tooltip from '../single/tooltip';
 
 const AvatarWrapper = styled(Avatar)(
   ({ theme }) => `
@@ -13,13 +23,8 @@ const AvatarWrapper = styled(Avatar)(
 );
 
 const DiscordIdentity = () => {
-  const {
-    user,
-    belorisMember,
-    belorisAdminMember,
-    belorisMemberRoles,
-    belorisAdminRoles,
-  } = React.useContext(UserContext);
+  const { user, belorisMemberRoles, belorisAdminRoles, logout } =
+    React.useContext(UserContext);
   const theme = useTheme();
 
   const getPremiumType = (type: number) => {
@@ -35,11 +40,21 @@ const DiscordIdentity = () => {
     }
   };
 
-  const getRoles = () => {
-    if (!belorisMemberRoles) return <></>;
+  const getPrimaryRole = (roles: Role[]) => {
+    if (!roles || roles.length === 0) return <>brak roli...</>;
 
-    return [...(belorisAdminRoles ?? []), ...(belorisMemberRoles ?? [])].map(
-      (role) => <Chip key={role.id} color="secondary" label={role.name} />,
+    const role = roles
+      .filter((r) => !r.managed)
+      .sort((a, b) => a.position - b.position)[0];
+
+    return (
+      <Chip
+        key={role.id}
+        color="secondary"
+        label={role.name}
+        size="small"
+        sx={{ marginRight: '.3rem' }}
+      />
     );
   };
 
@@ -71,7 +86,8 @@ const DiscordIdentity = () => {
             {user.username}
           </Typography>
           <Typography variant="subtitle1" noWrap>
-            Technik | <span>{getPremiumType(user.premium_type)}</span>
+            {getPrimaryRole(belorisAdminRoles ?? belorisMemberRoles)} |{' '}
+            <span>{getPremiumType(user.premium_type)}</span>
           </Typography>
         </Box>
         <Box
@@ -80,7 +96,20 @@ const DiscordIdentity = () => {
           alignItems="center"
           justifyContent="center"
         >
-          <LogoutIcon />
+          <Tooltip
+            title="Wyloguj"
+            arrow
+            TransitionComponent={Zoom}
+            placement="top"
+          >
+            <IconButton
+              aria-label="logout"
+              sx={{ color: '#F6F6F6' }}
+              onClick={() => logout()}
+            >
+              <LogoutIcon />
+            </IconButton>
+          </Tooltip>
         </Box>
       </Box>
     </Box>

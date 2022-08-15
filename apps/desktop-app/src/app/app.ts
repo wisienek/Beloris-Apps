@@ -3,7 +3,7 @@ import { rendererAppName, rendererAppPort } from './constants';
 import { environment } from '../environments/environment';
 import { join } from 'path';
 import { format } from 'url';
-import { Cookies, IPCChannels } from '@bella/enums';
+import { CookiesEnum, IPCChannels } from '@bella/enums';
 
 export default class App {
   // Keep a global reference of the window object, if you don't, the window will
@@ -133,7 +133,7 @@ export default class App {
 
         session.defaultSession.cookies.set({
           url: 'http://localhost',
-          name: Cookies.DISCORD_TOKEN,
+          name: CookiesEnum.DISCORD_TOKEN,
           value: JSON.stringify(cookie),
         });
 

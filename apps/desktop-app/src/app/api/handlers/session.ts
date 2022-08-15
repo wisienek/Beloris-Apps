@@ -1,13 +1,13 @@
 import { session } from 'electron';
 import { IpcEventDto, TokenDto } from '@bella/dto';
-import { Cookies } from '@bella/enums';
+import { CookiesEnum } from '@bella/enums';
 
 export const getSession = async (): Promise<IpcEventDto<TokenDto>> => {
   let returnValue: IpcEventDto<TokenDto>;
 
   try {
     const [cookie] = await session.defaultSession.cookies.get({
-      name: Cookies.DISCORD_TOKEN,
+      name: CookiesEnum.DISCORD_TOKEN,
     });
 
     if (!cookie) throw new Error(`Brak ciasteczka!`);
@@ -20,6 +20,28 @@ export const getSession = async (): Promise<IpcEventDto<TokenDto>> => {
     returnValue = {
       failed: false,
       data: cookieValue,
+    };
+  } catch (err) {
+    returnValue = {
+      failed: true,
+      error: err,
+    };
+  }
+
+  return returnValue;
+};
+
+export const logout = async (): Promise<IpcEventDto<boolean>> => {
+  let returnValue: IpcEventDto<boolean>;
+
+  try {
+    await session.defaultSession.cookies.remove('/', CookiesEnum.DISCORD_TOKEN);
+
+    console.log(`Deleted cookie ${CookiesEnum.DISCORD_TOKEN} from "/"`);
+
+    returnValue = {
+      failed: false,
+      data: true,
     };
   } catch (err) {
     returnValue = {

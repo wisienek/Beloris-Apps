@@ -17,6 +17,7 @@ import {
   getDownloadVersionData,
   setDownloadVersionData,
   getSession,
+  logout,
 } from '../api/handlers';
 
 export default class ElectronEvents {
@@ -46,6 +47,7 @@ ipcMain.handle(IPCChannels.OPEN_LOGIN_LINK, openLoginLink);
 
 // session
 ipcMain.handle(IPCChannels.GET_SESSION, getSession);
+ipcMain.handle(IPCChannels.LOGOUT, logout);
 
 ipcMain.handle(IPCChannels.SET_SESSION, (event, cookie) =>
   ipcRenderer.invoke(IPCChannels.SET_SESSION, cookie),

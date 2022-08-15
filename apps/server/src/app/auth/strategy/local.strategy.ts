@@ -6,7 +6,7 @@ import { Strategy } from 'passport-local';
 import { Request } from 'express';
 
 import { TokenDto } from '@bella/dto';
-import { Cookies } from '@bella/enums';
+import { CookiesEnum } from '@bella/enums';
 
 import { AuthService } from '../auth.service';
 import { NoTokenException, NoUserException } from '../errors';
@@ -18,8 +18,8 @@ export class LocalStrategy extends PassportStrategy(Strategy) {
   }
 
   async validate(request: Request): Promise<DiscordOauth2.User> {
-    const token = request.cookies[Cookies.DISCORD_TOKEN];
-    if (!token) throw new NoTokenException(Cookies.DISCORD_TOKEN);
+    const token = request.cookies[CookiesEnum.DISCORD_TOKEN];
+    if (!token) throw new NoTokenException(CookiesEnum.DISCORD_TOKEN);
 
     const parsedToken: TokenDto = JSON.parse(token);
     const user = await this.authService.fetchUser(parsedToken);
