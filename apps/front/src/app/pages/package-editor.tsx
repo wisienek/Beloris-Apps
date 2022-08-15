@@ -6,6 +6,9 @@ import {
 } from '../components/single/wizard-stepper';
 import { VersionSelector } from '../components/combined/package-editor-wizard';
 import * as _ from 'lodash';
+import { ApiRoutes } from '../api/api-routes.enum';
+import useFetch from 'react-fetch-hook';
+import { VersionDto } from '@bella/dto';
 
 export interface IStep {
   id: number;
@@ -38,6 +41,27 @@ const stepMap: IStep[] = [
 const PackageEditorPage = () => {
   const [activeStep, setActiveStep] = React.useState(1);
   const [skipped, setSkipped] = React.useState(new Set<number>());
+  const [version, setVersion] = React.useState<
+    Record<'major' | 'minor', number>
+  >({ major: 0, minor: 0 });
+  const [isCurrentVersion, setIsCurrentVersion] =
+    React.useState<boolean>(false);
+
+  const { data: versionHistory } = useFetch<VersionDto[]>(
+    ApiRoutes.VERSION_HISTORY,
+  );
+  const { data: currentVersion } = useFetch<VersionDto>(ApiRoutes.VERSION);
+
+  const handleVersionChange = (e: any, type: 'major' | 'minor') => {
+    const newValue = parseInt(e.target.value);
+    if (!newValue || newValue < 0 || version[type] === newValue) return;
+
+    setVersion({ ...version, [type]: newValue });
+  };
+
+  const handleCurrentVersionChange = () => {
+    setIsCurrentVersion(!isCurrentVersion);
+  };
 
   const isStepSkipped = (step: number) => {
     return skipped.has(step);
@@ -121,7 +145,16 @@ const PackageEditorPage = () => {
           justifyContent="center"
           alignItems="center"
         >
-          {activeStep === 1 && <VersionSelector />}
+          {activeStep === 1 && (
+            <VersionSelector
+              handleChange={handleVersionChange}
+              version={version}
+              currentVersion={currentVersion}
+              versionHistory={versionHistory}
+              isCurrentVersion={isCurrentVersion}
+              handleCurrentVersionChange={handleCurrentVersionChange}
+            />
+          )}
         </Grid>
         <Grid
           item

@@ -51,7 +51,6 @@ const WizardStepper = ({
           );
         })}
       </Stepper>
-      <Typography sx={{ mt: 2, mb: 1 }}>Krok {activeStep}</Typography>
     </Box>
   );
 };

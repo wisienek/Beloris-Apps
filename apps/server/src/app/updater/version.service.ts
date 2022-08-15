@@ -31,7 +31,7 @@ export class VersionService {
     });
   }
 
-  public async getVersionHistory(): Promise<Version[]> {
+  public async getVersionHistory(): Promise<VersionDto[]> {
     return await this.versionRepository.find({
       order: {
         major: 'DESC',
@@ -115,7 +115,7 @@ export class VersionService {
   public async deleteVersion({
     major,
     minor,
-  }: DeleteVersionDto): Promise<Version> {
+  }: DeleteVersionDto): Promise<VersionDto> {
     const fromDb = await this.versionRepository.findOne({
       where: {
         major: major,
