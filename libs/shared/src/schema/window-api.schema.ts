@@ -1,4 +1,4 @@
-import { IpcEventDto, TokenDto, VersionDto } from '../dto';
+import { FileDialogInputDto, IpcEventDto, TokenDto, VersionDto } from '../dto';
 import { UserSettings } from './user-settings.schema';
 
 type Platform =
@@ -28,12 +28,18 @@ export interface WindowApi {
     saveUserSettings: (
       data: Partial<UserSettings>,
     ) => Promise<IpcEventDto<boolean>>;
-    openFileDialog: () => Promise<IpcEventDto<string>>;
   };
   utilities: {
     openExternalLink: (link: string) => Promise<IpcEventDto<boolean>>;
+  };
+  session: {
     logout: () => Promise<IpcEventDto<boolean>>;
     getSession: () => Promise<IpcEventDto<TokenDto>>;
     receiveSession: (func: (...args: any) => void) => void;
+  };
+  files: {
+    openFileDialog: (
+      data: FileDialogInputDto,
+    ) => Promise<IpcEventDto<string | string[]>>;
   };
 }

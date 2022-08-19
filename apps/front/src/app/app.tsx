@@ -18,7 +18,7 @@ export const App = () => {
   const cookies = new Cookies();
 
   React.useEffect(() => {
-    window.api.utilities
+    window.api.session
       .getSession()
       .then(async (res) => {
         if (res.failed && res.error) throw res.error;

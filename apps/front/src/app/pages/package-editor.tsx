@@ -4,7 +4,10 @@ import {
   WizardStepper,
   StepperNavigation,
 } from '../components/single/wizard-stepper';
-import { VersionSelector } from '../components/combined/package-editor-wizard';
+import {
+  UploaderWizard,
+  VersionSelector,
+} from '../components/combined/package-editor-wizard';
 import * as _ from 'lodash';
 import { ApiRoutes } from '../api/api-routes.enum';
 import useFetch from 'react-fetch-hook';
@@ -138,6 +141,7 @@ const PackageEditorPage = () => {
             stepMap={stepMap}
           />
         </Grid>
+
         <Grid
           container
           display="flex"
@@ -155,7 +159,9 @@ const PackageEditorPage = () => {
               handleCurrentVersionChange={handleCurrentVersionChange}
             />
           )}
+          {activeStep === 2 && <UploaderWizard isPackage={true} />}
         </Grid>
+
         <Grid
           item
           sx={{

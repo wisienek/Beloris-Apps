@@ -1,5 +1,10 @@
 import { contextBridge, ipcRenderer } from 'electron';
-import { IpcEventDto, TokenDto, VersionDto } from '@bella/dto';
+import {
+  FileDialogInputDto,
+  IpcEventDto,
+  TokenDto,
+  VersionDto,
+} from '@bella/dto';
 import { UserSettings, WindowApi } from '@bella/schema';
 import { IPCChannels } from '@bella/enums';
 
@@ -22,13 +27,18 @@ const windowApi: WindowApi = {
     getUserSettings: () => ipcRenderer.invoke(IPCChannels.GET_USER_SETTINGS),
     saveUserSettings: (data: Partial<UserSettings>) =>
       ipcRenderer.invoke(IPCChannels.SAVE_USER_SETTINGS, data),
-    openFileDialog: () => ipcRenderer.invoke(IPCChannels.OPEN_FILE_DIALOG),
+  },
+  files: {
+    openFileDialog: (data: FileDialogInputDto) =>
+      ipcRenderer.invoke(IPCChannels.OPEN_FILE_DIALOG, data),
   },
   utilities: {
     openExternalLink: (link: string) =>
       ipcRenderer.invoke(IPCChannels.OPEN_EXTERNAL_LINK, link) as Promise<
         IpcEventDto<boolean>
       >,
+  },
+  session: {
     getSession: () =>
       ipcRenderer.invoke(IPCChannels.GET_SESSION) as Promise<
         IpcEventDto<TokenDto>

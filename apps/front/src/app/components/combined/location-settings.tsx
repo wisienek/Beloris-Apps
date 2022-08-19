@@ -8,7 +8,7 @@ import {
   Typography,
   Zoom,
 } from '@mui/material';
-import OutlinedInputWrapper from '../single/OutlinedInputWrapper';
+import OutlinedInputWrapper from '../single/outlined-input-wrapper';
 import DriveFileMoveIcon from '@mui/icons-material/DriveFileMove';
 import RestartAltIcon from '@mui/icons-material/RestartAlt';
 import Tooltip from '../single/tooltip';
@@ -16,7 +16,7 @@ import Tooltip from '../single/tooltip';
 export interface LocationSettingsArgs {
   id: string;
   label: React.ReactNode | string;
-  placeholder: string;
+  placeholder?: string;
   value: string;
   upload: (id: string) => void;
   reset: (id: string) => void;

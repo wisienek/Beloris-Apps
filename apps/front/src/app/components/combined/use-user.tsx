@@ -51,7 +51,7 @@ export const UserProvider = ({ children }: { children?: React.ReactNode }) => {
   const logout = async () => {
     const message = `Wylogowano z konta ${user.username}`;
 
-    await window.api.utilities.logout();
+    await window.api.session.logout();
     const cookies = new Cookies();
     cookies.remove(CookiesEnum.DISCORD_TOKEN);
 

@@ -2,9 +2,7 @@ import * as React from 'react';
 
 import {
   Box,
-  Checkbox,
   FormControl,
-  FormControlLabel,
   InputAdornment,
   InputLabel,
   OutlinedInput,
@@ -14,8 +12,12 @@ import {
 import Title from '../single/title';
 import { VersionDto } from '@bella/dto';
 import CurrentVersionCheckbox from '../single/current-version-checkbox';
+import LocationSettings from './location-settings';
+import { ErrorSeverity } from '../single/error-message';
+import { ErrorContext } from './error-box';
+import { IpcFileChoseEnum } from '@bella/enums';
 
-export interface VersionSelectorArgs {
+interface VersionSelectorArgs {
   version: Record<'major' | 'minor', number>;
   handleChange: (event: any, version: 'major' | 'minor') => void;
   versionHistory: VersionDto[] | undefined;
@@ -45,10 +47,6 @@ const VersionSelector = ({
       isSameVersion !== same && setIsSameVersion(same);
     }
   }, [version, versionHistory]);
-
-  const checkMainVersion = () =>
-    version?.major === currentVersion?.major &&
-    version?.minor === currentVersion?.minor;
 
   return (
     <>
@@ -116,4 +114,51 @@ const VersionSelector = ({
   );
 };
 
-export { VersionSelector };
+interface UploaderWizardArgs {
+  isPackage: boolean;
+}
+
+const UploaderWizard = ({ isPackage }: UploaderWizardArgs) => {
+  const { addError } = React.useContext(ErrorContext);
+  const [uploaded, setUploaded] = React.useState<string>('');
+
+  const upload = async (id: string) => {
+    const { failed, data, error } = await window.api.files.openFileDialog({
+      fileType:
+        id === 'package'
+          ? IpcFileChoseEnum.PACKAGE
+          : IpcFileChoseEnum.VERSION_FILE,
+    });
+
+    if (failed) {
+      addError(
+        ErrorSeverity.WARNING,
+        error?.message ?? `Coś poszło nie tak przy wybieraniu folderu!`,
+      );
+      return;
+    }
+
+    setUploaded(Array.isArray(data) ? data[0] : data);
+  };
+
+  const reset = (id: string) => {
+    console.log(`Reseting package ${id}`);
+  };
+
+  return (
+    <>
+      <Title>Prześlij {isPackage ? 'Paczkę jar/zip/tar' : 'Plik'}</Title>
+
+      <LocationSettings
+        id={isPackage ? 'package' : 'file'}
+        label={isPackage ? 'Paczka' : 'Plik'}
+        reset={reset}
+        upload={upload}
+        value={uploaded}
+      />
+    </>
+  );
+};
+
+export { VersionSelectorArgs, UploaderWizardArgs };
+export { VersionSelector, UploaderWizard };

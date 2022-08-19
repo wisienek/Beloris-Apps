@@ -18,7 +18,7 @@ const DiscordLogin = () => {
 
     console.log(`Login will be on:`, loginUrl);
 
-    window.api.utilities.receiveSession(async (cookie) => {
+    window.api.session.receiveSession(async (cookie) => {
       console.log(`Got cookie!`, Object.keys(cookie).length);
 
       cookies.set('DISCORD_TOKEN', cookie, { path: '/' });

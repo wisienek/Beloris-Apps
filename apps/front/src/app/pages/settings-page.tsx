@@ -8,13 +8,16 @@ import { SettingsContext } from '../settings/settings';
 import { ErrorContext } from '../components/combined/error-box';
 import { ErrorSeverity } from '../components/single/error-message';
 import DiscordLogin from '../components/single/discord-login';
+import { IpcFileChoseEnum } from '@bella/enums';
 
 const SettingsPage = () => {
   const { settings, saveSettings } = React.useContext(SettingsContext);
   const { addError } = React.useContext(ErrorContext);
 
   const handleFile = async (id: string) => {
-    const response = await window.api.settings.openFileDialog();
+    const response = await window.api.files.openFileDialog({
+      fileType: IpcFileChoseEnum.DIRECTORIES,
+    });
 
     if (response.failed) {
       addError(

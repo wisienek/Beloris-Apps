@@ -51,37 +51,6 @@ export const readUserSettings = (): IpcEventDto<UserSettings> => {
   return replyMessage;
 };
 
-export const openFileDialog = async (): Promise<IpcEventDto<string>> => {
-  let replyMessage: IpcEventDto<string>;
-
-  try {
-    const { canceled, filePaths } = await dialog.showOpenDialog({
-      title: 'Wybierz folder',
-      buttonLabel: 'Wybierz',
-      properties: ['openDirectory', 'multiSelections'],
-    });
-
-    if (canceled) throw new Error(`User zakończył akcję bez wyboru!`);
-
-    const directory = filePaths[0];
-
-    replyMessage = {
-      failed: false,
-      data: directory,
-    };
-  } catch (error) {
-    replyMessage = {
-      failed: true,
-      error: error,
-      data: null,
-    };
-
-    console.error(`Error while getting folder from user`, error);
-  }
-
-  return replyMessage;
-};
-
 export const saveUserSettings = (
   event: IpcMainEvent,
   data: Partial<UserSettings>,

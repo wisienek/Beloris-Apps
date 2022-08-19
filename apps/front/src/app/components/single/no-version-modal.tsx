@@ -44,7 +44,9 @@ export default function NoVersionModal() {
             underline="hover"
           >
             https://files.minecraftforge.net/net/minecraftforge/forge/index_1.12.2.html
-          </Link>
+          </Link>{' '}
+          <br />A następnie odpal minecraft aby wszystkie pliki mogły sięć
+          wygenerować
         </Typography>
       </Box>
     </Modal>
