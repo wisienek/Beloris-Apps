@@ -27,8 +27,7 @@ const stepMap: IStep[] = [
   },
   {
     id: 2,
-    name: 'Prześlij paczkę',
-    isOptional: true,
+    name: 'Wybierz pliki',
   },
   {
     id: 3,
@@ -89,7 +88,7 @@ const PackageEditorPage = () => {
   };
 
   const handleSkip = () => {
-    if (stepMap.find((step) => step.id === activeStep).isOptional) {
+    if (!stepMap.find((step) => step.id === activeStep).isOptional) {
       throw new Error("You can't skip a step that isn't optional.");
     }
 

@@ -24,7 +24,6 @@ export const App = () => {
         if (res.error) throw res.error;
 
         const userToken = res.data;
-        console.log(`token: `, userToken);
         cookies.set('DISCORD_TOKEN', userToken, { path: '/' });
 
         const { data: userData } = await axios.get(ApiRoutes.USER, {

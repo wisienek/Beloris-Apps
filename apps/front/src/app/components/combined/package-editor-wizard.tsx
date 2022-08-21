@@ -16,6 +16,7 @@ import CurrentVersionCheckbox from '../single/current-version-checkbox';
 import { ErrorSeverity } from '../single/error-message';
 import { ErrorContext } from './error-box';
 import { IpcFileChoseEnum } from '@bella/enums';
+import TransferList from '../single/transfer-list';
 
 interface VersionSelectorArgs {
   version: Record<'major' | 'minor', number>;
@@ -119,32 +120,12 @@ interface UploaderWizardArgs {
 }
 
 const UploaderWizard = ({ isPackage }: UploaderWizardArgs) => {
+  const theme = useTheme();
+
   const { addError } = React.useContext(ErrorContext);
-  const [uploaded, setUploaded] = React.useState<string>('');
-  const [files, setFiles] = React.useState<FileUploadDto[]>([]);
-
-  const upload = async (id: string) => {
-    const { failed, data, error } = await window.api.files.openFileDialog({
-      fileType:
-        id === 'package'
-          ? IpcFileChoseEnum.PACKAGE
-          : IpcFileChoseEnum.VERSION_FILE,
-    });
-
-    if (failed) {
-      addError(
-        ErrorSeverity.WARNING,
-        error?.message ?? `Coś poszło nie tak przy wybieraniu folderu!`,
-      );
-      return;
-    }
-
-    setUploaded(Array.isArray(data) ? data[0] : data);
-  };
-
-  const reset = (id: string) => {
-    console.log(`Reseting package ${id}`);
-  };
+  const [files, setFiles] = React.useState<FileUploadDto[]>(null);
+  const [filesMap, setFilesMap] = React.useState<Record<number, string>>({});
+  const [selectedFiles, setSelectedFiles] = React.useState<number[]>([]);
 
   const inteligentSearch = async () => {
     const filesFetch = await window.api.files.getDownloaderFiles();
@@ -162,15 +143,18 @@ const UploaderWizard = ({ isPackage }: UploaderWizardArgs) => {
     }
 
     setFiles(filesFetch.data);
+    setFilesMap(
+      Object.fromEntries(
+        new Map(filesFetch.data.map((f, i) => [i, f.savePath])),
+      ),
+    );
   };
 
-  React.useEffect(() => {
-    console.log(`Fetched files`, files);
-  }, [files]);
+  const setSelected = () => {};
 
   return (
     <>
-      <Title>Prześlij {isPackage ? 'Paczkę jar/zip/tar' : 'Plik'}</Title>
+      <Title>Wybierz pliki</Title>
 
       <Button
         variant="contained"
@@ -179,6 +163,28 @@ const UploaderWizard = ({ isPackage }: UploaderWizardArgs) => {
       >
         Inteligentne wyszukiwanie
       </Button>
+      <br />
+      {files && (
+        <>
+          {Object.keys(filesMap).length > 0 ? (
+            <TransferList
+              allItems={filesMap}
+              selectedLeft={Object.keys(filesMap).map(Number)}
+              selectedRight={[]}
+            />
+          ) : (
+            <Typography
+              variant="subtitle1"
+              gutterBottom
+              sx={{
+                color: theme.palette.warning.main,
+              }}
+            >
+              Brak plików w folderze!
+            </Typography>
+          )}
+        </>
+      )}
     </>
   );
 };

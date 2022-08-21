@@ -23,9 +23,9 @@ function union(a: readonly number[], b: readonly number[]) {
 }
 
 export interface TransferListArgs {
-  allItems: Record<number, any>;
-  selectedLeft: number[];
-  selectedRight: number[];
+  allItems: Record<number, string>;
+  selectedLeft: readonly number[];
+  selectedRight: readonly number[];
 }
 
 export default function TransferList({
@@ -97,7 +97,7 @@ export default function TransferList({
           />
         }
         title={title}
-        subheader={`${numberOfChecked(items)}/${items.length} selected`}
+        subheader={`${numberOfChecked(items)}/${items.length} Wybranych`}
       />
       <Divider />
       <List

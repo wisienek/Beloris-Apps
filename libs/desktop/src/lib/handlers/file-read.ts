@@ -1,9 +1,9 @@
 import { dialog } from 'electron';
 import { sync } from 'glob-promise';
-import { sep } from 'path';
+import { parse, sep } from 'path';
 
 import { FileDialogInputDto, FileUploadDto, IpcEventDto } from '@bella/dto';
-import { IpcFileMap } from '@bella/data';
+import { AllowedUploaderFileExtensions, IpcFileMap } from '@bella/data';
 import { FileAction } from '@bella/enums';
 
 import { handlerWrapper } from '../handler-wrapper';
@@ -30,7 +30,7 @@ export const openFileDialog = async (
       ),
     );
 
-    if (canceled) throw new Error(`User zakończył akcję bez wyboru!`);
+    if (canceled) throw new Error(`Użytkownik zakończył akcję bez wyboru!`);
 
     return filePaths[0];
   }, `Error while getting folder from user`);
@@ -43,19 +43,22 @@ export const getDownloaderFiles = async (): Promise<
     const { data: settings } = await readUserSettings();
 
     if (!settings || !settings?.downloadTo?.modpackFolder)
-      throw new Error(`Brak folderu ustawionego modpacka!`);
+      throw new Error(`Brak ustawionego folderu modpacka!`);
 
     const folderLocation = settings.downloadTo.modpackFolder;
 
-    const foundFiles = sync('', {
-      cwd: folderLocation,
-      nonull: false,
-      nocase: true,
-    });
+    const foundFiles = sync(
+      `**/*.{${AllowedUploaderFileExtensions.join(',')}}`,
+      {
+        cwd: folderLocation,
+        nonull: false,
+        nocase: true,
+      },
+    );
 
     return foundFiles.map((filePath) => {
       return new FileUploadDto({
-        name: filePath.split(sep).at(-1),
+        name: parse(filePath.split(sep).at(-1)).name,
         savePath: filePath,
         required: true,
         fileAction: FileAction.DOWNLOAD,
