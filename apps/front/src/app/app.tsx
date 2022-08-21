@@ -21,9 +21,10 @@ export const App = () => {
     window.api.session
       .getSession()
       .then(async (res) => {
-        if (res.failed && res.error) throw res.error;
+        if (res.error) throw res.error;
 
         const userToken = res.data;
+        console.log(`token: `, userToken);
         cookies.set('DISCORD_TOKEN', userToken, { path: '/' });
 
         const { data: userData } = await axios.get(ApiRoutes.USER, {

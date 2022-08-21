@@ -2,6 +2,7 @@ import * as React from 'react';
 
 import {
   Box,
+  Button,
   FormControl,
   InputAdornment,
   InputLabel,
@@ -10,9 +11,8 @@ import {
   useTheme,
 } from '@mui/material';
 import Title from '../single/title';
-import { VersionDto } from '@bella/dto';
+import { FileUploadDto, VersionDto } from '@bella/dto';
 import CurrentVersionCheckbox from '../single/current-version-checkbox';
-import LocationSettings from './location-settings';
 import { ErrorSeverity } from '../single/error-message';
 import { ErrorContext } from './error-box';
 import { IpcFileChoseEnum } from '@bella/enums';
@@ -121,6 +121,7 @@ interface UploaderWizardArgs {
 const UploaderWizard = ({ isPackage }: UploaderWizardArgs) => {
   const { addError } = React.useContext(ErrorContext);
   const [uploaded, setUploaded] = React.useState<string>('');
+  const [files, setFiles] = React.useState<FileUploadDto[]>([]);
 
   const upload = async (id: string) => {
     const { failed, data, error } = await window.api.files.openFileDialog({
@@ -145,17 +146,39 @@ const UploaderWizard = ({ isPackage }: UploaderWizardArgs) => {
     console.log(`Reseting package ${id}`);
   };
 
+  const inteligentSearch = async () => {
+    const filesFetch = await window.api.files.getDownloaderFiles();
+
+    if (filesFetch.error) {
+      addError(
+        ErrorSeverity.ERROR,
+        filesFetch?.error?.message,
+        false,
+        null,
+        `Inteligentne szukanie plików`,
+      );
+
+      return;
+    }
+
+    setFiles(filesFetch.data);
+  };
+
+  React.useEffect(() => {
+    console.log(`Fetched files`, files);
+  }, [files]);
+
   return (
     <>
       <Title>Prześlij {isPackage ? 'Paczkę jar/zip/tar' : 'Plik'}</Title>
 
-      <LocationSettings
-        id={isPackage ? 'package' : 'file'}
-        label={isPackage ? 'Paczka' : 'Plik'}
-        reset={reset}
-        upload={upload}
-        value={uploaded}
-      />
+      <Button
+        variant="contained"
+        size="small"
+        onClick={() => inteligentSearch()}
+      >
+        Inteligentne wyszukiwanie
+      </Button>
     </>
   );
 };

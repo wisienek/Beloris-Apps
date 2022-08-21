@@ -5,20 +5,19 @@
 
 import { app, ipcMain, ipcRenderer } from 'electron';
 
-import { IPCChannels } from '@bella/enums';
-
 import { environment } from '../../environments/environment';
+
+import { IPCChannels } from '@bella/enums';
 import {
   openFileDialog,
   readUserSettings,
   saveUserSettings,
   openExternalLink,
   openLoginLink,
-  getDownloadVersionData,
-  setDownloadVersionData,
   getSession,
   logout,
-} from '../api/handlers';
+  getDownloaderFiles,
+} from '@bella/dp';
 
 export default class ElectronEvents {
   static bootstrapElectronEvents(): Electron.IpcMain {
@@ -32,10 +31,6 @@ ipcMain.handle(IPCChannels.GET_APP_VERSION, () => {
   return environment.version;
 });
 
-// versioning
-ipcMain.handle(IPCChannels.GET_DOWNLOAD_VERSION, getDownloadVersionData);
-ipcMain.handle(IPCChannels.SET_DOWNLOAD_VERSION, setDownloadVersionData);
-
 // settings
 ipcMain.handle(IPCChannels.GET_USER_SETTINGS, readUserSettings);
 ipcMain.handle(IPCChannels.SAVE_USER_SETTINGS, saveUserSettings);
@@ -48,10 +43,12 @@ ipcMain.handle(IPCChannels.OPEN_LOGIN_LINK, openLoginLink);
 // session
 ipcMain.handle(IPCChannels.GET_SESSION, getSession);
 ipcMain.handle(IPCChannels.LOGOUT, logout);
-
 ipcMain.handle(IPCChannels.SET_SESSION, (event, cookie) =>
   ipcRenderer.invoke(IPCChannels.SET_SESSION, cookie),
 );
+
+// files
+ipcMain.handle(IPCChannels.LIST_DOWNLOADER_FILES, getDownloaderFiles);
 
 // Handle App termination
 ipcMain.on('quit', (event, code) => {

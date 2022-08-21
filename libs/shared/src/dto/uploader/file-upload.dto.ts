@@ -45,6 +45,10 @@ export class FileUploadDto {
   })
   @IsEnum(FileAction)
   fileAction: FileAction;
+
+  constructor(data: Partial<FileUploadDto>) {
+    Object.assign(this, data);
+  }
 }
 
 export class UploadedS3FileDto {

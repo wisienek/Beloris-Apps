@@ -20,13 +20,14 @@
       "@bella/config": ["libs/backend/config/src/index.ts"],
       "@bella/configuration": ["libs/backend/config/src/lib/configuration.ts"],
       "@bella/core": ["libs/core/src/index.ts"],
+      "@bella/data": ["libs/shared/src/data/index.ts"],
       "@bella/db": ["libs/backend/database/src/index.ts"],
+      "@bella/dp": ["libs/desktop/src/index.ts"],
       "@bella/dto": ["libs/shared/src/dto/index.ts"],
       "@bella/enums": ["libs/shared/src/enums/index.ts"],
       "@bella/schema": ["libs/shared/src/schema/index.ts"],
-      "@bella/utils": ["libs/shared/src/utils/index.ts"],
       "@bella/types": ["libs/shared/src/types/index.ts"],
-      "@bella/data": ["libs/shared/src/data/index.ts"]
+      "@bella/utils": ["libs/shared/src/utils/index.ts"]
     }
   },
   "exclude": ["node_modules", "tmp"]

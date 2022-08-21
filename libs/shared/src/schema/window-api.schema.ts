@@ -1,4 +1,9 @@
-import { FileDialogInputDto, IpcEventDto, TokenDto, VersionDto } from '../dto';
+import {
+  FileDialogInputDto,
+  FileUploadDto,
+  IpcEventDto,
+  TokenDto,
+} from '../dto';
 import { UserSettings } from './user-settings.schema';
 
 type Platform =
@@ -14,32 +19,39 @@ type Platform =
   | 'cygwin'
   | 'netbsd';
 
+export interface WindowAppApi {
+  getAppVersion: () => Promise<string>;
+  platform: Platform;
+}
+
+export interface WindowSettingsApi {
+  getUserSettings: () => Promise<IpcEventDto<UserSettings>>;
+  saveUserSettings: (
+    data: Partial<UserSettings>,
+  ) => Promise<IpcEventDto<boolean>>;
+}
+
+export interface WindowUtilitiesApi {
+  openExternalLink: (link: string) => Promise<IpcEventDto<boolean>>;
+}
+
+export interface WindowSessionApi {
+  logout: () => Promise<IpcEventDto<boolean>>;
+  getSession: () => Promise<IpcEventDto<TokenDto>>;
+  receiveSession: (func: (...args: any) => void) => void;
+}
+
+export interface WindowFilesApi {
+  openFileDialog: (
+    data: FileDialogInputDto,
+  ) => Promise<IpcEventDto<string | string[]>>;
+  getDownloaderFiles: () => Promise<IpcEventDto<FileUploadDto[]>>;
+}
+
 export interface WindowApi {
-  versioning: {
-    getPackageVersion: () => Promise<IpcEventDto<VersionDto>>;
-    setPackageVersion: (version: VersionDto) => Promise<IpcEventDto<boolean>>;
-  };
-  app: {
-    getAppVersion: () => Promise<string>;
-    platform: Platform;
-  };
-  settings: {
-    getUserSettings: () => Promise<IpcEventDto<UserSettings>>;
-    saveUserSettings: (
-      data: Partial<UserSettings>,
-    ) => Promise<IpcEventDto<boolean>>;
-  };
-  utilities: {
-    openExternalLink: (link: string) => Promise<IpcEventDto<boolean>>;
-  };
-  session: {
-    logout: () => Promise<IpcEventDto<boolean>>;
-    getSession: () => Promise<IpcEventDto<TokenDto>>;
-    receiveSession: (func: (...args: any) => void) => void;
-  };
-  files: {
-    openFileDialog: (
-      data: FileDialogInputDto,
-    ) => Promise<IpcEventDto<string | string[]>>;
-  };
+  app: WindowAppApi;
+  settings: WindowSettingsApi;
+  utilities: WindowUtilitiesApi;
+  session: WindowSessionApi;
+  files: WindowFilesApi;
 }

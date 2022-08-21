@@ -29,6 +29,7 @@ import {
   UploadedS3FileDto,
 } from '@bella/dto';
 import { MulterFile } from './typings';
+import { AllowedUploaderFileExtensions } from '@bella/data';
 
 @ApiTags('Uploader - files')
 @Controller('uploader/:major/:minor/')
@@ -121,18 +122,7 @@ export class FileUploaderController {
   })
   @ApiConsumes('multipart/form-data')
   @ApiFile()
-  @UploadedFileInterceptor(15_000_000, 1, null, [
-    'png',
-    'cfg',
-    'txt',
-    'json',
-    'toml',
-    'dat',
-    'ogg',
-    'jar',
-    'rar',
-    'zip',
-  ])
+  @UploadedFileInterceptor(15_000_000, 1, null, AllowedUploaderFileExtensions)
   async uploadFile(
     @Param('major', ParseIntPipe) major: number,
     @Param('minor', ParseIntPipe) minor: number,

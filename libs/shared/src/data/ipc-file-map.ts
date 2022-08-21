@@ -1,4 +1,8 @@
 import { IpcFileChoseEnum } from '../enums';
+import {
+  AllowedUploaderFileExtensions,
+  AllowedUploaderPackageExtensions,
+} from './allowed-uploader-file-extensions';
 
 type ElectronFileTypeFilter = {
   name: string;
@@ -27,21 +31,10 @@ export const IpcFileMap: Record<
   [IpcFileChoseEnum.DIRECTORIES]: ['openDirectory', 'multiSelections'],
   [IpcFileChoseEnum.PACKAGE]: {
     name: 'Paczka',
-    extensions: ['gz', 'rar', 'tar', 'jar', '7z'],
+    extensions: AllowedUploaderPackageExtensions,
   },
   [IpcFileChoseEnum.VERSION_FILE]: {
     name: 'Plik wersji',
-    extensions: [
-      'png',
-      'cfg',
-      'txt',
-      'json',
-      'toml',
-      'dat',
-      'ogg',
-      'jar',
-      'rar',
-      'zip',
-    ],
+    extensions: AllowedUploaderFileExtensions,
   },
 };

@@ -1,9 +1,10 @@
-import { BrowserWindow, shell, screen, session } from 'electron';
+import { BrowserWindow, shell, screen } from 'electron';
 import { rendererAppName, rendererAppPort } from './constants';
 import { environment } from '../environments/environment';
 import { join } from 'path';
 import { format } from 'url';
-import { CookiesEnum, IPCChannels } from '@bella/enums';
+import { IPCChannels } from '@bella/enums';
+import { Store, StoreKeys } from '@bella/dp';
 
 export default class App {
   // Keep a global reference of the window object, if you don't, the window will
@@ -129,15 +130,10 @@ export default class App {
     if (url.includes('?cookie')) {
       try {
         const cookie = JSON.parse(decodeURIComponent(url.split('?cookie=')[1]));
-        // console.log(`Logged in from redirect`, cookie);
+        console.log(`Logged in from redirect`, cookie);
 
-        session.defaultSession.cookies.set({
-          url: 'http://localhost',
-          name: CookiesEnum.DISCORD_TOKEN,
-          value: JSON.stringify(cookie),
-        });
+        Store.set(StoreKeys.SESSION, cookie);
 
-        // ipcMain.emit(IPCChannels.SET_SESSION, cookie);
         App.mainWindow.webContents.send(IPCChannels.SET_SESSION, cookie);
       } catch (error) {
         console.error(`Error while decoding cookie`, error);
