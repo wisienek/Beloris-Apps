@@ -2,7 +2,6 @@ import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { ConfigService } from '@nestjs/config';
 import { Raw, Repository } from 'typeorm';
-import { createHash } from 'crypto';
 
 import { MulterFile } from './typings';
 import { getBucketDownloadPath, getBundleKey, getFileKey } from './utils';
@@ -12,6 +11,7 @@ import {
   FileNotFoundException,
   FileRecordNotFoundException,
   VersionNotFoundException,
+  FileHashConflictException,
 } from './errors';
 
 import {
@@ -24,7 +24,7 @@ import {
 import { FileAction, FileType } from '@bella/enums';
 import { DownloaderFile, Version } from '@bella/db';
 import { S3Service } from '@bella/aws';
-import { FileHashConflictException } from './errors/file-hash-conflict.exception';
+import { getFileHash, getObjectWithoutProperties } from '@bella/core';
 
 @Injectable()
 export class FileUploaderService {
@@ -57,27 +57,29 @@ export class FileUploaderService {
 
     const sameMajor = currentVersion.major === major;
 
-    const files = await this.filesRepository.find({
-      where: {
-        version: {
-          major: currentVersion.major,
-          minor: Raw(
-            (alias) =>
-              `${alias} > ${sameMajor ? minor : 0} and ${alias} <= ${
-                currentVersion.minor
-              }`,
-          ),
+    const files = (
+      (await this.filesRepository.find({
+        where: {
+          version: {
+            major: currentVersion.major,
+            minor: Raw(
+              (alias) =>
+                `${alias} > ${sameMajor ? minor : 0} and ${alias} <= ${
+                  currentVersion.minor
+                }`,
+            ),
+          },
         },
-      },
-      order: {
-        version: {
-          minor: 'ASC',
+        order: {
+          version: {
+            minor: 'ASC',
+          },
+          isPrimaryBundle: 'DESC',
         },
-        isPrimaryBundle: 'DESC',
-      },
-    });
+      })) ?? []
+    )?.map((file) => getObjectWithoutProperties(file, ['version']));
 
-    return new FileListDto(currentVersion, files);
+    return new FileListDto(currentVersion, files as DownloaderFileDto[]);
   }
 
   public async getFileList(
@@ -154,7 +156,7 @@ export class FileUploaderService {
     if (!fileRecord) throw new FileRecordNotFoundException(uuid);
 
     const fileBuffer: Buffer = file.buffer;
-    const hash: string = FileUploaderService.getFileHash(fileBuffer);
+    const hash: string = getFileHash(fileBuffer);
     const fileKey: string = isPackage
       ? getBundleKey(major, file)
       : getFileKey(major, minor, file, fileRecord.name);
@@ -246,13 +248,6 @@ export class FileUploaderService {
     if (!foundVersion) throw new VersionNotFoundException(major, minor);
 
     return foundVersion;
-  }
-
-  private static getFileHash(buffer: Buffer): string {
-    const fileHash = createHash('sha256');
-    fileHash.update(buffer);
-
-    return fileHash.digest('hex');
   }
 
   public async clearUnusedFiles() {

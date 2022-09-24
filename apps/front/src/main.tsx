@@ -8,6 +8,15 @@ import { UserProvider } from './app/components/combined/use-user';
 import ThemeProvider from './app/components/theme/ThemeProvider';
 import SettingsContextProvider from './app/settings/settings';
 
+import * as Sentry from '@sentry/react';
+import { BrowserTracing } from '@sentry/tracing';
+
+Sentry.init({
+  dsn: `https://be79019d3be54446a3a393a0d62604fa@o1425024.ingest.sentry.io/6773291`,
+  integrations: [new BrowserTracing()],
+  tracesSampleRate: 1.0,
+});
+
 ReactDOM.render(
   <StrictMode>
     <HashRouter>

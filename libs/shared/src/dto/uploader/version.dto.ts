@@ -9,12 +9,14 @@ import {
 import { Type } from 'class-transformer';
 import { TransformBoolean } from '../../utils';
 import { DownloaderFileDto } from './downloader-file.dto';
+import { AutoMap } from '@automapper/classes';
 
 export class VersionDto {
   @ApiProperty({
     description: 'generated uuid',
   })
   @IsUUID()
+  @AutoMap()
   uuid: string;
 
   @ApiProperty({
@@ -23,6 +25,7 @@ export class VersionDto {
   @IsInt()
   @IsPositive()
   @Type(() => Number)
+  @AutoMap()
   major: number;
 
   @ApiProperty({
@@ -31,6 +34,7 @@ export class VersionDto {
   @IsInt()
   @IsPositive()
   @Type(() => Number)
+  @AutoMap()
   minor: number;
 
   @ApiProperty({
@@ -38,20 +42,24 @@ export class VersionDto {
   })
   @IsBoolean()
   @TransformBoolean()
+  @AutoMap()
   isCurrent: boolean;
 
   @ApiProperty({
     description: 'Timestamp of creation',
   })
+  @AutoMap()
   createdAt: Date;
 
   @ApiProperty({
     description: 'Timestamp of last update',
   })
+  @AutoMap()
   updatedAt: Date;
 
   @ApiPropertyOptional()
   @IsOptional()
+  @AutoMap(() => [DownloaderFileDto])
   files?: DownloaderFileDto[];
 }
 

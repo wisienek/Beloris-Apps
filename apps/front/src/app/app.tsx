@@ -29,6 +29,7 @@ export const App = () => {
         const { data: userData } = await axios.get(ApiRoutes.USER, {
           withCredentials: true,
         });
+        if (!userData) throw new Error(`Brak autoryzacji`);
 
         verifyUser(userData);
 
@@ -38,9 +39,10 @@ export const App = () => {
           true,
         );
       })
-      .catch((error) =>
-        console.error(`Error przy fetchowaniu usera (local)`, error),
-      );
+      .catch((error) => {
+        window.api.session.logout();
+        console.error(`Error przy fetchowaniu usera (local)`, error);
+      });
   }, []);
 
   return (

@@ -2,6 +2,8 @@ import { ServeStaticModule } from '@nestjs/serve-static';
 import { PassportModule } from '@nestjs/passport';
 import { ConfigModule } from '@nestjs/config';
 import { Module } from '@nestjs/common';
+import { AutomapperModule } from '@automapper/nestjs';
+import { classes } from '@automapper/classes';
 
 import { join } from 'path';
 
@@ -27,6 +29,9 @@ import { UpdaterModule } from './updater';
     PassportModule.register({
       session: true,
       defaultStrategy: 'local',
+    }),
+    AutomapperModule.forRoot({
+      strategyInitializer: classes(),
     }),
     DataBaseModule,
     AuthModule,

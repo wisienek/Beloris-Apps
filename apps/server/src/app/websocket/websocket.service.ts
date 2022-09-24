@@ -27,6 +27,6 @@ export class WebsocketService {
   public setServer(server: Server): void {
     this.socketServer = server;
 
-    this.logger.debug(`Setting server ${server.engine}`);
+    // this.logger.debug(`Setting server ${JSON.stringify(server.engine)}`);
   }
 }

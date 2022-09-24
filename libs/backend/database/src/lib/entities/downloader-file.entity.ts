@@ -8,16 +8,19 @@ import {
 } from 'typeorm';
 import { FileAction, FileType } from '@bella/enums';
 import { Version } from './version.entity';
+import { AutoMap } from '@automapper/classes';
 
 @Entity()
 export class DownloaderFile extends BaseEntity {
   @PrimaryGeneratedColumn('uuid')
+  @AutoMap()
   uuid!: string;
 
   @Column({
     type: 'boolean',
     nullable: true,
   })
+  @AutoMap()
   isPrimaryBundle?: boolean;
 
   @Column({
@@ -25,24 +28,28 @@ export class DownloaderFile extends BaseEntity {
     nullable: true,
     length: 512,
   })
+  @AutoMap()
   hash?: string;
 
   @Column({
     type: 'varchar',
     nullable: false,
   })
+  @AutoMap()
   name!: string;
 
   @Column({
     type: 'varchar',
     nullable: true,
   })
+  @AutoMap()
   downloadPath?: string;
 
   @Column({
     nullable: false,
     type: 'varchar',
   })
+  @AutoMap()
   savePath!: string;
 
   @Column({
@@ -50,12 +57,14 @@ export class DownloaderFile extends BaseEntity {
     unsigned: true,
     nullable: true,
   })
+  @AutoMap()
   fileSize?: number;
 
   @Column({
     type: 'enum',
     enum: FileType,
   })
+  @AutoMap(() => String)
   fileType!: FileType;
 
   @Column({
@@ -63,6 +72,7 @@ export class DownloaderFile extends BaseEntity {
     default: true,
     nullable: false,
   })
+  @AutoMap()
   required = true;
 
   @Column({
@@ -71,6 +81,7 @@ export class DownloaderFile extends BaseEntity {
     default: FileAction.DOWNLOAD,
     nullable: false,
   })
+  @AutoMap(() => String)
   fileAction!: FileAction;
 
   @ManyToOne(() => Version, (version) => version.files, {
@@ -78,5 +89,6 @@ export class DownloaderFile extends BaseEntity {
     eager: true,
   })
   @JoinTable()
+  @AutoMap(() => Version)
   version: Version;
 }

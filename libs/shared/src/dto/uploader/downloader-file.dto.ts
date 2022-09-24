@@ -14,13 +14,16 @@ import {
 
 import { TransformBoolean } from '../../utils';
 import { FileAction, FileType } from '../../enums';
+import { AutoMap } from '@automapper/classes';
 
 export class DownloaderFileDto {
-  @ApiProperty({
+  @ApiPropertyOptional({
     description: 'Unique descriptor for file',
   })
   @IsUUID()
-  uuid!: string;
+  @IsOptional()
+  @AutoMap()
+  uuid?: string;
 
   @ApiPropertyOptional({
     description: 'If a bundle is primary for a major version',
@@ -30,6 +33,7 @@ export class DownloaderFileDto {
   @IsOptional()
   @IsBoolean()
   @TransformBoolean()
+  @AutoMap()
   isPrimaryBundle?: boolean;
 
   @ApiPropertyOptional({
@@ -40,6 +44,7 @@ export class DownloaderFileDto {
   @IsOptional()
   @Min(0)
   @Transform(({ value }) => value.toPrecision(2))
+  @AutoMap()
   fileSize?: number;
 
   @ApiPropertyOptional({
@@ -47,12 +52,14 @@ export class DownloaderFileDto {
   })
   @IsOptional()
   @IsString()
+  @AutoMap()
   hash?: string;
 
   @ApiProperty({
     description: 'File name',
   })
   @IsString()
+  @AutoMap()
   name!: string;
 
   @ApiPropertyOptional({
@@ -61,6 +68,7 @@ export class DownloaderFileDto {
   @IsOptional()
   @IsString()
   @IsUrl()
+  @AutoMap()
   downloadPath?: string;
 
   @ApiProperty({
@@ -68,6 +76,7 @@ export class DownloaderFileDto {
       'Where to save given file on pc (relative from .minecraft folder)',
   })
   @IsString()
+  @AutoMap()
   savePath: string;
 
   @ApiPropertyOptional({
@@ -77,6 +86,7 @@ export class DownloaderFileDto {
   })
   @IsOptional()
   @IsEnum(FileType)
+  @AutoMap()
   fileType?: FileType;
 
   @ApiProperty({
@@ -86,6 +96,7 @@ export class DownloaderFileDto {
   })
   @IsBoolean()
   @TransformBoolean()
+  @AutoMap()
   required = true;
 
   @Exclude()
@@ -93,6 +104,7 @@ export class DownloaderFileDto {
     description: 'Which versions does the file belong to',
   })
   @IsOptional()
+  @AutoMap(() => [VersionDto])
   versions?: VersionDto[];
 
   @ApiProperty({
@@ -100,5 +112,6 @@ export class DownloaderFileDto {
     enum: FileAction,
   })
   @IsEnum(FileAction)
+  @AutoMap()
   fileAction!: FileAction;
 }

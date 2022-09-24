@@ -81,7 +81,14 @@ export class AuthService {
   public async fetchUser(token: TokenDto): Promise<DiscordOauth2.User> {
     if (!token) throw new UnauthorizedException(`No token!`);
 
-    return await this.oauth.getUser(token.access_token);
+    let user: DiscordOauth2.User;
+    try {
+      user = await this.oauth.getUser(token.access_token);
+    } catch (err) {
+      this.logger.error(err);
+    }
+
+    return user;
   }
 
   public async fetchMember(

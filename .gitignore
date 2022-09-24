@@ -46,3 +46,6 @@ ormconfig.json
 *.js.map
 
 *.pem
+
+/**/*.tfvars
+.terraform

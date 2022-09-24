@@ -1,10 +1,16 @@
-import { FC, useState, createContext, useEffect } from 'react';
+import { FC, useState, createContext, useEffect, ReactElement } from 'react';
 import { ThemeProvider } from '@mui/material';
 import { themeCreator } from './base';
 
 export const ThemeContext = createContext((_themeName: string): void => {});
 
-const ThemeProviderWrapper: FC = (props) => {
+export interface ThemeProviderWrapperArgs {
+  children?: Array<ReactElement> | ReactElement;
+}
+
+const ThemeProviderWrapper: FC<ThemeProviderWrapperArgs> = ({
+  children,
+}: ThemeProviderWrapperArgs) => {
   const [themeName, _setThemeName] = useState('NebulaFighterTheme');
 
   useEffect(() => {
@@ -21,7 +27,7 @@ const ThemeProviderWrapper: FC = (props) => {
 
   return (
     <ThemeContext.Provider value={setThemeName}>
-      <ThemeProvider theme={theme}>{props.children}</ThemeProvider>
+      <ThemeProvider theme={theme}>{children}</ThemeProvider>
     </ThemeContext.Provider>
   );
 };

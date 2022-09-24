@@ -25,6 +25,7 @@
       "@bella/dp": ["libs/desktop/src/index.ts"],
       "@bella/dto": ["libs/shared/src/dto/index.ts"],
       "@bella/enums": ["libs/shared/src/enums/index.ts"],
+      "@bella/mapper": ["libs/backend/mapper/src/index.ts"],
       "@bella/schema": ["libs/shared/src/schema/index.ts"],
       "@bella/types": ["libs/shared/src/types/index.ts"],
       "@bella/utils": ["libs/shared/src/utils/index.ts"]

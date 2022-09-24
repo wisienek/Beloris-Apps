@@ -1,3 +1,4 @@
+import * as Sentry from '@sentry/electron';
 import { BrowserWindow, shell, screen } from 'electron';
 import { rendererAppName, rendererAppPort } from './constants';
 import { environment } from '../environments/environment';
@@ -5,6 +6,7 @@ import { join } from 'path';
 import { format } from 'url';
 import { IPCChannels } from '@bella/enums';
 import { Store, StoreKeys } from '@bella/dp';
+import 'dotenv/config';
 
 export default class App {
   // Keep a global reference of the window object, if you don't, the window will
@@ -34,11 +36,11 @@ export default class App {
     App.mainWindow = null;
   }
 
-  private static onRedirect(event: any, url: string) {
+  private static async onRedirect(event: any, url: string) {
     if (url !== App.mainWindow.webContents.getURL()) {
       // this is a normal external redirect, open it in a new browser window
       event.preventDefault();
-      shell.openExternal(url);
+      await shell.openExternal(url).catch((error) => console.error(error));
     }
   }
 
@@ -114,15 +116,23 @@ export default class App {
   private static loadMainWindow() {
     // load the index.html of the app.
     if (!App.application.isPackaged) {
-      App.mainWindow.loadURL(`http://localhost:${rendererAppPort}`);
+      App.mainWindow
+        .loadURL(`http://localhost:${rendererAppPort}`)
+        .catch((error) =>
+          console.error(`Error while loading unpackaged app:`, error),
+        );
     } else {
-      App.mainWindow.loadURL(
-        format({
-          pathname: join(__dirname, rendererAppName, 'index.html'),
-          protocol: 'file:',
-          slashes: true,
-        }),
-      );
+      App.mainWindow
+        .loadURL(
+          format({
+            pathname: join(__dirname, rendererAppName, 'index.html'),
+            protocol: 'file:',
+            slashes: true,
+          }),
+        )
+        .catch((error) =>
+          console.error(`Error while loading packaged app:`, error),
+        );
     }
   }
 
@@ -153,6 +163,10 @@ export default class App {
     // Electron.BrowserWindow into this function
     // so this class has no dependencies. This
     // makes the code easier to write tests for
+
+    Sentry.init({
+      dsn: `https://${process.env['ELECTRON_SENTRY_KEY']}.ingest.sentry.io/${process.env['ELECTRON_SENTRY_ID']}`,
+    });
 
     App.BrowserWindow = browserWindow;
     App.application = app;
