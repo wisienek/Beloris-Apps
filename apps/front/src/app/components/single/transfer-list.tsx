@@ -26,12 +26,16 @@ export interface TransferListArgs {
   allItems: Record<number, string>;
   selectedLeft: readonly number[];
   selectedRight: readonly number[];
+  setParentRight?: (args: number[]) => void;
+  setParentLeft?: (args: number[]) => void;
 }
 
 export default function TransferList({
   selectedLeft,
   selectedRight,
   allItems,
+  setParentRight,
+  setParentLeft,
 }: TransferListArgs) {
   const [checked, setChecked] = React.useState<readonly number[]>([]);
   const [left, setLeft] = React.useState<readonly number[]>(selectedLeft);
@@ -65,15 +69,27 @@ export default function TransferList({
   };
 
   const handleCheckedRight = () => {
-    setRight(right.concat(leftChecked));
-    setLeft(not(left, leftChecked));
+    const _left = not(left, leftChecked);
+    const _right = right.concat(leftChecked);
+
+    setRight(_right);
+    setLeft(_left);
     setChecked(not(checked, leftChecked));
+
+    setParentRight && setParentRight(_right);
+    setParentLeft && setParentLeft(_left);
   };
 
   const handleCheckedLeft = () => {
-    setLeft(left.concat(rightChecked));
-    setRight(not(right, rightChecked));
+    const _left = left.concat(rightChecked);
+    const _right = not(right, rightChecked);
+
+    setLeft(_left);
+    setRight(_right);
     setChecked(not(checked, rightChecked));
+
+    setParentRight && setParentRight(_right);
+    setParentLeft && setParentLeft(_left);
   };
 
   const customList = (title: React.ReactNode, items: readonly number[]) => (

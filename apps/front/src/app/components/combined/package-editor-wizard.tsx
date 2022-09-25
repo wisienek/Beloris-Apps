@@ -16,7 +16,6 @@ import { FileUploadDto, VersionDto } from '@bella/dto';
 import CurrentVersionCheckbox from '../single/current-version-checkbox';
 import { ErrorSeverity } from '../single/error-message';
 import { ErrorContext } from './error-box';
-import { IpcFileChoseEnum } from '@bella/enums';
 import TransferList from '../single/transfer-list';
 import Tooltip from '../single/tooltip';
 
@@ -119,13 +118,14 @@ const VersionSelector = ({
 
 interface UploaderWizardArgs {
   isPackage: boolean;
+  files: FileUploadDto[];
+  setFiles: React.Dispatch<React.SetStateAction<FileUploadDto[]>>;
 }
 
-const UploaderWizard = ({ isPackage }: UploaderWizardArgs) => {
+const UploaderWizard = ({ isPackage, files, setFiles }: UploaderWizardArgs) => {
   const theme = useTheme();
 
   const { addError } = React.useContext(ErrorContext);
-  const [files, setFiles] = React.useState<FileUploadDto[]>(null);
   const [filesMap, setFilesMap] = React.useState<Record<number, string>>({});
   const [selectedFiles, setSelectedFiles] = React.useState<number[]>([]);
   const [isBuilding, setIsBuilding] = React.useState<boolean>(false);
@@ -183,7 +183,7 @@ const UploaderWizard = ({ isPackage }: UploaderWizardArgs) => {
             </Button>
           </Tooltip>
 
-          {isBuilding && <></>}
+          {isBuilding && <>Buduje paczkę</>}
         </>
       ) : (
         <>
@@ -197,11 +197,21 @@ const UploaderWizard = ({ isPackage }: UploaderWizardArgs) => {
           <br />
           {files && (
             <>
+              <Typography
+                variant="subtitle1"
+                gutterBottom
+                sx={{
+                  color: theme.palette.warning.main,
+                }}
+              >
+                Wybierz pliki, które przesłać
+              </Typography>
               {Object.keys(filesMap).length > 0 ? (
                 <TransferList
                   allItems={filesMap}
                   selectedLeft={Object.keys(filesMap).map(Number)}
                   selectedRight={[]}
+                  setParentRight={(numbers) => setSelectedFiles(numbers)}
                 />
               ) : (
                 <Typography

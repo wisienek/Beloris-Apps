@@ -11,7 +11,7 @@ import {
 import * as _ from 'lodash';
 import { ApiRoutes } from '../api/api-routes.enum';
 import useFetch from 'react-fetch-hook';
-import { VersionDto } from '@bella/dto';
+import { FileUploadDto, VersionDto } from '@bella/dto';
 
 export interface IStep {
   id: number;
@@ -48,6 +48,7 @@ const PackageEditorPage = () => {
   >({ major: 0, minor: 0 });
   const [isCurrentVersion, setIsCurrentVersion] =
     React.useState<boolean>(false);
+  const [files, setFiles] = React.useState<FileUploadDto[]>(null);
 
   const { data: versionHistory } = useFetch<VersionDto[]>(
     ApiRoutes.VERSION_HISTORY,
@@ -158,7 +159,13 @@ const PackageEditorPage = () => {
               handleCurrentVersionChange={handleCurrentVersionChange}
             />
           )}
-          {activeStep === 2 && <UploaderWizard isPackage={true} />}
+          {activeStep === 2 && (
+            <UploaderWizard
+              isPackage={isCurrentVersion}
+              files={files}
+              setFiles={setFiles}
+            />
+          )}
         </Grid>
 
         <Grid
