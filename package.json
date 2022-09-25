@@ -5,6 +5,7 @@
   "version": "0.0.1",
   "license": "MIT",
   "scripts": {
+    "start-dev": "yarn run server & nx run front:serve & nx run desktop-app:serve",
     "server": "nx serve",
     "build": "nx build",
     "test": "nx test",
