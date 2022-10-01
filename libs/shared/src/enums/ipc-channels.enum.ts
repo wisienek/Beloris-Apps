@@ -16,4 +16,5 @@ export enum IPCChannels {
   LOGOUT = 'logout',
   // files
   LIST_DOWNLOADER_FILES = 'list-downloader-files',
+  BUILD_PACKAGE = 'build-package',
 }

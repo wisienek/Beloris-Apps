@@ -46,6 +46,7 @@ export interface WindowFilesApi {
     data: FileDialogInputDto,
   ) => Promise<IpcEventDto<string | string[]>>;
   getDownloaderFiles: () => Promise<IpcEventDto<FileUploadDto[]>>;
+  buildModpackPackage: (version: number) => Promise<IpcEventDto<string>>;
 }
 
 export interface WindowApi {

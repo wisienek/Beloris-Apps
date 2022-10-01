@@ -161,6 +161,7 @@ const PackageEditorPage = () => {
           )}
           {activeStep === 2 && (
             <UploaderWizard
+              version={version}
               isPackage={isCurrentVersion}
               files={files}
               setFiles={setFiles}

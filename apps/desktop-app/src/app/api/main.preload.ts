@@ -25,6 +25,10 @@ const windowApi: WindowApi = {
       ipcRenderer.invoke(IPCChannels.LIST_DOWNLOADER_FILES) as Promise<
         IpcEventDto<FileUploadDto[]>
       >,
+    buildModpackPackage: (version: number) =>
+      ipcRenderer.invoke(IPCChannels.BUILD_PACKAGE, version) as Promise<
+        IpcEventDto<string>
+      >,
   },
   utilities: {
     openExternalLink: (link: string) =>

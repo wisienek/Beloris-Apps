@@ -117,12 +117,18 @@ const VersionSelector = ({
 };
 
 interface UploaderWizardArgs {
+  version: Record<'major' | 'minor', number>;
   isPackage: boolean;
   files: FileUploadDto[];
   setFiles: React.Dispatch<React.SetStateAction<FileUploadDto[]>>;
 }
 
-const UploaderWizard = ({ isPackage, files, setFiles }: UploaderWizardArgs) => {
+const UploaderWizard = ({
+  isPackage,
+  files,
+  setFiles,
+  version,
+}: UploaderWizardArgs) => {
   const theme = useTheme();
 
   const { addError } = React.useContext(ErrorContext);
@@ -156,7 +162,15 @@ const UploaderWizard = ({ isPackage, files, setFiles }: UploaderWizardArgs) => {
   const createPackage = async () => {
     setIsBuilding(true);
 
-    setTimeout(() => setIsBuilding(false), 5000);
+    const { error } = await window.api.files.buildModpackPackage(version.major);
+    setIsBuilding(false);
+
+    if (error) {
+      addError(ErrorSeverity.ERROR, error.message, false);
+      return;
+    }
+
+    addError(ErrorSeverity.SUCCESS, `Zbudowano paczkę!`, true);
   };
 
   const setSelected = () => {};

@@ -17,6 +17,7 @@ import {
   getSession,
   logout,
   getDownloaderFiles,
+  buildPackage,
 } from '@bella/dp';
 
 export default class ElectronEvents {
@@ -49,6 +50,7 @@ ipcMain.handle(IPCChannels.SET_SESSION, (event, cookie) =>
 
 // files
 ipcMain.handle(IPCChannels.LIST_DOWNLOADER_FILES, getDownloaderFiles);
+ipcMain.handle(IPCChannels.BUILD_PACKAGE, buildPackage);
 
 // Handle App termination
 ipcMain.on('quit', (event, code) => {
