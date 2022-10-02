@@ -11,6 +11,7 @@ import { ApiRoutes } from './api/api-routes.enum';
 import { UserContext } from './components/combined/use-user';
 import { ErrorSeverity } from './components/single/error-message';
 import PackageEditorPage from './pages/package-editor';
+import PackageEditorStateContextProvider from './components/package-editor/package-editor-state';
 
 export const App = () => {
   const { addError } = React.useContext(ErrorContext);
@@ -51,7 +52,11 @@ export const App = () => {
       <OuterLayerDrawer>
         <Route path="/" exact component={MainPage} />
         <Route path="/settings" component={SettingsPage} />
-        <Route path="/mods-wizard" component={PackageEditorPage} />
+        <Route path="/mods-wizard">
+          <PackageEditorStateContextProvider>
+            <PackageEditorPage />
+          </PackageEditorStateContextProvider>
+        </Route>
       </OuterLayerDrawer>
     </>
   );

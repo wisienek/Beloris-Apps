@@ -7,7 +7,13 @@ import {
   Button,
   Typography,
 } from '@mui/material';
-import { IStep } from '../../pages/package-editor';
+
+export interface IStep {
+  id: number;
+  name: string;
+  isOptional?: boolean;
+  completed?: boolean;
+}
 
 export interface WizardStepperArgs {
   stepMap: IStep[];
@@ -63,17 +69,7 @@ const StepperNavigation = ({
   handleSkip,
   handleNext,
 }: WizardStepperNavigationArgs) => {
-  return activeStep === stepMap.length ? (
-    <React.Fragment>
-      <Typography sx={{ mt: 2, mb: 1 }}>
-        Wszystko zrobione, to koniec!
-      </Typography>
-      <Box sx={{ display: 'flex', flexDirection: 'row', pt: 2 }}>
-        <Box sx={{ flex: '1 1 auto' }} />
-        <Button onClick={handleReset}>Reset</Button>
-      </Box>
-    </React.Fragment>
-  ) : (
+  return (
     <React.Fragment>
       <Box sx={{ display: 'flex', flexDirection: 'row', pt: 2 }}>
         <Button
@@ -90,8 +86,13 @@ const StepperNavigation = ({
             Pomiń
           </Button>
         )}
-        <Button onClick={handleNext}>
-          {activeStep === stepMap.length - 1 ? 'Zakończ' : 'Dalej'}
+        <Button
+          disabled={activeStep === stepMap.length}
+          onClick={() =>
+            activeStep === stepMap.length ? console.log(`Finish`) : handleNext()
+          }
+        >
+          {activeStep === stepMap.length ? 'koniec...' : 'Dalej'}
         </Button>
       </Box>
     </React.Fragment>
