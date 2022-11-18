@@ -2,19 +2,21 @@ import { DataSourceOptions } from 'typeorm';
 import { join } from 'path';
 
 import { Backpack, DownloaderFile, GameDCLink, Version } from './entities';
-import configuration from '@bella/configuration';
-import { EnvEnum } from '@bella/enums';
+import { DatabaseConfig, getStaticConfig, ProjectConfig } from '@bella/config';
 
 const getDefaultConfig = (): DataSourceOptions => {
-  const defConfig = configuration();
+  const config = getStaticConfig(DatabaseConfig);
+  const projectConfig = getStaticConfig(ProjectConfig);
 
-  const dbconfig = defConfig.db;
-  const synchronize = defConfig.envType === EnvEnum.DEV;
-
+  const synchronize = projectConfig.isDev();
   return {
     type: 'mariadb',
     synchronize,
-    ...dbconfig,
+    port: config.port,
+    database: config.db,
+    username: config.user,
+    password: config.password,
+    host: config.host,
   };
 };
 

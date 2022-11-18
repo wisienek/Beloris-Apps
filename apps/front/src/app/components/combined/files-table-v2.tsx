@@ -279,10 +279,10 @@ const FileTableV2: FC<FileTableV2Props> = ({
             {paginatedFiles.map((file) => {
               const isFileSelected = _.includes(filesToDownload, file);
               return (
-                <TableRow hover key={file.uuid}>
+                <TableRow hover key={file.id}>
                   <TableCell>
                     <Typography variant="body1" color="text.primary" noWrap>
-                      {file.uuid.split('-')[0]}
+                      {file.id.split('-')[0]}
                     </Typography>
                   </TableCell>
 

@@ -17,7 +17,7 @@ export class VersionDto {
   })
   @IsUUID()
   @AutoMap()
-  uuid: string;
+  id: string;
 
   @ApiProperty({
     description: 'Major version',

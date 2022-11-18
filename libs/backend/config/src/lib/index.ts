@@ -1,3 +1,2 @@
-export * from './configuration.schema';
-export * from './configuration.type';
-export * from './types';
+export * from './configs';
+export * from './config.module';

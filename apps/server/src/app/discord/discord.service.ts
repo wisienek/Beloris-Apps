@@ -1,9 +1,9 @@
 import { Client, Intents } from 'discord.js';
-import { ConfigService } from '@nestjs/config';
 import { forwardRef, Inject, Injectable, Logger } from '@nestjs/common';
 
-import { BotConfiguration } from '@bella/config';
 import { ServerListEnum } from '@bella/enums';
+import { DiscordConfig } from '@bella/config';
+
 import { EventManager } from './events';
 import { CommandManager } from './commands';
 
@@ -12,10 +12,10 @@ export class DiscordService extends Client {
   private readonly logger = new Logger(DiscordService.name);
 
   constructor(
-    private readonly config: ConfigService,
     @Inject(forwardRef(() => EventManager))
     public readonly eventManager: EventManager,
-    public readonly commandManager: CommandManager, // private readonly commandManager: CommandManager,
+    public readonly commandManager: CommandManager,
+    private config: DiscordConfig,
   ) {
     super({
       intents: [
@@ -29,24 +29,16 @@ export class DiscordService extends Client {
       ],
     });
 
-    this.login((this.config.get('bot') as BotConfiguration).secret).then(
-      async () => {
-        const invite = this.generateInvite({
-          scopes: [
-            'applications.commands',
-            'bot',
-            'email',
-            'identify',
-            'guilds',
-          ],
-          permissions: ['ADMINISTRATOR'],
-        });
+    this.login(config.clientSecret).then(async () => {
+      const invite = this.generateInvite({
+        scopes: ['applications.commands', 'bot', 'email', 'identify', 'guilds'],
+        permissions: ['ADMINISTRATOR'],
+      });
 
-        this.logger.debug(`Logged in bot, invite: ${invite}`);
-        this.setupEvents();
-        await this.setupCommands();
-      },
-    );
+      this.logger.debug(`Logged in bot, invite: ${invite}`);
+      this.setupEvents();
+      await this.setupCommands();
+    });
   }
 
   public async getMember(server: ServerListEnum, memberId: string) {

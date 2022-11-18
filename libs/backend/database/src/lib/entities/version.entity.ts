@@ -16,7 +16,7 @@ export class Version extends BaseEntity {
   @Exclude()
   @PrimaryGeneratedColumn('uuid')
   @AutoMap()
-  uuid: string;
+  id: string;
 
   @Column({
     unsigned: true,
@@ -43,6 +43,6 @@ export class Version extends BaseEntity {
   updatedAt: Date;
 
   @OneToMany(() => DownloaderFile, (file) => file.version)
-  @AutoMap(() => [DownloaderFile])
+  @AutoMap(() => DownloaderFile)
   files: DownloaderFile[];
 }

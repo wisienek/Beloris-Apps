@@ -23,7 +23,7 @@ export class DownloaderFileDto {
   @IsUUID()
   @IsOptional()
   @AutoMap()
-  uuid?: string;
+  id?: string;
 
   @ApiPropertyOptional({
     description: 'If a bundle is primary for a major version',
@@ -104,7 +104,7 @@ export class DownloaderFileDto {
     description: 'Which versions does the file belong to',
   })
   @IsOptional()
-  @AutoMap(() => [VersionDto])
+  @AutoMap(() => VersionDto)
   versions?: VersionDto[];
 
   @ApiProperty({

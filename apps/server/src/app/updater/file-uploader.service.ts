@@ -150,7 +150,7 @@ export class FileUploaderService {
 
     const fileRecord = await this.filesRepository.findOne({
       where: {
-        uuid,
+        id: uuid,
       },
     });
     if (!fileRecord) throw new FileRecordNotFoundException(uuid);

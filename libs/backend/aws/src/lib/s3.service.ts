@@ -1,20 +1,17 @@
 import { Injectable } from '@nestjs/common';
 import { AwsConfig } from '@bella/config';
 import * as AWS from 'aws-sdk';
-import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class S3Service {
   protected readonly s3: AWS.S3;
 
-  constructor(private configService: ConfigService) {
-    const awsConfig: AwsConfig = configService.get('aws');
-
+  constructor(private config: AwsConfig) {
     this.s3 = new AWS.S3({
-      region: awsConfig.region,
+      region: config.region,
       credentials: {
-        accessKeyId: awsConfig.accessKeyId,
-        secretAccessKey: awsConfig.accessKey,
+        accessKeyId: config.accessKey,
+        secretAccessKey: config.keySecret,
       },
       apiVersion: '2010-12-01',
     });

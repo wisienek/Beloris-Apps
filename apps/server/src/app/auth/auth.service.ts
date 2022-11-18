@@ -7,16 +7,16 @@ import {
 import { ConfigService } from '@nestjs/config';
 import { Request, Response } from 'express';
 import { parse } from 'querystring';
-
 import * as DiscordOauth2 from 'discord-oauth2';
+import { Role } from 'discord.js';
 import * as crypto from 'crypto';
 import * as _ from 'lodash';
 
-import { TokenDto } from '@bella/dto';
 import { CookiesEnum, ServerListEnum } from '@bella/enums';
-import { BotConfiguration } from '@bella/config';
+import { DiscordConfig } from '@bella/config';
+import { TokenDto } from '@bella/dto';
+
 import { DiscordService } from '../discord';
-import { Role } from 'discord.js';
 
 @Injectable()
 export class AuthService {
@@ -27,7 +27,7 @@ export class AuthService {
   ];
 
   private readonly logger = new Logger(AuthService.name);
-  private discordConfig: BotConfiguration;
+  private discordConfig: DiscordConfig;
   private oauth: DiscordOauth2;
 
   constructor(
@@ -37,8 +37,8 @@ export class AuthService {
     this.discordConfig = this.config.get('bot');
 
     this.oauth = new DiscordOauth2({
-      clientId: this.discordConfig.id,
-      clientSecret: this.discordConfig.secret,
+      clientId: this.discordConfig.clientId,
+      clientSecret: this.discordConfig.clientSecret,
       redirectUri: this.discordConfig.redirectUri,
     });
   }

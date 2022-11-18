@@ -54,7 +54,7 @@ function DashboardContent() {
     event.preventDefault();
 
     _.includes(filesToDownload, file)
-      ? setFilesToDownload(filesToDownload.filter((f) => f.uuid !== file.uuid))
+      ? setFilesToDownload(filesToDownload.filter((f) => f.id !== file.id))
       : setFilesToDownload([...filesToDownload, file]);
   };
 

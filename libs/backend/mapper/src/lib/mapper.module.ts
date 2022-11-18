@@ -1,11 +1,14 @@
-import { Global, Module, Provider } from '@nestjs/common';
+import { Module } from '@nestjs/common';
+import { AutomapperModule } from '@automapper/nestjs';
+import { classes } from '@automapper/classes';
 import { DownloaderFileMapper, VersionMapper } from './profiles';
 
-const services: Provider[] = [DownloaderFileMapper, VersionMapper];
-
-@Global()
 @Module({
-  providers: services,
-  exports: services,
+  imports: [
+    AutomapperModule.forRoot({
+      strategyInitializer: classes(),
+    }),
+  ],
+  providers: [VersionMapper, DownloaderFileMapper],
 })
 export class MapperModule {}

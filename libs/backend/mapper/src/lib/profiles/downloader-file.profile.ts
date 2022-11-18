@@ -1,19 +1,18 @@
 import { Injectable } from '@nestjs/common';
-import { createMap, MappingProfile, namingConventions } from '@automapper/core';
+import { createMap, Mapper, MappingProfile } from '@automapper/core';
+import { AutomapperProfile, InjectMapper } from '@automapper/nestjs';
 import { DownloaderFile } from '@bella/db';
 import { DownloaderFileDto } from '@bella/dto';
-import { BaseMapper } from '../base-mapper';
 
 @Injectable()
-export class DownloaderFileMapper extends BaseMapper {
+export class DownloaderFileMapper extends AutomapperProfile {
+  constructor(@InjectMapper() mapper: Mapper) {
+    super(mapper);
+  }
+
   get profile(): MappingProfile {
     return (mapper) => {
-      createMap(
-        mapper,
-        DownloaderFile,
-        DownloaderFileDto,
-        namingConventions(this.namingConvention),
-      );
+      createMap(mapper, DownloaderFile, DownloaderFileDto);
     };
   }
 }

@@ -1,3 +1,4 @@
+import { AutoMap } from '@automapper/classes';
 import {
   BaseEntity,
   Column,
@@ -10,24 +11,30 @@ import {
 @Entity()
 export class Backpack extends BaseEntity {
   @PrimaryGeneratedColumn('uuid')
-  uuid!: string;
+  @AutoMap()
+  id!: string;
 
   @Column('text', {
     nullable: true,
   })
+  @AutoMap()
   playerUuid?: string;
 
   @Column('text')
+  @AutoMap()
   inventoryName!: string;
 
   @Column('text', {
     nullable: true,
   })
+  @AutoMap()
   itemData?: string;
 
   @CreateDateColumn()
+  @AutoMap()
   createdAt!: Date;
 
   @UpdateDateColumn()
+  @AutoMap()
   updatedAt?: Date;
 }

@@ -4,7 +4,6 @@ import {
   Logger,
   ValidationPipe,
 } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
 import { NestFactory, Reflector } from '@nestjs/core';
 
 import * as cookieParser from 'cookie-parser';
@@ -13,12 +12,14 @@ import * as passport from 'passport';
 
 import { AppModule } from './app/app.module';
 import { SocketIoAdapter } from './app/websocket';
+import { getStaticConfig, ServerConfig } from '@bella/config';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
-  const globalPrefix = 'api';
-  app.setGlobalPrefix(globalPrefix);
+  const serverConfig = getStaticConfig(ServerConfig);
+
+  app.setGlobalPrefix(serverConfig.globalPrefix);
   app.enableCors({
     origin: [
       'http://localhost:3000',
@@ -59,13 +60,11 @@ async function bootstrap() {
     .setVersion('1.0')
     .build();
   const document = SwaggerModule.createDocument(app, docsConfig);
-  SwaggerModule.setup(`${globalPrefix}/docs`, app, document);
+  SwaggerModule.setup(`${serverConfig.globalPrefix}/docs`, app, document);
 
-  const { port } = await app.get(ConfigService).get('app');
-
-  await app.listen(port);
+  await app.listen(serverConfig.port);
   Logger.log(
-    `🚀 Application is running on: http://localhost:${port}/${globalPrefix}`,
+    `🚀 Application is running on: http://localhost:${serverConfig.port}/${serverConfig.globalPrefix}`,
     AppModule.name,
   );
 }

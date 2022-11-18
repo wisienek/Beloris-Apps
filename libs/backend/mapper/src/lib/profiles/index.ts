@@ -1,2 +1,2 @@
-export * from './downloader-file.profile';
 export * from './version.profile';
+export * from './downloader-file.profile';

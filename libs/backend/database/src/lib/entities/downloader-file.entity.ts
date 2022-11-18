@@ -14,7 +14,7 @@ import { AutoMap } from '@automapper/classes';
 export class DownloaderFile extends BaseEntity {
   @PrimaryGeneratedColumn('uuid')
   @AutoMap()
-  uuid!: string;
+  id!: string;
 
   @Column({
     type: 'boolean',
@@ -64,7 +64,7 @@ export class DownloaderFile extends BaseEntity {
     type: 'enum',
     enum: FileType,
   })
-  @AutoMap(() => String)
+  @AutoMap()
   fileType!: FileType;
 
   @Column({
@@ -81,7 +81,7 @@ export class DownloaderFile extends BaseEntity {
     default: FileAction.DOWNLOAD,
     nullable: false,
   })
-  @AutoMap(() => String)
+  @AutoMap()
   fileAction!: FileAction;
 
   @ManyToOne(() => Version, (version) => version.files, {
