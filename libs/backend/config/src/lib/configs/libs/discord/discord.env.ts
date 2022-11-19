@@ -11,7 +11,9 @@ export class _DiscordEnv {
 
   @IsString()
   @IsNotEmpty()
-  @IsUrl()
+  @IsUrl({
+    require_tld: false,
+  })
   @Expose()
   BOT_REDIRECT_URI: string;
 

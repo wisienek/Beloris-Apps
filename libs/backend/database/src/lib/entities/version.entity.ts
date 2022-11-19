@@ -3,17 +3,17 @@ import {
   Column,
   CreateDateColumn,
   Entity,
+  Index,
   OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
 import { DownloaderFile } from '@bella/db';
-import { Exclude } from 'class-transformer';
 import { AutoMap } from '@automapper/classes';
 
 @Entity()
+@Index(['major', 'minor'], { unique: true })
 export class Version extends BaseEntity {
-  @Exclude()
   @PrimaryGeneratedColumn('uuid')
   @AutoMap()
   id: string;

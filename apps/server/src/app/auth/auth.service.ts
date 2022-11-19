@@ -4,7 +4,6 @@ import {
   Logger,
   UnauthorizedException,
 } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
 import { Request, Response } from 'express';
 import { parse } from 'querystring';
 import * as DiscordOauth2 from 'discord-oauth2';
@@ -27,25 +26,22 @@ export class AuthService {
   ];
 
   private readonly logger = new Logger(AuthService.name);
-  private discordConfig: DiscordConfig;
   private oauth: DiscordOauth2;
 
   constructor(
-    private config: ConfigService,
+    private config: DiscordConfig,
     private discordService: DiscordService,
   ) {
-    this.discordConfig = this.config.get('bot');
-
     this.oauth = new DiscordOauth2({
-      clientId: this.discordConfig.clientId,
-      clientSecret: this.discordConfig.clientSecret,
-      redirectUri: this.discordConfig.redirectUri,
+      clientId: this.config.clientId,
+      clientSecret: this.config.clientSecret,
+      redirectUri: this.config.redirectUri,
     });
   }
 
   public async login() {
     return this.oauth.generateAuthUrl({
-      redirectUri: this.discordConfig.redirectUri,
+      redirectUri: this.config.redirectUri,
       responseType: 'token',
       scope: AuthService.UserScope,
       state: crypto.randomBytes(16).toString('hex'),

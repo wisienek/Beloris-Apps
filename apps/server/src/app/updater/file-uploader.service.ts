@@ -1,6 +1,5 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { ConfigService } from '@nestjs/config';
 import { Raw, Repository } from 'typeorm';
 
 import { MulterFile } from './typings';
@@ -12,6 +11,7 @@ import {
   FileRecordNotFoundException,
   VersionNotFoundException,
   FileHashConflictException,
+  CurrentVersionNotFoundException,
 } from './errors';
 
 import {
@@ -21,17 +21,15 @@ import {
   GetFileListDto,
   UploadPackageInfo,
 } from '@bella/dto';
+import { getFileHash, getObjectWithoutProperties } from '@bella/core';
 import { FileAction, FileType } from '@bella/enums';
 import { DownloaderFile, Version } from '@bella/db';
+import { AwsConfig } from '@bella/config';
 import { S3Service } from '@bella/aws';
-import { getFileHash, getObjectWithoutProperties } from '@bella/core';
 
 @Injectable()
 export class FileUploaderService {
   private readonly logger = new Logger(FileUploaderService.name);
-
-  private readonly fileBucket: string;
-  private readonly awsRegion: string;
 
   constructor(
     @InjectRepository(Version)
@@ -39,11 +37,8 @@ export class FileUploaderService {
     @InjectRepository(DownloaderFile)
     private readonly filesRepository: Repository<DownloaderFile>,
     private readonly awsService: S3Service,
-    private readonly configService: ConfigService,
-  ) {
-    this.fileBucket = this.configService.get('aws.fileBucket');
-    this.awsRegion = this.configService.get('aws.region');
-  }
+    private readonly awsConfig: AwsConfig,
+  ) {}
 
   public async getFilesToUpdate(major: number, minor: number) {
     const currentVersion = await this.versionRepository.findOne({
@@ -51,6 +46,7 @@ export class FileUploaderService {
         isCurrent: true,
       },
     });
+    if (!currentVersion) throw new CurrentVersionNotFoundException();
 
     if (currentVersion.major === major && currentVersion.minor === minor)
       return new FileListDto(currentVersion, null);
@@ -165,8 +161,8 @@ export class FileUploaderService {
     );
     const downloadPath = getBucketDownloadPath(
       fileKey,
-      this.fileBucket,
-      this.awsRegion,
+      this.awsConfig.uploaderBucket,
+      this.awsConfig.region,
     );
     // const fileType = determineFileType(file);
 
@@ -181,7 +177,11 @@ export class FileUploaderService {
     this.logger.debug(
       `Uploading ${isPackage ? 'bundle' : 'file'} with size: ${fileSize}Mb`,
     );
-    await this.awsService.upload(fileKey, fileBuffer, this.fileBucket);
+    await this.awsService.upload(
+      fileKey,
+      fileBuffer,
+      this.awsConfig.uploaderBucket,
+    );
     this.logger.debug(
       `Uploaded ${isPackage ? 'bundle' : 'file'} file: ${downloadPath}`,
     );
@@ -195,13 +195,12 @@ export class FileUploaderService {
   }
 
   public async createPackageData(major: number, fileData: UploadPackageInfo) {
-    const version = await this.getVersion(major);
+    const version = await this.getVersion(major, 1, true);
 
     const foundOne = await this.filesRepository.findOne({
       where: {
         version: { major },
-        hash: fileData.hash,
-        downloadPath: fileData.downloadPath,
+        isPrimaryBundle: true,
       },
     });
     if (foundOne)
@@ -238,13 +237,23 @@ export class FileUploaderService {
     return savedRecord;
   }
 
-  private async getVersion(major: number, minor: number = 1): Promise<Version> {
+  private async getVersion(
+    major: number,
+    minor: number = 1,
+    create?: boolean,
+  ): Promise<Version> {
     const foundVersion = await this.versionRepository.findOne({
       where: {
         major,
         minor,
       },
     });
+    if (create === true)
+      return await this.versionRepository.save({
+        major,
+        minor,
+      });
+
     if (!foundVersion) throw new VersionNotFoundException(major, minor);
 
     return foundVersion;
