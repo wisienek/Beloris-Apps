@@ -42,7 +42,7 @@ export default function MyTable(args: MyTableArguments) {
           <Box sx={{ height: 400, width: '100%' }}>
             <DataGrid
               rows={filesFetch.data.files.map((f) => {
-                return { ...f, id: f.uuid };
+                return { ...f, id: f.id };
               })}
               columns={columns}
               pageSize={5}

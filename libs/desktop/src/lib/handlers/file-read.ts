@@ -1,15 +1,21 @@
 import { dialog } from 'electron';
 import { sync } from 'glob-promise';
 import { parse, sep } from 'path';
-import { readdirSync } from 'fs';
+import { readdirSync, readFileSync, statSync } from 'fs';
 import * as tar from 'tar';
 
-import { FileDialogInputDto, FileUploadDto, IpcEventDto } from '@bella/dto';
+import {
+  FileDialogInputDto,
+  FileUploadDto,
+  IpcEventDto,
+  PackageDataDto,
+} from '@bella/dto';
 import {
   AllowedUploaderFileExtensions,
   IpcFileMap,
   packerFiles,
 } from '@bella/data';
+import { getFileHash } from '@bella/core';
 import { FileAction } from '@bella/enums';
 
 import { handlerWrapper } from '../handler-wrapper';
@@ -76,7 +82,7 @@ export const getDownloaderFiles = async (): Promise<
 export const buildPackage = async (
   event,
   version: number,
-): Promise<IpcEventDto<string>> => {
+): Promise<IpcEventDto<PackageDataDto>> => {
   return await handlerWrapper(async () => {
     const { data: settings } = await readUserSettings();
     const modpackFolder = settings.downloadTo.modpackFolder;
@@ -92,15 +98,23 @@ export const buildPackage = async (
           .join(', ')}`,
       );
 
+    const filePath = `${modpackFolder}/beloris_${version}.tar.gz`;
     await tar.create(
       {
         gzip: true,
         cwd: modpackFolder,
-        file: `${modpackFolder}/beloris_${version}.tar.gz`,
+        file: filePath,
       },
       existingFiles,
     );
 
-    return '';
+    const readFile = readFileSync(filePath);
+    const stats = statSync(filePath);
+
+    const name = `beloris_${version}.tar.gz`;
+    const hash = getFileHash(readFile);
+    const fileSize = stats.size;
+
+    return { filePath, name, hash, fileSize };
   }, `Error while building modpack package`);
 };

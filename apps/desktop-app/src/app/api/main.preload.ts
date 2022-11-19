@@ -3,6 +3,7 @@ import {
   FileDialogInputDto,
   FileUploadDto,
   IpcEventDto,
+  PackageDataDto,
   TokenDto,
 } from '@bella/dto';
 import { UserSettings, WindowApi } from '@bella/schema';
@@ -27,7 +28,7 @@ const windowApi: WindowApi = {
       >,
     buildModpackPackage: (version: number) =>
       ipcRenderer.invoke(IPCChannels.BUILD_PACKAGE, version) as Promise<
-        IpcEventDto<string>
+        IpcEventDto<PackageDataDto>
       >,
   },
   utilities: {

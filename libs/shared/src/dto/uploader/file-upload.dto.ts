@@ -41,6 +41,7 @@ export class FileUploadDto {
     type: 'enum',
     enum: FileAction,
     default: FileAction.DOWNLOAD,
+    description: `What to do with the file`,
     nullable: false,
   })
   @IsEnum(FileAction)
@@ -74,6 +75,6 @@ export class UploadedS3FileDto {
 }
 
 export class UploadPackageInfo extends IntersectionType(
-  UploadedS3FileDto,
+  OmitType(UploadedS3FileDto, ['downloadPath'] as const),
   OmitType(FileUploadDto, ['fileAction'] as const),
 ) {}

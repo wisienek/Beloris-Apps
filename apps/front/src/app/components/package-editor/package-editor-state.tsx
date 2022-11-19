@@ -5,7 +5,7 @@ import * as _ from 'lodash';
 import { ApiRoutes } from '../../api/api-routes.enum';
 import { IStep } from '../single/wizard-stepper';
 
-import { FileUploadDto, VersionDto } from '@bella/dto';
+import { FileUploadDto, UploadPackageInfo, VersionDto } from '@bella/dto';
 
 const stepMap: IStep[] = [
   {
@@ -44,8 +44,10 @@ export interface PackageEditorStateValue {
   isCurrentVersion: boolean;
   handleCurrentVersionChange: () => void;
   isPackage: boolean;
-  files: FileUploadDto[];
-  setFiles: React.Dispatch<React.SetStateAction<FileUploadDto[]>>;
+  files: Array<FileUploadDto | UploadPackageInfo>;
+  setFiles: React.Dispatch<
+    React.SetStateAction<Array<FileUploadDto | UploadPackageInfo>>
+  >;
 }
 
 export const PackageEditorStateContext =
@@ -80,7 +82,8 @@ const PackageEditorStateContextProvider = ({
   >({ major: 0, minor: 0 });
   const [isCurrentVersion, setIsCurrentVersion] =
     React.useState<boolean>(false);
-  const [files, setFiles] = React.useState<FileUploadDto[]>(null);
+  const [files, setFiles] =
+    React.useState<Array<FileUploadDto | UploadPackageInfo>>(null);
 
   const { data: versionHistory } = useFetch<VersionDto[]>(
     ApiRoutes.VERSION_HISTORY,
@@ -109,7 +112,11 @@ const PackageEditorStateContextProvider = ({
       newSkipped.delete(activeStep);
     }
 
-    setActiveStep((prevActiveStep) => prevActiveStep + 1);
+    setActiveStep((prevActiveStep) =>
+      prevActiveStep === 2 && version.minor === 0
+        ? prevActiveStep + 2
+        : prevActiveStep + 1,
+    );
     setSkipped(newSkipped);
   };
 
@@ -117,7 +124,9 @@ const PackageEditorStateContextProvider = ({
     const min = _.minBy(stepMap, 'id').id;
 
     if (activeStep - 1 >= min)
-      setActiveStep((prevActiveStep) => prevActiveStep - 1);
+      setActiveStep((prevActiveStep) =>
+        activeStep === 4 ? prevActiveStep - 2 : prevActiveStep - 1,
+      );
   };
 
   const handleSkip = () => {

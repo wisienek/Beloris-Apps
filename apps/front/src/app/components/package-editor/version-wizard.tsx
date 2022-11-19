@@ -45,7 +45,9 @@ const VersionSelector = () => {
       <Title>Wybierz wersję</Title>
       <Typography variant="subtitle1" gutterBottom>
         Aktualna wersja:{' '}
-        <b>{`${currentVersion?.major}.${currentVersion?.minor}`}</b>
+        <b>{`${currentVersion?.major ?? 'xx'}.${
+          currentVersion?.minor ?? 'xx'
+        }`}</b>
       </Typography>
 
       <Box

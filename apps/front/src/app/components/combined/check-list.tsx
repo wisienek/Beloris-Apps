@@ -47,7 +47,7 @@ export interface CheckListTask {
   id?: string | number;
   name: string;
   label: string;
-  checked: boolean;
+  checked: ((...args: any[]) => boolean) | boolean;
 }
 
 export interface CheckListContent {
@@ -87,7 +87,11 @@ function Checklist({ contents }: CheckListArgs) {
                     <CheckboxWrapper
                       color="primary"
                       name={task.name}
-                      checked={task.checked}
+                      checked={
+                        typeof task.checked === 'boolean'
+                          ? task.checked
+                          : task.checked()
+                      }
                       disabled
                     />
                   }

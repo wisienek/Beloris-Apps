@@ -1,6 +1,9 @@
 import * as React from 'react';
+import axios from 'axios';
 import AssignmentTwoToneIcon from '@mui/icons-material/AssignmentTwoTone';
 import { Box, Button, Zoom } from '@mui/material';
+
+// import { UploadPackageInfo } from '@bella/dto';
 
 import {
   PackageEditorStateContext,
@@ -8,29 +11,8 @@ import {
 } from './package-editor-state';
 import Title from '../single/title';
 import Tooltip from '../single/tooltip';
-import Checklist, { CheckListContent } from '../combined/check-list';
-
-const content: CheckListContent = {
-  header: 'Check-lista',
-  icon: <AssignmentTwoToneIcon />,
-  tasks: [
-    {
-      name: 'wersja',
-      label: 'Wybrana wersja',
-      checked: false,
-    },
-    {
-      name: 'pliki',
-      label: 'Przesłane pliki',
-      checked: false,
-    },
-    {
-      name: 'zmiany',
-      label: 'Wprowadzone zmiany',
-      checked: false,
-    },
-  ],
-};
+import Checklist, { CheckListTask } from '../combined/check-list';
+import { ApiRoutes } from '../../api/api-routes.enum';
 
 const UploaderWizard = () => {
   const { version, isPackage, files } =
@@ -42,16 +24,70 @@ const UploaderWizard = () => {
   const reVerify = () => {
     const newTodo = [...toDo];
 
-    if (!version.major || !version.minor)
-      newTodo.push(`Musisz ustalić wersję!`);
-
-    if (version.major <= 0 || version.minor <= 0)
-      newTodo.push(`Wersja duża lub mała nie może być mniejsza niż 0`);
+    if (
+      isNaN(version?.major) ||
+      version?.major === undefined ||
+      version.major === 0 ||
+      isNaN(version?.minor)
+    )
+      newTodo.push(`Musisz ustalić poprawnå wersję!`);
 
     if (!isPackage && files.length === 0)
       newTodo.push(`Brak plików do przesłania!`);
 
+    console.log(newTodo);
     setTodo(newTodo);
+  };
+
+  const getTasks = (): CheckListTask[] => {
+    return [
+      {
+        name: 'wersja',
+        label: 'Wybrana wersja',
+        checked:
+          !isNaN(version.major) && !isNaN(version.minor) && version.major > 0,
+      },
+      {
+        name: 'pliki',
+        label: 'Przesłane pliki',
+        checked: isPackage ? true : files?.length > 0,
+      },
+      {
+        name: 'zmiany',
+        label: 'Wprowadzone zmiany',
+        checked: isPackage,
+      },
+    ];
+  };
+
+  const uploadFiles = async () => {
+    setSending(true);
+
+    if (isPackage) {
+      const packageInfo = files[0];
+      if (!('hash' in packageInfo)) {
+        console.error(`Package info is not instance of UploadPackageInfo`);
+
+        setSending(false);
+        return;
+      }
+
+      try {
+        const uploadedInfo = await axios({
+          method: 'post',
+          url: ApiRoutes.PACKAGE_UPLOAD(version.major, version.minor),
+          data: packageInfo,
+        });
+
+        console.log(`Created package data: `, uploadedInfo);
+
+        // upload package file
+      } catch (error) {
+        console.error(error);
+      }
+
+      setSending(false);
+    }
   };
 
   React.useEffect(() => {
@@ -68,7 +104,15 @@ const UploaderWizard = () => {
           pb: 2,
         }}
       >
-        <Checklist contents={[content]} />
+        <Checklist
+          contents={[
+            {
+              header: 'Check-lista',
+              icon: <AssignmentTwoToneIcon />,
+              tasks: getTasks(),
+            },
+          ]}
+        />
       </Box>
 
       <Tooltip
@@ -81,9 +125,9 @@ const UploaderWizard = () => {
           variant="contained"
           size="small"
           disabled={toDo.length > 0 || sending}
-          onClick={() => setSending(!sending)}
+          onClick={() => uploadFiles()}
         >
-          Prześlij zmiany
+          {sending ? 'Przesyłam zmiany...' : 'Prześlij zmiany'}
         </Button>
       </Tooltip>
     </>

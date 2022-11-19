@@ -2,6 +2,7 @@ import {
   FileDialogInputDto,
   FileUploadDto,
   IpcEventDto,
+  PackageDataDto,
   TokenDto,
 } from '../dto';
 import { UserSettings } from './user-settings.schema';
@@ -46,7 +47,9 @@ export interface WindowFilesApi {
     data: FileDialogInputDto,
   ) => Promise<IpcEventDto<string | string[]>>;
   getDownloaderFiles: () => Promise<IpcEventDto<FileUploadDto[]>>;
-  buildModpackPackage: (version: number) => Promise<IpcEventDto<string>>;
+  buildModpackPackage: (
+    version: number,
+  ) => Promise<IpcEventDto<PackageDataDto>>;
 }
 
 export interface WindowApi {

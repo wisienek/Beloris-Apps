@@ -11,14 +11,7 @@ import {
   PackageEditorStateValue,
 } from './package-editor-state';
 
-import { FileUploadDto } from '@bella/dto';
-
-interface FileWizardArgs {
-  version: Record<'major' | 'minor', number>;
-  isPackage: boolean;
-  files: FileUploadDto[];
-  setFiles: React.Dispatch<React.SetStateAction<FileUploadDto[]>>;
-}
+import { UploadPackageInfo } from '@bella/dto';
 
 const FileWizard = () => {
   const { isPackage, files, setFiles, version } =
@@ -57,7 +50,9 @@ const FileWizard = () => {
   const createPackage = async () => {
     setIsBuilding(true);
 
-    const { error } = await window.api.files.buildModpackPackage(version.major);
+    const { error, data } = await window.api.files.buildModpackPackage(
+      version.major,
+    );
     setIsBuilding(false);
 
     if (error) {
@@ -65,7 +60,21 @@ const FileWizard = () => {
       return;
     }
 
-    addError(ErrorSeverity.SUCCESS, `Zbudowano paczkę!`, true);
+    addError(
+      ErrorSeverity.SUCCESS,
+      `Zbudowano paczkę: ${data.filePath}!`,
+      true,
+    );
+
+    const packageFile: UploadPackageInfo = {
+      name: data.name,
+      required: true,
+      savePath: '/',
+      hash: data.hash,
+      fileSize: data.fileSize,
+    };
+
+    setFiles([packageFile]);
   };
 
   const setSelected = () => {};
@@ -141,4 +150,4 @@ const FileWizard = () => {
   );
 };
 
-export { FileWizardArgs, FileWizard };
+export { FileWizard };

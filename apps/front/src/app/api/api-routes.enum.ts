@@ -20,7 +20,7 @@ export class ApiRoutes {
   public static PACKAGE = (major: number, minor: number) =>
     `${ApiRoutes.SERVER_URL}/uploader/${major}/${minor}/package`;
   public static PACKAGE_UPLOAD = (major: number, minor: number) =>
-    `${ApiRoutes.PACKAGE(major, minor)}/file`;
+    `${ApiRoutes.PACKAGE(major, minor)}`;
 
   // User
   public static LOGIN = `${ApiRoutes.SERVER_URL}/auth/login`;
