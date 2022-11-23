@@ -4,6 +4,7 @@ import * as _ from 'lodash';
 
 import { Skeleton, Container, Grid, Paper } from '@mui/material';
 
+import { ApiRoutes } from '@bella/data';
 import { DownloaderFileDto, FileListDto } from '@bella/dto';
 
 import LinearProgressWithLabel from '../components/single/linear-progress-with-label';
@@ -11,7 +12,6 @@ import VersionDetails from '../components/combined/version-details';
 import VersionMenu from '../components/combined/version-menu';
 import { Copyright } from '../components/single/copyright';
 import Title from '../components/single/title';
-import { ApiRoutes } from '../api/api-routes.enum';
 import FileTableV2Container from '../components/combined/files-table-v2';
 import { SettingsContext, SettingsContextValue } from '../settings/settings';
 import NoVersionModal from '../components/single/no-version-modal';

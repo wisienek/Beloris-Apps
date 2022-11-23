@@ -11,18 +11,17 @@ import {
   PackageEditorStateValue,
 } from './package-editor-state';
 
-import { UploadPackageInfo } from '@bella/dto';
+import { usePackageCreator } from './hooks';
 
 const FileWizard = () => {
-  const { isPackage, files, setFiles, version } =
+  const { isPackage, files, setFiles } =
     React.useContext<PackageEditorStateValue>(PackageEditorStateContext);
-
-  const theme = useTheme();
-
   const { addError } = React.useContext(ErrorContext);
+
+  const { createPackage, isBuilding } = usePackageCreator();
+
   const [filesMap, setFilesMap] = React.useState<Record<number, string>>({});
   const [selectedFiles, setSelectedFiles] = React.useState<number[]>([]);
-  const [isBuilding, setIsBuilding] = React.useState<boolean>(false);
 
   const intelligentSearch = async () => {
     const filesFetch = await window.api.files.getDownloaderFiles();
@@ -47,37 +46,9 @@ const FileWizard = () => {
     );
   };
 
-  const createPackage = async () => {
-    setIsBuilding(true);
-
-    const { error, data } = await window.api.files.buildModpackPackage(
-      version.major,
-    );
-    setIsBuilding(false);
-
-    if (error) {
-      addError(ErrorSeverity.ERROR, error.message, false);
-      return;
-    }
-
-    addError(
-      ErrorSeverity.SUCCESS,
-      `Zbudowano paczkę: ${data.filePath}!`,
-      true,
-    );
-
-    const packageFile: UploadPackageInfo = {
-      name: data.name,
-      required: true,
-      savePath: '/',
-      hash: data.hash,
-      fileSize: data.fileSize,
-    };
-
-    setFiles([packageFile]);
-  };
-
   const setSelected = () => {};
+
+  const theme = useTheme();
 
   return (
     <>

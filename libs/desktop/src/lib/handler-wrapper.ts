@@ -16,7 +16,7 @@ export const handlerWrapper = async <U>(
   } catch (err) {
     replyMessage = {
       failed: true,
-      error: err,
+      error: err?.isAxiosError ? err.response.data : err,
       data: null,
     };
 

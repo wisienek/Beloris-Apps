@@ -4,7 +4,8 @@ import { DataGrid, GridColDef } from '@mui/x-data-grid';
 import useFetch from 'react-fetch-hook';
 
 import { FileListDto, VersionDto } from '@bella/dto';
-import { ApiRoutes } from '../../api/api-routes.enum';
+import { ApiRoutes } from '@bella/data';
+
 import Title from './title';
 
 const columns: GridColDef[] = [

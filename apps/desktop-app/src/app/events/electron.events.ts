@@ -18,6 +18,8 @@ import {
   logout,
   getDownloaderFiles,
   buildPackage,
+  uploadPackage,
+  uploadFiles,
 } from '@bella/dp';
 
 export default class ElectronEvents {
@@ -51,6 +53,15 @@ ipcMain.handle(IPCChannels.SET_SESSION, (event, cookie) =>
 // files
 ipcMain.handle(IPCChannels.LIST_DOWNLOADER_FILES, getDownloaderFiles);
 ipcMain.handle(IPCChannels.BUILD_PACKAGE, buildPackage);
+
+// uploader
+
+ipcMain.handle(IPCChannels.UPLOAD_PACKAGE, (event, version, packageData) =>
+  uploadPackage(event, version, packageData),
+);
+ipcMain.handle(IPCChannels.UPLOAD_FILES, (event, version, packageData) =>
+  uploadFiles(),
+);
 
 // Handle App termination
 ipcMain.on('quit', (event, code) => {

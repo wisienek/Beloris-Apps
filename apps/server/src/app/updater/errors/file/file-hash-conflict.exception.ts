@@ -8,9 +8,8 @@ export class FileHashConflictException extends ConflictException {
     savePath: string,
     fileAction: FileAction,
   ) {
-    super({
-      statusCode: 400,
-      message: `No data was changed (same hash), chose different file. ${major}:${minor}, ${savePath}, ${fileAction}`,
-    });
+    super(
+      `No data was changed (same hash), chose different file. ${major}:${minor}, ${savePath}, ${fileAction}`,
+    );
   }
 }

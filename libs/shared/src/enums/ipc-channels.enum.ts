@@ -17,4 +17,7 @@ export enum IPCChannels {
   // files
   LIST_DOWNLOADER_FILES = 'list-downloader-files',
   BUILD_PACKAGE = 'build-package',
+  // upload files
+  UPLOAD_PACKAGE = 'upload-package',
+  UPLOAD_FILES = 'upload-files',
 }

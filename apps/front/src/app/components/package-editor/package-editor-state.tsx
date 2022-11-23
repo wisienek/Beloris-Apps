@@ -1,11 +1,13 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import useFetch from 'react-fetch-hook';
 import * as _ from 'lodash';
 
-import { ApiRoutes } from '../../api/api-routes.enum';
-import { IStep } from '../single/wizard-stepper';
-
+import { ApiRoutes } from '@bella/data';
 import { FileUploadDto, UploadPackageInfo, VersionDto } from '@bella/dto';
+
+import { ErrorContext } from '../combined/error-box';
+import { ErrorSeverity } from '../single/error-message';
+import { IStep } from '../single/wizard-stepper';
 
 const stepMap: IStep[] = [
   {
@@ -75,13 +77,18 @@ const PackageEditorStateContextProvider = ({
 }: {
   children?: React.ReactNode;
 }) => {
+  const { addError } = useContext(ErrorContext);
+
   const [activeStep, setActiveStep] = React.useState(1);
   const [skipped, setSkipped] = React.useState(new Set<number>());
+
   const [version, setVersion] = React.useState<
     Record<'major' | 'minor', number>
   >({ major: 0, minor: 0 });
+
   const [isCurrentVersion, setIsCurrentVersion] =
     React.useState<boolean>(false);
+
   const [files, setFiles] =
     React.useState<Array<FileUploadDto | UploadPackageInfo>>(null);
 
@@ -106,6 +113,18 @@ const PackageEditorStateContextProvider = ({
   };
 
   const handleNext = () => {
+    // isPackageBuilder && no package
+    if (activeStep === 2 && files.length === 0) {
+      addError(
+        ErrorSeverity.WARNING,
+        `Aby przejśc dalej musisz wybrac pliki / zbudowac paczkę`,
+        false,
+        null,
+        `Brak plików!`,
+      );
+      return;
+    }
+
     let newSkipped = skipped;
     if (isStepSkipped(activeStep)) {
       newSkipped = new Set(newSkipped.values());
@@ -113,7 +132,7 @@ const PackageEditorStateContextProvider = ({
     }
 
     setActiveStep((prevActiveStep) =>
-      prevActiveStep === 2 && version.minor === 0
+      prevActiveStep === 2 && version.minor <= 1
         ? prevActiveStep + 2
         : prevActiveStep + 1,
     );
@@ -125,7 +144,9 @@ const PackageEditorStateContextProvider = ({
 
     if (activeStep - 1 >= min)
       setActiveStep((prevActiveStep) =>
-        activeStep === 4 ? prevActiveStep - 2 : prevActiveStep - 1,
+        activeStep === 4 && version.minor <= 1
+          ? prevActiveStep - 2
+          : prevActiveStep - 1,
       );
   };
 
@@ -164,7 +185,7 @@ const PackageEditorStateContextProvider = ({
         currentVersion,
         isCurrentVersion,
         handleCurrentVersionChange,
-        isPackage: version.minor === 0,
+        isPackage: version.minor <= 1,
         files,
         setFiles,
       }}

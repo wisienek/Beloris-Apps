@@ -1,49 +1,19 @@
-import * as React from 'react';
+import { useEffect } from 'react';
 import { Route } from 'react-router-dom';
-import Cookies from 'universal-cookie';
-import axios from 'axios';
 
 import MainPage from './pages/main-page';
 import SettingsPage from './pages/settings-page';
-import { ErrorBox, ErrorContext } from './components/combined/error-box';
+import { ErrorBox } from './components/combined/error-box';
 import OuterLayerDrawer from './components/combined/outer-layer-drawer';
-import { ApiRoutes } from './api/api-routes.enum';
-import { UserContext } from './components/combined/use-user';
-import { ErrorSeverity } from './components/single/error-message';
 import PackageEditorPage from './pages/package-editor';
 import PackageEditorStateContextProvider from './components/package-editor/package-editor-state';
+import { useLogin } from './hooks';
 
 export const App = () => {
-  const { addError } = React.useContext(ErrorContext);
-  const { verifyUser } = React.useContext(UserContext);
-  const cookies = new Cookies();
+  const { login } = useLogin();
 
-  React.useEffect(() => {
-    window.api.session
-      .getSession()
-      .then(async (res) => {
-        if (res.error) throw res.error;
-
-        const userToken = res.data;
-        cookies.set('DISCORD_TOKEN', userToken, { path: '/' });
-
-        const { data: userData } = await axios.get(ApiRoutes.USER, {
-          withCredentials: true,
-        });
-        if (!userData) throw new Error(`Brak autoryzacji`);
-
-        verifyUser(userData);
-
-        addError(
-          ErrorSeverity.SUCCESS,
-          `Zalogowano na konto: ${userData.username}`,
-          true,
-        );
-      })
-      .catch((error) => {
-        window.api.session.logout();
-        console.error(`Error przy fetchowaniu usera (local)`, error);
-      });
+  useEffect(() => {
+    login();
   }, []);
 
   return (

@@ -8,9 +8,8 @@ export class FileConflictException extends ConflictException {
     savePath: string,
     fileAction: FileAction,
   ) {
-    super({
-      statusCode: 400,
-      message: `file for version ${major}:${minor} and savePath ${savePath} [${fileAction}] already exists, use Patch`,
-    });
+    super(
+      `file for version ${major}:${minor} and savePath ${savePath} [${fileAction}] already exists, use Patch`,
+    );
   }
 }

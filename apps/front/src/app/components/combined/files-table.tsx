@@ -19,8 +19,7 @@ import QuestionMarkOutlinedIcon from '@mui/icons-material/QuestionMarkOutlined';
 
 import { FileListDto, VersionDto } from '@bella/dto';
 import { FileAction } from '@bella/enums';
-
-import { ApiRoutes } from '../../api/api-routes.enum';
+import { ApiRoutes } from '@bella/data';
 
 export interface FileTableArgs {
   version: VersionDto;

@@ -4,8 +4,8 @@ import axios from 'axios';
 import { GuildMember, Role } from 'discord.js';
 
 import { User } from '@bella/types';
+import { ApiRoutes } from '@bella/data';
 
-import { ApiRoutes } from '../../api/api-routes.enum';
 import Cookies from 'universal-cookie';
 import { CookiesEnum } from '@bella/enums';
 import { ErrorContext } from './error-box';

@@ -4,7 +4,8 @@ import { Fab, FormControl, Grid, Typography } from '@mui/material';
 import axios from 'axios';
 import Cookies from 'universal-cookie';
 
-import { ApiRoutes } from '../../api/api-routes.enum';
+import { ApiRoutes } from '@bella/data';
+
 import { UserContext, UserContextValue } from '../combined/use-user';
 import DiscordIdentity from '../combined/discord-identity';
 

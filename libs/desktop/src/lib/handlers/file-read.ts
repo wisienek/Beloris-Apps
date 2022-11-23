@@ -20,6 +20,7 @@ import { FileAction } from '@bella/enums';
 
 import { handlerWrapper } from '../handler-wrapper';
 import { readUserSettings } from './user-settings';
+import { getPackagePath } from '../utils';
 
 export const openFileDialog = async (
   event,
@@ -98,7 +99,7 @@ export const buildPackage = async (
           .join(', ')}`,
       );
 
-    const filePath = `${modpackFolder}/beloris_${version}.tar.gz`;
+    const filePath = getPackagePath(modpackFolder, version);
     await tar.create(
       {
         gzip: true,

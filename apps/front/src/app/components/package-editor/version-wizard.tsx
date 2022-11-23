@@ -1,4 +1,4 @@
-import * as React from 'react';
+import { useContext } from 'react';
 import {
   Box,
   FormControl,
@@ -15,30 +15,20 @@ import {
   PackageEditorStateContext,
   PackageEditorStateValue,
 } from './package-editor-state';
+import { useSameVersion } from './hooks';
 
 const VersionSelector = () => {
   const {
     version,
-    versionHistory,
     currentVersion,
     handleVersionChange,
     isCurrentVersion,
     handleCurrentVersionChange,
-  } = React.useContext<PackageEditorStateValue>(PackageEditorStateContext);
+  } = useContext<PackageEditorStateValue>(PackageEditorStateContext);
+
+  const { isSameVersion } = useSameVersion();
 
   const theme = useTheme();
-
-  const [isSameVersion, setIsSameVersion] = React.useState<boolean>(false);
-
-  React.useEffect(() => {
-    if (version && versionHistory) {
-      const same = versionHistory.some(
-        (v) => v?.minor === version?.minor && v?.major === version?.major,
-      );
-
-      isSameVersion !== same && setIsSameVersion(same);
-    }
-  }, [version, versionHistory]);
 
   return (
     <>

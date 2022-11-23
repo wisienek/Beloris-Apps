@@ -1,13 +1,16 @@
 import { contextBridge, ipcRenderer } from 'electron';
 import {
+  DownloaderFileDto,
   FileDialogInputDto,
   FileUploadDto,
   IpcEventDto,
   PackageDataDto,
   TokenDto,
+  UploadPackageInfo,
 } from '@bella/dto';
 import { UserSettings, WindowApi } from '@bella/schema';
 import { IPCChannels } from '@bella/enums';
+import { VersionType } from '@bella/types';
 
 const windowApi: WindowApi = {
   app: {
@@ -22,14 +25,30 @@ const windowApi: WindowApi = {
   files: {
     openFileDialog: (data: FileDialogInputDto) =>
       ipcRenderer.invoke(IPCChannels.OPEN_FILE_DIALOG, data),
+
     getDownloaderFiles: () =>
       ipcRenderer.invoke(IPCChannels.LIST_DOWNLOADER_FILES) as Promise<
         IpcEventDto<FileUploadDto[]>
       >,
+
     buildModpackPackage: (version: number) =>
       ipcRenderer.invoke(IPCChannels.BUILD_PACKAGE, version) as Promise<
         IpcEventDto<PackageDataDto>
       >,
+
+    uploadPackage: (version: VersionType, packageData: UploadPackageInfo) =>
+      ipcRenderer.invoke(
+        IPCChannels.UPLOAD_PACKAGE,
+        version,
+        packageData,
+      ) as Promise<IpcEventDto<DownloaderFileDto>>,
+
+    uploadFiles: (version: VersionType, packageData: PackageDataDto) =>
+      ipcRenderer.invoke(
+        IPCChannels.UPLOAD_FILES,
+        version,
+        packageData,
+      ) as Promise<IpcEventDto<DownloaderFileDto[]>>,
   },
   utilities: {
     openExternalLink: (link: string) =>

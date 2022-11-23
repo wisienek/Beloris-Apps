@@ -232,7 +232,7 @@ export class FileUploaderService {
       `Created new Package record: ${savedRecord.downloadPath}, ${savedRecord.hash}, primary ${major}: ${savedRecord.isPrimaryBundle}`,
     );
 
-    if (savedRecord) await this.filesRepository.remove(oldBundle);
+    if (savedRecord && oldBundle) await this.filesRepository.remove(oldBundle);
 
     return savedRecord;
   }
@@ -248,13 +248,15 @@ export class FileUploaderService {
         minor,
       },
     });
-    if (create === true)
-      return await this.versionRepository.save({
-        major,
-        minor,
-      });
+    if (!foundVersion) {
+      if (create === true)
+        return await this.versionRepository.save({
+          major,
+          minor,
+        });
 
-    if (!foundVersion) throw new VersionNotFoundException(major, minor);
+      throw new VersionNotFoundException(major, minor);
+    }
 
     return foundVersion;
   }

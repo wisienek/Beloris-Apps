@@ -19,8 +19,11 @@ export class ApiRoutes {
   // Packages
   public static PACKAGE = (major: number, minor: number) =>
     `${ApiRoutes.SERVER_URL}/uploader/${major}/${minor}/package`;
-  public static PACKAGE_UPLOAD = (major: number, minor: number) =>
-    `${ApiRoutes.PACKAGE(major, minor)}`;
+  public static PACKAGE_UPLOAD = (
+    major: number,
+    minor: number,
+    infoUUID: string,
+  ) => `${ApiRoutes.PACKAGE(major, minor)}/${infoUUID}`;
 
   // User
   public static LOGIN = `${ApiRoutes.SERVER_URL}/auth/login`;
