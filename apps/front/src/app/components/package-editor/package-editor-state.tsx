@@ -114,7 +114,7 @@ const PackageEditorStateContextProvider = ({
 
   const handleNext = () => {
     // isPackageBuilder && no package
-    if (activeStep === 2 && files.length === 0) {
+    if (activeStep === 2 && (!files || files?.length === 0)) {
       addError(
         ErrorSeverity.WARNING,
         `Aby przejśc dalej musisz wybrac pliki / zbudowac paczkę`,

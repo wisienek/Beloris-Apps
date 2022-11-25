@@ -6,13 +6,13 @@ import {
   Logger,
   UnauthorizedException,
 } from '@nestjs/common';
-import { Request, Response } from 'express';
-import { parse } from 'querystring';
 import * as DiscordOauth2 from 'discord-oauth2';
-import { Role } from 'discord.js';
-import * as crypto from 'crypto';
-import * as _ from 'lodash';
+import { Request, Response } from 'express';
 import { Cache } from 'cache-manager';
+import { randomBytes } from 'crypto';
+import { parse } from 'querystring';
+import { Role } from 'discord.js';
+import * as _ from 'lodash';
 
 import { CookiesEnum, ServerListEnum } from '@bella/enums';
 import { DiscordConfig } from '@bella/config';
@@ -50,7 +50,7 @@ export class AuthService {
       redirectUri: this.config.redirectUri,
       responseType: 'token',
       scope: AuthService.UserScope,
-      state: crypto.randomBytes(16).toString('hex'),
+      state: randomBytes(16).toString('hex'),
     });
   }
 

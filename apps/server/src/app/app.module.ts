@@ -1,7 +1,7 @@
 import { ServeStaticModule } from '@nestjs/serve-static';
-import { PassportModule } from '@nestjs/passport';
-import { CacheModule, Module } from '@nestjs/common';
 import { AutomapperModule } from '@automapper/nestjs';
+import { CacheModule, Module } from '@nestjs/common';
+import { PassportModule } from '@nestjs/passport';
 import { classes } from '@automapper/classes';
 
 import { join } from 'path';
@@ -9,14 +9,14 @@ import { join } from 'path';
 import { DataBaseModule } from '@bella/db';
 
 import { DiscordModule } from './discord';
-import { AuthModule } from './auth';
-import { WebSocketModule } from './websocket';
 import { UpdaterModule } from './updater';
+import { AuthModule } from './auth';
 
 @Module({
   imports: [
     CacheModule.register({
       isGlobal: true,
+      ttl: 3600,
     }),
     ServeStaticModule.forRoot({
       rootPath: join(__dirname, 'assets'),
@@ -31,7 +31,6 @@ import { UpdaterModule } from './updater';
     DataBaseModule,
     AuthModule,
     DiscordModule,
-    WebSocketModule,
     UpdaterModule,
   ],
 })

@@ -11,7 +11,6 @@ import * as session from 'express-session';
 import * as passport from 'passport';
 
 import { AppModule } from './app/app.module';
-import { SocketIoAdapter } from './app/websocket';
 import { getStaticConfig, ServerConfig } from '@bella/config';
 
 async function bootstrap() {
@@ -51,7 +50,6 @@ async function bootstrap() {
   app.use(passport.session());
 
   app.useGlobalInterceptors(new ClassSerializerInterceptor(app.get(Reflector)));
-  app.useWebSocketAdapter(new SocketIoAdapter(app, ['*', 'null']));
 
   const docsConfig = new DocumentBuilder()
     .setTitle('BelorisRP Documentation')

@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { CacheModule, Module } from '@nestjs/common';
 
 import { ConfigModuleInternal, DiscordConfig } from '@bella/config';
 import { AuthController } from './auth.controller';

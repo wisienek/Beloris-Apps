@@ -20,7 +20,7 @@ export const handlerWrapper = async <U>(
       data: null,
     };
 
-    console.error(errorMessage ?? 'No provided custom message', err);
+    console.error(replyMessage.error);
   }
 
   return replyMessage;

@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Button, Typography, useTheme, Zoom } from '@mui/material';
+import { Box, Button, Typography, useTheme, Zoom } from '@mui/material';
 
 import { ErrorContext } from '../combined/error-box';
 import { ErrorSeverity } from '../single/error-message';
@@ -12,6 +12,8 @@ import {
 } from './package-editor-state';
 
 import { usePackageCreator } from './hooks';
+import WizardFile from './atoms/wizard-file';
+import FileMap from './molecules/file-map';
 
 const FileWizard = () => {
   const { isPackage, files, setFiles } =
@@ -55,7 +57,7 @@ const FileWizard = () => {
       <Title>Wybierz pliki</Title>
 
       {isPackage ? (
-        <>
+        <Box>
           <Tooltip
             title="Buduje plik archiwum z obecnej paczki modów"
             arrow
@@ -73,9 +75,9 @@ const FileWizard = () => {
           </Tooltip>
 
           {isBuilding && <>Buduje paczkę</>}
-        </>
+        </Box>
       ) : (
-        <>
+        <Box>
           <Button
             variant="contained"
             size="small"
@@ -115,8 +117,14 @@ const FileWizard = () => {
               )}
             </>
           )}
-        </>
+        </Box>
       )}
+
+      {files?.length > 0 ? (
+        <>
+          <FileMap />
+        </>
+      ) : null}
     </>
   );
 };
