@@ -4,7 +4,7 @@ import { useContext, useState } from 'react';
 import {
   PackageEditorStateContext,
   PackageEditorStateValue,
-} from '../package-editor-state';
+} from '../sections/package-editor-state';
 import { ErrorContext } from '../../combined/error-box';
 
 export const usePackageCreator = () => {

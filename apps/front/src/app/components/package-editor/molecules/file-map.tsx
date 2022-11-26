@@ -4,7 +4,7 @@ import WizardFile from '../atoms/wizard-file';
 import {
   PackageEditorStateContext,
   PackageEditorStateValue,
-} from '../package-editor-state';
+} from '../sections/package-editor-state';
 
 const FileMap = () => {
   const { files } = useContext<PackageEditorStateValue>(

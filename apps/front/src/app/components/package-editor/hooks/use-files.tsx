@@ -1,10 +1,10 @@
-import { useContext, useEffect, useState } from 'react';
+import { useContext, useState } from 'react';
 import { ErrorSeverity } from '../../single/error-message';
 import { ErrorContext } from '../../combined/error-box';
 import {
   PackageEditorStateContext,
   PackageEditorStateValue,
-} from '../package-editor-state';
+} from '../sections/package-editor-state';
 import { FileUploadDto } from '@bella/dto';
 
 export const useFiles = () => {

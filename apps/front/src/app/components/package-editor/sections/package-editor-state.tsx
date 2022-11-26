@@ -5,9 +5,9 @@ import * as _ from 'lodash';
 import { ApiRoutes } from '@bella/data';
 import { FileUploadDto, UploadPackageInfo, VersionDto } from '@bella/dto';
 
-import { ErrorContext } from '../combined/error-box';
-import { ErrorSeverity } from '../single/error-message';
-import { IStep } from '../single/wizard-stepper';
+import { ErrorContext } from '../../combined/error-box';
+import { ErrorSeverity } from '../../single/error-message';
+import { IStep } from '../../single/wizard-stepper';
 
 const stepMap: IStep[] = [
   {

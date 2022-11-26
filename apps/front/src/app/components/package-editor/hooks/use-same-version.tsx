@@ -2,7 +2,7 @@ import { useContext, useEffect, useState } from 'react';
 import {
   PackageEditorStateContext,
   PackageEditorStateValue,
-} from '../package-editor-state';
+} from '../sections/package-editor-state';
 
 export const useSameVersion = () => {
   const { version, versionHistory } = useContext<PackageEditorStateValue>(

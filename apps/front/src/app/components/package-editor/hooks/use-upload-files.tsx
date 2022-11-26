@@ -3,7 +3,7 @@ import { ErrorSeverity } from '../../single/error-message';
 import {
   PackageEditorStateContext,
   PackageEditorStateValue,
-} from '../package-editor-state';
+} from '../sections/package-editor-state';
 import * as React from 'react';
 import { ErrorContext } from '../../combined/error-box';
 

@@ -3,7 +3,7 @@ import * as React from 'react';
 import {
   PackageEditorStateContext,
   PackageEditorStateValue,
-} from '../package-editor-state';
+} from '../sections/package-editor-state';
 
 export const useVerifyPackage = () => {
   const { version, isPackage, files } =

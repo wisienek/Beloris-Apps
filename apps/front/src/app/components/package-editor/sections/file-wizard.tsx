@@ -1,16 +1,16 @@
 import { useContext } from 'react';
 import { Box, Button, Grid, Typography, useTheme, Zoom } from '@mui/material';
 
-import Title from '../single/title';
-import Tooltip from '../single/tooltip';
+import Title from '../../single/title';
+import Tooltip from '../../single/tooltip';
 import {
   PackageEditorStateContext,
   PackageEditorStateValue,
 } from './package-editor-state';
 
-import { usePackageCreator, useFiles } from './hooks';
-import FileMap from './molecules/file-map';
-import FileSelector from './molecules/file-selector';
+import { usePackageCreator, useFiles } from '../hooks';
+import FileMap from '../molecules/file-map';
+import FileSelector from '../molecules/file-selector';
 
 const FileWizard = () => {
   const { isPackage, files } = useContext<PackageEditorStateValue>(

@@ -6,13 +6,14 @@ import {
   StepperNavigation,
 } from '../components/single/wizard-stepper';
 
-import VersionSelector from '../components/package-editor/version-wizard';
-import { FileWizard } from '../components/package-editor/file-wizard';
+import VersionSelector from '../components/package-editor/sections/version-wizard';
+import { FileWizard } from '../components/package-editor/sections/file-wizard';
 import {
   PackageEditorStateContext,
   PackageEditorStateValue,
-} from '../components/package-editor/package-editor-state';
-import UploaderWizard from '../components/package-editor/uploader-wizard';
+} from '../components/package-editor/sections/package-editor-state';
+import UploaderWizard from '../components/package-editor/sections/uploader-wizard';
+import FileOptions from '../components/package-editor/sections/file-options';
 
 const PackageEditorPage = () => {
   const {
@@ -67,9 +68,10 @@ const PackageEditorPage = () => {
           justifyContent="center"
           alignItems="center"
         >
-          {activeStep === 1 && <VersionSelector />}
-          {activeStep === 2 && <FileWizard />}
-          {activeStep === 4 && <UploaderWizard />}
+          {activeStep === 1 ? <VersionSelector /> : null}
+          {activeStep === 2 ? <FileWizard /> : null}
+          {activeStep === 3 ? <FileOptions /> : null}
+          {activeStep === 4 ? <UploaderWizard /> : null}
         </Grid>
 
         <Grid

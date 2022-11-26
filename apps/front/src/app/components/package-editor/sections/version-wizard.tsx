@@ -9,13 +9,13 @@ import {
   useTheme,
 } from '@mui/material';
 
-import Title from '../single/title';
-import CurrentVersionCheckbox from '../single/current-version-checkbox';
+import Title from '../../single/title';
+import CurrentVersionCheckbox from '../../single/current-version-checkbox';
 import {
   PackageEditorStateContext,
   PackageEditorStateValue,
 } from './package-editor-state';
-import { useSameVersion } from './hooks';
+import { useSameVersion } from '../hooks';
 
 const VersionSelector = () => {
   const {

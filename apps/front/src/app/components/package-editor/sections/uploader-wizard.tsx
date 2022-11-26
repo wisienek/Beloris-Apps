@@ -5,10 +5,10 @@ import {
   PackageEditorStateContext,
   PackageEditorStateValue,
 } from './package-editor-state';
-import Checklist, { CheckListTask } from '../combined/check-list';
-import Title from '../single/title';
-import Tooltip from '../single/tooltip';
-import { useVerifyPackage, useUploadFiles } from './hooks';
+import Checklist, { CheckListTask } from '../../combined/check-list';
+import Title from '../../single/title';
+import Tooltip from '../../single/tooltip';
+import { useVerifyPackage, useUploadFiles } from '../hooks';
 
 const UploaderWizard = () => {
   const { version, isPackage, files } = useContext<PackageEditorStateValue>(

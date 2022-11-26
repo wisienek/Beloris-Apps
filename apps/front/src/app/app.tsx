@@ -6,7 +6,7 @@ import SettingsPage from './pages/settings-page';
 import { ErrorBox } from './components/combined/error-box';
 import OuterLayerDrawer from './components/combined/outer-layer-drawer';
 import PackageEditorPage from './pages/package-editor';
-import PackageEditorStateContextProvider from './components/package-editor/package-editor-state';
+import PackageEditorStateContextProvider from './components/package-editor/sections/package-editor-state';
 import { useLogin } from './hooks';
 
 export const App = () => {
