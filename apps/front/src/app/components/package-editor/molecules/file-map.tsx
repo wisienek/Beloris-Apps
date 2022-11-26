@@ -28,12 +28,16 @@ const FileMap = () => {
       >
         <Typography variant="h6">Wybrane pliki</Typography>
       </Box>
-      <Grid container spacing={4}>
-        <Grid item>
-          {files.map((file) => (
-            <WizardFile file={file} />
-          ))}
-        </Grid>
+      <Grid
+        container
+        direction="column"
+        justifyContent="center"
+        alignItems="stretch"
+        spacing={4}
+      >
+        {files.map((file) => (
+          <WizardFile file={file} />
+        ))}
       </Grid>
     </Box>
   );

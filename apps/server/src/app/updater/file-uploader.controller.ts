@@ -29,7 +29,8 @@ import {
   UploadedS3FileDto,
 } from '@bella/dto';
 import { MulterFile } from './typings';
-import { AllowedUploaderFileExtensions } from '@bella/data';
+import { AllowedFileSizes, AllowedUploaderFileExtensions } from '@bella/data';
+import { FileType } from '@bella/enums';
 
 @ApiTags('Uploader - files')
 @Controller('uploader/:major/:minor/')
@@ -82,7 +83,7 @@ export class FileUploaderController {
   })
   @ApiConsumes('multipart/form-data')
   @ApiFile()
-  @UploadedFileInterceptor(80_000_000, 1, [
+  @UploadedFileInterceptor(AllowedFileSizes[FileType.BUNDLE], 1, [
     'application/gzip',
     'application/vnd.rar',
     'application/x-tar',

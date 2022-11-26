@@ -9,6 +9,7 @@ import ListItemIcon from '@mui/material/ListItemIcon';
 import Checkbox from '@mui/material/Checkbox';
 import Button from '@mui/material/Button';
 import Divider from '@mui/material/Divider';
+import { Box } from '@mui/material';
 
 function not(a: readonly number[], b: readonly number[]) {
   return a.filter((value) => b.indexOf(value) === -1);
@@ -28,6 +29,7 @@ export interface TransferListArgs {
   selectedRight: readonly number[];
   setParentRight?: (args: number[]) => void;
   setParentLeft?: (args: number[]) => void;
+  accept?: () => void;
 }
 
 export default function TransferList({
@@ -36,6 +38,7 @@ export default function TransferList({
   allItems,
   setParentRight,
   setParentLeft,
+  accept,
 }: TransferListArgs) {
   const [checked, setChecked] = React.useState<readonly number[]>([]);
   const [left, setLeft] = React.useState<readonly number[]>(selectedLeft);
@@ -90,6 +93,11 @@ export default function TransferList({
 
     setParentRight && setParentRight(_right);
     setParentLeft && setParentLeft(_left);
+  };
+
+  const handleAccept = () => {
+    accept();
+    setLeft([]);
   };
 
   const customList = (title: React.ReactNode, items: readonly number[]) => (
@@ -157,33 +165,50 @@ export default function TransferList({
   );
 
   return (
-    <Grid container spacing={2} justifyContent="center" alignItems="center">
-      <Grid item>{customList('Do wyboru', left)}</Grid>
-      <Grid item>
-        <Grid container direction="column" alignItems="center">
-          <Button
-            sx={{ my: 0.5 }}
-            variant="outlined"
-            size="small"
-            onClick={handleCheckedRight}
-            disabled={leftChecked.length === 0}
-            aria-label="przenieś do wybranych"
-          >
-            &gt;
-          </Button>
-          <Button
-            sx={{ my: 0.5 }}
-            variant="outlined"
-            size="small"
-            onClick={handleCheckedLeft}
-            disabled={rightChecked.length === 0}
-            aria-label="przenieś do wszystkich"
-          >
-            &lt;
-          </Button>
+    <Box
+      sx={{
+        display: 'flex',
+        flexDirection: 'column',
+      }}
+    >
+      <Grid container spacing={2} justifyContent="center" alignItems="center">
+        <Grid item>{customList('Do wyboru', left)}</Grid>
+        <Grid item>
+          <Grid container direction="column" alignItems="center">
+            <Button
+              sx={{ my: 0.5 }}
+              variant="outlined"
+              size="small"
+              onClick={handleCheckedRight}
+              disabled={leftChecked.length === 0}
+              aria-label="przenieś do wybranych"
+            >
+              &gt;
+            </Button>
+            <Button
+              sx={{ my: 0.5 }}
+              variant="outlined"
+              size="small"
+              onClick={handleCheckedLeft}
+              disabled={rightChecked.length === 0}
+              aria-label="przenieś do wszystkich"
+            >
+              &lt;
+            </Button>
+          </Grid>
         </Grid>
+        <Grid item>{customList('Wybrane', right)}</Grid>
       </Grid>
-      <Grid item>{customList('Wybrane', right)}</Grid>
-    </Grid>
+
+      <Button
+        sx={{ my: 0.5, mt: 2 }}
+        variant="contained"
+        size="large"
+        aria-label="zaakceptuj"
+        onClick={() => handleAccept()}
+      >
+        Zaakceptuj
+      </Button>
+    </Box>
   );
 }

@@ -1,28 +1,23 @@
 import { FileUploadDto, UploadPackageInfo } from '@bella/dto';
-import {
-  Box,
-  CardHeader,
-  Grid,
-  IconButton,
-  Tooltip,
-  Typography,
-  useTheme,
-} from '@mui/material';
+import { Box, CardHeader, Grid, Typography } from '@mui/material';
 import DriveFolderUploadIcon from '@mui/icons-material/DriveFolderUpload';
-import * as React from 'react';
+
+import { AllowedFileSizes } from '@bella/data';
+
 import { CustomLinearProgress } from '../../single/linear-progress-with-label';
+import { fileSizeFormat } from '../../../utils/number-format';
+import WizardFileControls from './wizard-file-controls';
 
 export interface WizardFileArgs {
   file: FileUploadDto | UploadPackageInfo;
 }
 
-// TODO: style
+// TODO: add normal file support
 const WizardFile = ({ file }: WizardFileArgs) => {
   const isPackageFile = 'hash' in file;
-  const theme = useTheme();
 
   return (
-    <Grid item xs={12} md={4}>
+    <Grid item>
       <Box>
         <CardHeader
           sx={{
@@ -30,7 +25,7 @@ const WizardFile = ({ file }: WizardFileArgs) => {
             pt: 0,
           }}
           avatar={<DriveFolderUploadIcon />}
-          title={isPackageFile ? `Paczka` : `Plik`}
+          title={`${isPackageFile ? `Paczka` : `Plik`} ${file.name}`}
           titleTypographyProps={{
             variant: 'h5',
             color: 'textPrimary',
@@ -39,15 +34,16 @@ const WizardFile = ({ file }: WizardFileArgs) => {
         {isPackageFile ? (
           <Box>
             <Typography variant="subtitle2" gutterBottom>
-              Waga paczki:
-              <Typography color="black">
-                <b>{(file.fileSize / 1024).toPrecision(2)} mb /100 mb</b>
-              </Typography>
+              Waga paczki:{' '}
+              <b>
+                {fileSizeFormat(file.fileSize)} /{' '}
+                {fileSizeFormat(AllowedFileSizes.bundle)}
+              </b>
             </Typography>
             <CustomLinearProgress
               color="primary"
               variant="determinate"
-              value={file.fileSize}
+              value={(file.fileSize / AllowedFileSizes.bundle) * 100}
             />
           </Box>
         ) : null}
@@ -55,33 +51,14 @@ const WizardFile = ({ file }: WizardFileArgs) => {
           sx={{
             display: 'flex',
             alignItems: 'center',
-            justifyContent: 'space-between',
+            justifyContent: 'flex-end',
           }}
         >
-          <Box>
-            <Tooltip arrow title="View project calendar" placement="top">
-              <IconButton
-                size="small"
-                color="secondary"
-                sx={{
-                  ml: 0.5,
-                }}
-              >
-                icon 1
-              </IconButton>
-            </Tooltip>
-            <Tooltip arrow title="Mark project as favourite" placement="top">
-              <IconButton
-                size="small"
-                sx={{
-                  color: `${theme.colors.warning.main}`,
-                  ml: 0.5,
-                }}
-              >
-                icon 1
-              </IconButton>
-            </Tooltip>
-          </Box>
+          <WizardFileControls
+            file={file}
+            isPackageFile={isPackageFile}
+            deleteSelection={() => null}
+          />
         </Box>
       </Box>
     </Grid>
