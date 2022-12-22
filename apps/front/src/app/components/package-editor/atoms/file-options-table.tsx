@@ -27,18 +27,6 @@ import {
   PackageEditorStateValue,
 } from '../sections/package-editor-state';
 
-// const columns: FileOptionsTableArgs['columns'] = [
-//   { accessor: 'name', id: 'name', Header: 'Nazwa', width: '30%' },
-//   { accessor: 'savePath', id: 'savePath', Header: 'Lokacja', width: '40%' },
-//   { accessor: 'fileAction', id: 'fileAction', Header: 'Zmiana', width: '20%' },
-//   {
-//     accessor: 'required',
-//     id: 'required',
-//     Header: 'Obowiązkowy?',
-//     width: '10%',
-//   },
-// ];
-
 const columnHelper = createColumnHelper<FileUploadDto>();
 
 export interface FileOptionsContainerArgs {
@@ -96,6 +84,7 @@ function FileOptionsTableContainer(args: FileOptionsContainerArgs) {
     columnHelper.accessor('savePath', {
       id: 'savePath',
       header: 'Lokalizacja',
+      enableResizing: true,
       size: 330,
       cell: (props) => props.getValue(),
     }),
@@ -112,7 +101,7 @@ function FileOptionsTableContainer(args: FileOptionsContainerArgs) {
     columnHelper.accessor('required', {
       id: 'required',
       header: 'Obowiązkowy?',
-      size: 150,
+      size: 50,
       cell: (props) =>
         renderRequired(
           props.row.original.savePath,
@@ -146,6 +135,7 @@ interface FileOptionsTableArgs extends FileOptionsContainerArgs {
 
 function FileOptionsTable({ columns, data }: FileOptionsTableArgs) {
   const currentTable = useReactTable({
+    enableColumnResizing: true,
     columns,
     data,
     getCoreRowModel: getCoreRowModel(),
@@ -157,7 +147,15 @@ function FileOptionsTable({ columns, data }: FileOptionsTableArgs) {
         {currentTable.getHeaderGroups().map((headerGroup) => (
           <TableRow key={headerGroup.id}>
             {headerGroup.headers.map((header) => (
-              <TableCell key={header.id}>
+              <TableCell
+                key={header.id}
+                variant="head"
+                align={
+                  ['required', 'filesAction'].includes(header.id)
+                    ? 'center'
+                    : 'left'
+                }
+              >
                 {header.isPlaceholder
                   ? null
                   : flexRender(
@@ -174,7 +172,16 @@ function FileOptionsTable({ columns, data }: FileOptionsTableArgs) {
         {currentTable.getRowModel().rows.map((row) => (
           <TableRow key={row.id}>
             {row.getVisibleCells().map((cell) => (
-              <TableCell key={cell.id}>
+              <TableCell
+                key={cell.id}
+                align={
+                  ['required', 'filesAction'].includes(cell.column.id)
+                    ? 'center'
+                    : 'left'
+                }
+                padding={cell.column.id === 'required' ? 'checkbox' : 'normal'}
+                size={cell.column.id === 'required' ? 'small' : null}
+              >
                 {flexRender(cell.column.columnDef.cell, cell.getContext())}
               </TableCell>
             ))}

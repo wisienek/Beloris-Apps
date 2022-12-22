@@ -1,5 +1,4 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import { VersionDto } from './version.dto';
 import { Exclude, Transform } from 'class-transformer';
 import {
   IsBoolean,
@@ -11,19 +10,18 @@ import {
   IsUUID,
   Min,
 } from 'class-validator';
-
-import { TransformBoolean } from '../../utils';
-import { FileAction, FileType } from '../../enums';
 import { AutoMap } from '@automapper/classes';
+import { FileAction, FileType } from '../../enums';
+import { TransformBoolean } from '../../utils';
+import { VersionDto } from './version.dto';
 
 export class DownloaderFileDto {
   @ApiPropertyOptional({
     description: 'Unique descriptor for file',
   })
   @IsUUID()
-  @IsOptional()
   @AutoMap()
-  id?: string;
+  id: string;
 
   @ApiPropertyOptional({
     description: 'If a bundle is primary for a major version',
@@ -79,15 +77,14 @@ export class DownloaderFileDto {
   @AutoMap()
   savePath: string;
 
-  @ApiPropertyOptional({
+  @ApiProperty({
     type: 'enum',
     enum: FileType,
     description: 'What type of file it is',
   })
-  @IsOptional()
   @IsEnum(FileType)
   @AutoMap()
-  fileType?: FileType;
+  fileType: FileType;
 
   @ApiProperty({
     description: 'If a file is required to download',
@@ -105,7 +102,7 @@ export class DownloaderFileDto {
   })
   @IsOptional()
   @AutoMap(() => VersionDto)
-  versions?: VersionDto[];
+  version: VersionDto;
 
   @ApiProperty({
     description: 'What to do with a file',
