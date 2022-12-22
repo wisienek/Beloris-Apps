@@ -2,10 +2,8 @@ import { extname } from 'path';
 import { MulterFile } from '../typings';
 import { FileType } from '@bella/enums';
 
-export const getFileExtension = (file: MulterFile | string) => {
-  if (typeof file === 'string') return extname(file);
-  return extname(file.originalname);
-};
+export const getFileExtension = (file: MulterFile | string) =>
+  typeof file === 'string' ? extname(file) : extname(file.originalname);
 
 export const getBucketDownloadPath = (
   key: string,
