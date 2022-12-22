@@ -1,6 +1,10 @@
-import { VersionDto } from '@bella/dto';
-
-export type UserVersion = Omit<VersionDto, 'files'>;
+export class UserVersion {
+  major: number;
+  minor: number;
+  isCurrent: boolean;
+  createdAt: Date;
+  updatedAt: Date;
+}
 
 export class VersionSettings {
   currentVersion: UserVersion;

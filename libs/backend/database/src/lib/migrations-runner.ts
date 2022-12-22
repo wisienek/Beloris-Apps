@@ -1,6 +1,6 @@
 import { DataSource } from 'typeorm';
 import { getConfig } from './db-config';
-import * as migrations from './migrations';
+import { migrations } from './migrations';
 
 export const migrationsRunner = async () => {
   const dbConfig = getConfig();
@@ -10,7 +10,7 @@ export const migrationsRunner = async () => {
     synchronize: false,
     logging: true,
     name: 'MIGRATIONS_CONN',
-    migrations: migrations,
+    migrations,
   }).initialize();
 
   await connection.runMigrations({ transaction: 'all' });

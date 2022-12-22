@@ -1,2 +1,5 @@
 export const getPackagePath = (modpackFolder: string, major: string | number) =>
-  `${modpackFolder}/beloris_${major}.tar.gz`;
+  `${modpackFolder}/${getPackageName(major)}`;
+
+export const getPackageName = (major: string | number) =>
+  `beloris_${major}.tar.gz`;

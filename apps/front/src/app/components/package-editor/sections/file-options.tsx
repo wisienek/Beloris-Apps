@@ -18,8 +18,8 @@ const FileOptions = () => {
   );
 
   const editFile = (savePath: string, options: EditFleOptions) => {
-    const fileToMark = files.find((f) => f.savePath === savePath);
-    if (!fileToMark) {
+    const fileIndex = files.findIndex((f) => f.savePath === savePath);
+    if (!fileIndex || fileIndex < 0) {
       addError(
         ErrorSeverity.ERROR,
         `Nie znaleziono pliku: ${savePath}`,
@@ -31,10 +31,11 @@ const FileOptions = () => {
       return;
     }
 
-    const editedFile = { ...fileToMark, ...options };
-    const filtered = files.filter((f) => f.savePath !== savePath);
+    const newFiles = [...files];
+    const fileValues = Object.values(options);
+    for (const [key, value] of fileValues) newFiles[fileIndex][key] = value;
 
-    setFiles([...filtered, editedFile]);
+    setFiles(newFiles);
   };
 
   return isPackage ? (

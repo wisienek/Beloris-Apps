@@ -87,7 +87,6 @@ export const SettingsDefaults: UserSettings = {
     currentVersion: {
       major: 0,
       minor: 0,
-      id: null,
       isCurrent: null,
       createdAt: null,
       updatedAt: null,

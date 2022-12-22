@@ -52,10 +52,6 @@ export class FileUploadDto {
   })
   @IsEnum(FileAction)
   fileAction: FileAction;
-
-  constructor(data: Partial<FileUploadDto>) {
-    Object.assign(this, data);
-  }
 }
 
 export class UploadedS3FileDto {
@@ -88,3 +84,6 @@ export class UploadPackageInfo extends IntersectionType(
   OmitType(UploadedS3FileDto, ['downloadPath'] as const),
   OmitType(FileUploadDto, ['fileAction'] as const),
 ) {}
+
+export class UpdateFileInfo extends PartialType(FileUploadDto) {}
+export class UpdatePackageFileInfo extends PartialType(UploadPackageInfo) {}

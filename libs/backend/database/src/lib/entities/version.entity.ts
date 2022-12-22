@@ -29,7 +29,7 @@ export class Version {
   @AutoMap()
   minor: number;
 
-  @Column('boolean')
+  @Column('boolean', { default: false })
   @AutoMap()
   isCurrent = false;
 

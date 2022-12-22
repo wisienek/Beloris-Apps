@@ -1,5 +1,6 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { Exclude, Transform } from 'class-transformer';
+import { AutoMap } from '@automapper/classes';
 import {
   IsBoolean,
   IsEnum,
@@ -10,7 +11,6 @@ import {
   IsUUID,
   Min,
 } from 'class-validator';
-import { AutoMap } from '@automapper/classes';
 import { FileAction, FileType } from '../../enums';
 import { TransformBoolean } from '../../utils';
 import { VersionDto } from './version.dto';

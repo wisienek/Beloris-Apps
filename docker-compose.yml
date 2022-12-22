@@ -1,0 +1,101 @@
+version: '3.7'
+
+networks:
+  bella-net:
+    name: bella-net
+    driver: bridge
+
+services:
+  mysql_game:
+    container_name: game_db
+    image: mysql:8.0-oracle
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: ${GAME_DB_DATABASE}
+      MYSQL_USER: ${GAME_DB_USERNAME}
+      MYSQL_PASSWORD: ${GAME_DB_PASSWORD}
+    ports:
+      - ${GAME_DB_PORT}:3306
+    volumes:
+      - ./.docker/game_db:/var/lib/mysql
+
+  redis:
+    container_name: bella_redis
+    image: redis:6
+    ports:
+      - '6379:6379'
+
+# FLARUM
+
+  flarum_db:
+    image: mariadb:10.5
+    container_name: flarum_db
+    command:
+      - "mysqld"
+      - "--character-set-server=utf8mb4"
+      - "--collation-server=utf8mb4_unicode_ci"
+    volumes:
+      - ./.docker/flarum_db:/var/lib/mysql
+    environment:
+      TZ: ${TZ}
+      MYSQL_ALLOW_EMPTY_PASSWORD: "yes"
+      MYSQL_DATABASE: ${FLARUM_DB_DATABASE}
+      MYSQL_USER: ${FLARUM_DB_USER}
+      MYSQL_PASSWORD: ${FLARUM_DB_PASSWORD}
+    ports:
+      - ${FLARUM_DB_PORT}:3306
+    networks:
+      - bella-net
+    restart: always
+
+  flarum_msmtpd:
+    image: crazymax/msmtpd:latest
+    container_name: flarum_msmtpd
+    environment:
+      TZ: ${TZ}
+      SMTP_HOST: ${SMTP_HOST}
+      SMTP_PORT: ${SMTP_PORT}
+      SMTP_TLS: ${SMTP_TLS}
+      SMTP_STARTTLS: ${SMTP_STARTTLS}
+      SMTP_TLS_CHECKCERT: ${SMTP_TLS_CHECKCERT}
+      SMTP_AUTH: ${SMTP_AUTH}
+      SMTP_USER: ${SMTP_USER}
+      SMTP_PASSWORD: ${SMTP_PASSWORD}
+      SMTP_FROM: ${SMTP_FROM}
+    networks:
+      - bella-net
+    restart: always
+
+  flarum:
+    image: crazymax/flarum:latest
+    container_name: flarum
+    ports:
+      - target: 8000
+        published: 8000
+        protocol: tcp
+    environment:
+      TZ: ${TZ}
+      PUID: ${PUID}
+      PGID: ${PGID}
+      DB_PORT: ${FLARUM_DB_PORT}
+      DB_HOST: 127.0.0.1
+      DB_NAME: ${FLARUM_DB_DATABASE}
+      DB_USER: ${FLARUM_DB_USER}
+      DB_PASSWORD: ${FLARUM_DB_PASSWORD}
+      FLARUM_BASE_URL: ${FLARUM_BASE_URL}
+      MEMORY_LIMIT: ${MEMORY_LIMIT}
+      UPLOAD_MAX_SIZE: ${UPLOAD_MAX_SIZE}
+      OPCACHE_MEM_SIZE: ${OPCACHE_MEM_SIZE}
+      REAL_IP_FROM: ${REAL_IP_FROM}
+      REAL_IP_HEADER: ${REAL_IP_HEADER}
+      LOG_IP_VAR: ${LOG_IP_VAR}
+      FLARUM_DEBUG: ${FLARUM_DEBUG}
+    depends_on:
+      - flarum_db
+      - flarum_msmtpd
+    volumes:
+      - ./.docker/flarum:/data
+    networks:
+      - bella-net
+    restart: always

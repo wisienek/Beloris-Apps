@@ -1,13 +1,9 @@
 import { ServeStaticModule } from '@nestjs/serve-static';
-import { AutomapperModule } from '@automapper/nestjs';
 import { CacheModule, Module } from '@nestjs/common';
 import { PassportModule } from '@nestjs/passport';
-import { classes } from '@automapper/classes';
-
 import { join } from 'path';
-
+import { MapperModule } from '@bella/mapper';
 import { DataBaseModule } from '@bella/db';
-
 import { DiscordModule } from './discord';
 import { UpdaterModule } from './updater';
 import { AuthModule } from './auth';
@@ -25,9 +21,7 @@ import { AuthModule } from './auth';
       session: true,
       defaultStrategy: 'local',
     }),
-    AutomapperModule.forRoot({
-      strategyInitializer: classes(),
-    }),
+    MapperModule,
     DataBaseModule,
     AuthModule,
     DiscordModule,

@@ -5,6 +5,7 @@ import {
   Param,
   ParseIntPipe,
   ParseUUIDPipe,
+  Patch,
   Post,
   Query,
   UploadedFile,
@@ -16,21 +17,20 @@ import {
   ApiParam,
   ApiTags,
 } from '@nestjs/swagger';
-
-import { FileUploaderService } from './file-uploader.service';
-import { UploadedFileInterceptor } from './validators';
-import { ApiFile } from './utils';
-
+import { AllowedFileSizes, AllowedUploaderFileExtensions } from '@bella/data';
+import { FileType } from '@bella/enums';
 import {
   FileListDto,
   GetFileListDto,
   FileUploadDto,
   UploadPackageInfo,
   UploadedS3FileDto,
+  UpdatePackageFileInfo,
 } from '@bella/dto';
+import { FileUploaderService } from './file-uploader.service';
+import { UploadedFileInterceptor } from './validators';
 import { MulterFile } from './typings';
-import { AllowedFileSizes, AllowedUploaderFileExtensions } from '@bella/data';
-import { FileType } from '@bella/enums';
+import { ApiFile } from './utils';
 
 @ApiTags('Uploader - files')
 @Controller('uploader/:major/:minor/')
@@ -70,6 +70,14 @@ export class FileUploaderController {
     @Body() fileData: UploadPackageInfo,
   ) {
     return await this.fileUploaderService.createPackageData(major, fileData);
+  }
+
+  @Patch('package/:uuid')
+  updatePackageData(
+    @Param('uuid', ParseUUIDPipe) uuid: string,
+    @Body() fileData: UpdatePackageFileInfo,
+  ) {
+    return this.fileUploaderService.updateFileData(uuid, fileData);
   }
 
   @Post('package/:uuid')

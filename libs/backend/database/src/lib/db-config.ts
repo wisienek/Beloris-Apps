@@ -1,6 +1,5 @@
 import { DataSourceOptions } from 'typeorm';
 import { join } from 'path';
-
 import { DatabaseConfig, getStaticConfig } from '@bella/config';
 import { Backpack, DownloaderFile, GameDCLink, Version } from './entities';
 

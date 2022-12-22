@@ -1,8 +1,8 @@
-import { Injectable } from '@nestjs/common';
 import { createMap, Mapper, MappingProfile } from '@automapper/core';
 import { AutomapperProfile, InjectMapper } from '@automapper/nestjs';
-import { DownloaderFile } from '@bella/db';
+import { Injectable } from '@nestjs/common';
 import { DownloaderFileDto } from '@bella/dto';
+import { DownloaderFile } from '@bella/db';
 
 @Injectable()
 export class DownloaderFileMapper extends AutomapperProfile {

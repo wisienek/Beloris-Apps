@@ -24,6 +24,11 @@ export class ApiRoutes {
     minor: number,
     infoUUID: string,
   ) => `${ApiRoutes.PACKAGE(major, minor)}/${infoUUID}`;
+  public static PACKAGE_EDIT = (
+    major: number,
+    minor: number,
+    infoUUID: string,
+  ) => `${ApiRoutes.PACKAGE(major, minor)}/${infoUUID}`;
 
   // User
   public static LOGIN = `${ApiRoutes.SERVER_URL}/auth/login`;

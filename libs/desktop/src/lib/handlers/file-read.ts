@@ -1,9 +1,10 @@
-import { dialog } from 'electron';
-import { sync } from 'glob-promise';
-import { parse, sep } from 'path';
 import { readdirSync, readFileSync, statSync } from 'fs';
+import { sync } from 'glob-promise';
+import { dialog } from 'electron';
+import { parse, sep } from 'path';
 import * as tar from 'tar';
-
+import { getFileHash } from '@bella/core';
+import { FileAction } from '@bella/enums';
 import {
   FileDialogInputDto,
   FileUploadDto,
@@ -15,12 +16,9 @@ import {
   IpcFileMap,
   packerFiles,
 } from '@bella/data';
-import { getFileHash } from '@bella/core';
-import { FileAction } from '@bella/enums';
-
 import { handlerWrapper } from '../handler-wrapper';
 import { readUserSettings } from './user-settings';
-import { getPackagePath } from '../utils';
+import { getPackageName, getPackagePath } from '../utils';
 
 export const openFileDialog = async (
   event,
@@ -69,14 +67,12 @@ export const getDownloaderFiles = async (): Promise<
       },
     );
 
-    return foundFiles.map((filePath) => {
-      return new FileUploadDto({
-        name: parse(filePath.split(sep).at(-1)).name,
-        savePath: filePath,
-        required: true,
-        fileAction: FileAction.DOWNLOAD,
-      });
-    });
+    return foundFiles.map((filePath) => ({
+      name: parse(filePath.split(sep).at(-1)).name,
+      savePath: filePath,
+      required: true,
+      fileAction: FileAction.DOWNLOAD,
+    }));
   }, `Error while preparing downloader files`);
 };
 
@@ -86,10 +82,9 @@ export const buildPackage = async (
 ): Promise<IpcEventDto<PackageDataDto>> => {
   return await handlerWrapper(async () => {
     const { data: settings } = await readUserSettings();
+
     const modpackFolder = settings.downloadTo.modpackFolder;
-
     const readDirectory = readdirSync(modpackFolder);
-
     const existingFiles = readDirectory.filter((f) => packerFiles.includes(f));
 
     if (existingFiles.length !== packerFiles.length)
@@ -112,7 +107,7 @@ export const buildPackage = async (
     const readFile = readFileSync(filePath);
     const stats = statSync(filePath);
 
-    const name = `beloris_${version}.tar.gz`;
+    const name = getPackageName(version);
     const hash = getFileHash(readFile);
     const fileSize = stats.size;
 

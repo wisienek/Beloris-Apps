@@ -1,7 +1,6 @@
 import { IpcMainEvent } from 'electron';
-
-import { IpcEventDto } from '@bella/dto';
 import { UserSettings } from '@bella/schema';
+import { IpcEventDto } from '@bella/dto';
 import { handlerWrapper } from '../handler-wrapper';
 import { Store, StoreKeys } from '../store';
 

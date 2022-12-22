@@ -1,19 +1,17 @@
-import * as React from 'react';
+import { useContext } from 'react';
 import { Grid } from '@mui/material';
-
-import {
-  WizardStepper,
-  StepperNavigation,
-} from '../components/single/wizard-stepper';
-
 import VersionSelector from '../components/package-editor/sections/version-wizard';
+import UploaderWizard from '../components/package-editor/sections/uploader-wizard';
 import { FileWizard } from '../components/package-editor/sections/file-wizard';
+import FileOptions from '../components/package-editor/sections/file-options';
 import {
   PackageEditorStateContext,
   PackageEditorStateValue,
 } from '../components/package-editor/sections/package-editor-state';
-import UploaderWizard from '../components/package-editor/sections/uploader-wizard';
-import FileOptions from '../components/package-editor/sections/file-options';
+import {
+  WizardStepper,
+  StepperNavigation,
+} from '../components/single/wizard-stepper';
 
 const PackageEditorPage = () => {
   const {
@@ -24,7 +22,7 @@ const PackageEditorPage = () => {
     handleBack,
     handleSkip,
     handleReset,
-  } = React.useContext<PackageEditorStateValue>(PackageEditorStateContext);
+  } = useContext<PackageEditorStateValue>(PackageEditorStateContext);
 
   return (
     <Grid
