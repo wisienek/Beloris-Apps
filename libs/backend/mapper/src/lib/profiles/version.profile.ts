@@ -1,16 +1,9 @@
-import {
-  createMap,
-  forMember,
-  Mapper,
-  MappingProfile,
-  mapWith,
-} from '@automapper/core';
-import { Injectable } from '@nestjs/common';
 import { AutomapperProfile, InjectMapper } from '@automapper/nestjs';
+import { createMap, Mapper, MappingProfile } from '@automapper/core';
+import { Injectable } from '@nestjs/common';
 
-import { DownloaderFileDto, FileListDto, VersionDto } from '@bella/dto';
-import { DownloaderFile, Version } from '@bella/db';
-import { getObjectWithoutProperties } from '@bella/core';
+import { VersionDto } from '@bella/dto';
+import { Version } from '@bella/db';
 
 @Injectable()
 export class VersionMapper extends AutomapperProfile {
@@ -21,22 +14,6 @@ export class VersionMapper extends AutomapperProfile {
   get profile(): MappingProfile {
     return (mapper) => {
       createMap(mapper, Version, VersionDto);
-
-      createMap(
-        mapper,
-        Version,
-        FileListDto,
-        forMember(
-          (d) => d.version,
-          mapWith(VersionDto, Version, (s) =>
-            getObjectWithoutProperties(s, ['files']),
-          ),
-        ),
-        forMember(
-          (d) => d.files,
-          mapWith(DownloaderFileDto, DownloaderFile, (s) => s.files),
-        ),
-      );
     };
   }
 }

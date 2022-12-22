@@ -18,7 +18,6 @@
     "paths": {
       "@bella/aws": ["libs/backend/aws/src/index.ts"],
       "@bella/config": ["libs/backend/config/src/index.ts"],
-      "@bella/configuration": ["libs/backend/config/src/lib/configuration.ts"],
       "@bella/core": ["libs/core/src/index.ts"],
       "@bella/data": ["libs/shared/src/data/index.ts"],
       "@bella/db": ["libs/backend/database/src/index.ts"],

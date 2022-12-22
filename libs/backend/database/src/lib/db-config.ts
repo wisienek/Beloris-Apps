@@ -1,22 +1,22 @@
 import { DataSourceOptions } from 'typeorm';
 import { join } from 'path';
 
+import { DatabaseConfig, getStaticConfig } from '@bella/config';
 import { Backpack, DownloaderFile, GameDCLink, Version } from './entities';
-import { DatabaseConfig, getStaticConfig, ProjectConfig } from '@bella/config';
 
 const getDefaultConfig = (): DataSourceOptions => {
   const config = getStaticConfig(DatabaseConfig);
-  const projectConfig = getStaticConfig(ProjectConfig);
 
-  const synchronize = projectConfig.isDev();
   return {
     type: 'mariadb',
-    synchronize,
     port: config.port,
     database: config.db,
     username: config.user,
     password: config.password,
     host: config.host,
+    charset: 'utf8mb4',
+    timezone: 'Z',
+    migrationsTableName: 'migrations',
   };
 };
 

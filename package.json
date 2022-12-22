@@ -5,6 +5,9 @@
   "version": "0.0.1",
   "license": "MIT",
   "scripts": {
+    "typeorm": "ts-node --project libs/backend/database/tsconfig.lib.json -r tsconfig-paths/register ./node_modules/typeorm/cli.js",
+    "db:drop": "nx run database:typeorm:drop",
+    "db:mig-gen": "nx run backend-database:migration:generate",
     "start-dev": "yarn run server & nx run front:serve & nx run desktop-app:serve",
     "server": "nx serve",
     "build": "nx build",

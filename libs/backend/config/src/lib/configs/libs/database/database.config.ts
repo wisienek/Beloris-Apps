@@ -12,22 +12,22 @@ export class DatabaseConfig extends BaseConfig {
   }
 
   get host() {
-    return this.env.DB_HOST;
+    return this.env.GAME_DB_HOST;
   }
 
   get port() {
-    return this.env.DB_PORT;
+    return this.env.GAME_DB_PORT;
   }
 
   get user() {
-    return this.env.DB_USERNAME;
+    return this.env.GAME_DB_USERNAME;
   }
 
   get password() {
-    return this.env.DB_PASSWORD;
+    return this.env.GAME_DB_PASSWORD;
   }
 
   get db() {
-    return this.env.DB_DATABASE;
+    return this.env.GAME_DB_DATABASE;
   }
 }

@@ -1,4 +1,6 @@
 import { ApiProperty, ApiPropertyOptional, PickType } from '@nestjs/swagger';
+import { AutoMap } from '@automapper/classes';
+import { Type } from 'class-transformer';
 import {
   IsBoolean,
   IsInt,
@@ -6,10 +8,8 @@ import {
   IsPositive,
   IsUUID,
 } from 'class-validator';
-import { Type } from 'class-transformer';
 import { TransformBoolean } from '../../utils';
 import { DownloaderFileDto } from './downloader-file.dto';
-import { AutoMap } from '@automapper/classes';
 
 export class VersionDto {
   @ApiProperty({
@@ -57,10 +57,12 @@ export class VersionDto {
   @AutoMap()
   updatedAt: Date;
 
-  @ApiPropertyOptional()
+  @ApiPropertyOptional({
+    description: `Files in current version`,
+  })
   @IsOptional()
   @AutoMap(() => [DownloaderFileDto])
-  files?: DownloaderFileDto[];
+  files: DownloaderFileDto[] = [];
 }
 
 export class CreateVersionDto extends PickType(VersionDto, [
@@ -73,3 +75,16 @@ export class DeleteVersionDto extends PickType(VersionDto, [
   'major',
   'minor',
 ] as const) {}
+
+export class CreatedVersion {
+  @ApiProperty({
+    description: `Created version`,
+  })
+  new: VersionDto;
+
+  @ApiPropertyOptional({
+    description: `Old version when changing current`,
+  })
+  @IsOptional()
+  old?: VersionDto;
+}

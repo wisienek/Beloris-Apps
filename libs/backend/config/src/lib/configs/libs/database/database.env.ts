@@ -7,7 +7,7 @@ export class _DatabaseEnv {
   @IsString()
   @IsNotEmpty()
   @Expose()
-  DB_HOST: string;
+  GAME_DB_HOST: string;
 
   @IsNumber({
     allowNaN: false,
@@ -15,22 +15,22 @@ export class _DatabaseEnv {
     maxDecimalPlaces: 0,
   })
   @Expose()
-  DB_PORT: number;
+  GAME_DB_PORT: number;
 
   @IsString()
   @IsNotEmpty()
   @Expose()
-  DB_USERNAME: string;
+  GAME_DB_USERNAME: string;
 
   @IsString()
   @IsNotEmpty()
   @Expose()
-  DB_PASSWORD: string;
+  GAME_DB_PASSWORD: string;
 
   @IsString()
   @IsNotEmpty()
   @Expose()
-  DB_DATABASE: string;
+  GAME_DB_DATABASE: string;
 }
 
 export const DatabaseEnv = registerAs('database', () =>

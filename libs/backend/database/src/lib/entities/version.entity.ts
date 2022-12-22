@@ -1,5 +1,5 @@
+import { AutoMap } from '@automapper/classes';
 import {
-  BaseEntity,
   Column,
   CreateDateColumn,
   Entity,
@@ -8,12 +8,11 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
-import { DownloaderFile } from '@bella/db';
-import { AutoMap } from '@automapper/classes';
+import { DownloaderFile } from './downloader-file.entity';
 
 @Entity()
 @Index(['major', 'minor'], { unique: true })
-export class Version extends BaseEntity {
+export class Version {
   @PrimaryGeneratedColumn('uuid')
   @AutoMap()
   id: string;

@@ -1,6 +1,5 @@
 import { AutoMap } from '@automapper/classes';
 import {
-  BaseEntity,
   Column,
   CreateDateColumn,
   Entity,
@@ -9,7 +8,7 @@ import {
 } from 'typeorm';
 
 @Entity()
-export class Backpack extends BaseEntity {
+export class Backpack {
   @PrimaryGeneratedColumn('uuid')
   @AutoMap()
   id!: string;

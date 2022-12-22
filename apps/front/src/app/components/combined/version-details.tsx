@@ -1,14 +1,13 @@
-import React from 'react';
 import { DateTime } from 'luxon';
-
+import React from 'react';
 import { Avatar, Box, Grid, Typography, useTheme } from '@mui/material';
-import { styled } from '@mui/material/styles';
-import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
 import InsertDriveFileIcon from '@mui/icons-material/InsertDriveFile';
+import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
 import CloudDoneIcon from '@mui/icons-material/CloudDone';
 import DownloadIcon from '@mui/icons-material/Download';
-
+import { styled } from '@mui/material/styles';
 import { DownloaderFileDto, VersionDto } from '@bella/dto';
+import { UserVersion } from '@bella/schema';
 
 const AvatarSuccess = styled(Avatar)(
   ({ theme }) => `
@@ -32,7 +31,7 @@ const ThemedGrid = styled(Grid)(({ theme }) => ({
 
 export interface VersionDetailsArgs {
   fetchedVersion: VersionDto;
-  downloadedVersion: VersionDto;
+  downloadedVersion: UserVersion;
   fetchedFilesToDownload: DownloaderFileDto[];
   isSameVersion: boolean;
   error: Error;

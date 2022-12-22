@@ -1,9 +1,8 @@
-import { Entity, Column, PrimaryGeneratedColumn, BaseEntity } from 'typeorm';
-import { ApiProperty } from '@nestjs/swagger';
+import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm';
 import { AutoMap } from '@automapper/classes';
 
 @Entity()
-export class GameDCLink extends BaseEntity {
+export class GameDCLink {
   @PrimaryGeneratedColumn()
   @AutoMap()
   id!: number;

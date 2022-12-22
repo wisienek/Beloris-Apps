@@ -4,8 +4,8 @@ import { ApiOkResponse, ApiParam, ApiTags } from '@nestjs/swagger';
 import { Request, Response } from 'express';
 import { join } from 'path';
 
-import { TokenDto } from '@bella/dto';
 import { ServerListEnum } from '@bella/enums';
+import { TokenDto } from '@bella/dto';
 
 import { AuthService } from './auth.service';
 import { Auth, DcUser } from './guard';

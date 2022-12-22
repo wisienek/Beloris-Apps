@@ -1,2 +1,2 @@
+export * from './api-file.decorator';
 export * from './file-utils';
-export * from './api-file';

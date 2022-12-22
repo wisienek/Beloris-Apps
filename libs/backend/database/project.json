@@ -22,6 +22,34 @@
         "jestConfig": "libs/backend/database/jest.config.js",
         "passWithNoTests": true
       }
+    },
+    "migration": {
+      "executor": "@nrwl/workspace:run-commands",
+      "configurations": {
+        "generate": {
+          "forwardAllArgs": false,
+          "commands": [
+            "yarn run typeorm -d libs/backend/database/src/data-source.ts migration:generate libs/backend/database/src/migrations/{args.name}.ts"
+          ]
+        }
+      }
+    },
+    "typeorm": {
+      "executor": "@nrwl/workspace:run-commands",
+      "configurations": {
+        "forwardAllArgs": false,
+        "drop": {
+          "commands": [
+            "yarn run typeorm -d libs/backend/database/src/data-source.ts schema:drop"
+          ]
+        },
+        "log": {
+          "commands": [
+            "yarn run typeorm -d libs/backend/database/src/data-source.ts schema:log"
+          ]
+        }
+
+      }
     }
   },
   "tags": [
