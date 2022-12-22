@@ -1,5 +1,5 @@
+import { AutoMap } from '@automapper/classes';
 import {
-  BaseEntity,
   Column,
   Entity,
   JoinTable,
@@ -8,13 +8,12 @@ import {
 } from 'typeorm';
 import { FileAction, FileType } from '@bella/enums';
 import { Version } from './version.entity';
-import { AutoMap } from '@automapper/classes';
 
 @Entity()
-export class DownloaderFile extends BaseEntity {
+export class DownloaderFile {
   @PrimaryGeneratedColumn('uuid')
   @AutoMap()
-  id!: string;
+  id: string;
 
   @Column({
     type: 'boolean',
@@ -36,7 +35,7 @@ export class DownloaderFile extends BaseEntity {
     nullable: false,
   })
   @AutoMap()
-  name!: string;
+  name: string;
 
   @Column({
     type: 'varchar',
@@ -50,7 +49,7 @@ export class DownloaderFile extends BaseEntity {
     type: 'varchar',
   })
   @AutoMap()
-  savePath!: string;
+  savePath: string;
 
   @Column({
     type: 'float',
@@ -65,7 +64,7 @@ export class DownloaderFile extends BaseEntity {
     enum: FileType,
   })
   @AutoMap()
-  fileType!: FileType;
+  fileType: FileType;
 
   @Column({
     type: 'boolean',
@@ -82,11 +81,10 @@ export class DownloaderFile extends BaseEntity {
     nullable: false,
   })
   @AutoMap()
-  fileAction!: FileAction;
+  fileAction: FileAction;
 
   @ManyToOne(() => Version, (version) => version.files, {
     onDelete: 'RESTRICT',
-    eager: true,
   })
   @JoinTable()
   @AutoMap(() => Version)

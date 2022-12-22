@@ -1,9 +1,23 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { InjectMapper } from '@automapper/nestjs';
+import { Mapper } from '@automapper/core';
 import { Raw, Repository } from 'typeorm';
-
-import { MulterFile } from './typings';
+import { getFileHash, getObjectWithoutProperties } from '@bella/core';
+import { FileAction, FileType } from '@bella/enums';
+import { DownloaderFile, Version } from '@bella/db';
+import { AwsConfig } from '@bella/config';
+import { S3Service } from '@bella/aws';
+import {
+  DownloaderFileDto,
+  FileListDto,
+  FileUploadDto,
+  GetFileListDto,
+  UploadPackageInfo,
+  VersionDto,
+} from '@bella/dto';
 import { getBucketDownloadPath, getBundleKey, getFileKey } from './utils';
+import { MulterFile } from './typings';
 import {
   FileConflictException,
   FileDataNotFoundException,
@@ -13,19 +27,6 @@ import {
   FileHashConflictException,
   CurrentVersionNotFoundException,
 } from './errors';
-
-import {
-  DownloaderFileDto,
-  FileListDto,
-  FileUploadDto,
-  GetFileListDto,
-  UploadPackageInfo,
-} from '@bella/dto';
-import { getFileHash, getObjectWithoutProperties } from '@bella/core';
-import { FileAction, FileType } from '@bella/enums';
-import { DownloaderFile, Version } from '@bella/db';
-import { AwsConfig } from '@bella/config';
-import { S3Service } from '@bella/aws';
 
 @Injectable()
 export class FileUploaderService {
@@ -38,9 +39,13 @@ export class FileUploaderService {
     private readonly filesRepository: Repository<DownloaderFile>,
     private readonly awsService: S3Service,
     private readonly awsConfig: AwsConfig,
+    @InjectMapper() private mapper: Mapper,
   ) {}
 
-  public async getFilesToUpdate(major: number, minor: number) {
+  public async getFilesToUpdate(
+    major: number,
+    minor: number,
+  ): Promise<FileListDto> {
     const currentVersion = await this.versionRepository.findOne({
       where: {
         isCurrent: true,
@@ -75,7 +80,10 @@ export class FileUploaderService {
       })) ?? []
     )?.map((file) => getObjectWithoutProperties(file, ['version']));
 
-    return new FileListDto(currentVersion, files as DownloaderFileDto[]);
+    return {
+      version: this.mapper.map(currentVersion, Version, VersionDto),
+      files: this.mapper.mapArray(files, DownloaderFile, DownloaderFileDto),
+    };
   }
 
   public async getFileList(
@@ -99,7 +107,10 @@ export class FileUploaderService {
       },
     });
 
-    return new FileListDto(version, files);
+    return {
+      version: this.mapper.map(version, Version, VersionDto),
+      files: this.mapper.mapArray(files, DownloaderFile, DownloaderFileDto),
+    };
   }
 
   public async uploadFile(
@@ -129,10 +140,12 @@ export class FileUploaderService {
 
     const version = await this.getVersion(major, minor);
 
-    return await this.filesRepository.save({
+    const saved = await this.filesRepository.save({
       ...data,
       version,
     });
+
+    return this.mapper.map(saved, DownloaderFile, DownloaderFileDto);
   }
 
   public async handleUploadFile(
@@ -186,15 +199,20 @@ export class FileUploaderService {
       `Uploaded ${isPackage ? 'bundle' : 'file'} file: ${downloadPath}`,
     );
 
-    return await this.filesRepository.save({
+    const saved = await this.filesRepository.save({
       ...fileRecord,
       hash,
       fileSize,
       downloadPath,
     });
+
+    return this.mapper.map(saved, DownloaderFile, DownloaderFileDto);
   }
 
-  public async createPackageData(major: number, fileData: UploadPackageInfo) {
+  public async createPackageData(
+    major: number,
+    fileData: UploadPackageInfo,
+  ): Promise<DownloaderFileDto> {
     const version = await this.getVersion(major, 1, true);
 
     const foundOne = await this.filesRepository.findOne({
@@ -234,7 +252,7 @@ export class FileUploaderService {
 
     if (savedRecord && oldBundle) await this.filesRepository.remove(oldBundle);
 
-    return savedRecord;
+    return this.mapper.map(savedRecord, DownloaderFile, DownloaderFileDto);
   }
 
   private async getVersion(
