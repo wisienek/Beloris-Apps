@@ -115,7 +115,7 @@ export class FileUploaderService {
     };
   }
 
-  public async uploadFile(
+  public async uploadFileData(
     major: number,
     minor: number,
     data: FileUploadDto,

@@ -1,14 +1,14 @@
 import { useContext } from 'react';
 import AssignmentTwoToneIcon from '@mui/icons-material/AssignmentTwoTone';
 import { Box, Button, Zoom } from '@mui/material';
+import Checklist, { CheckListTask } from '../../combined/check-list';
+import { useVerifyPackage, useUploadFiles } from '../hooks';
+import Tooltip from '../../single/tooltip';
+import Title from '../../single/title';
 import {
   PackageEditorStateContext,
   PackageEditorStateValue,
 } from './package-editor-state';
-import Checklist, { CheckListTask } from '../../combined/check-list';
-import Title from '../../single/title';
-import Tooltip from '../../single/tooltip';
-import { useVerifyPackage, useUploadFiles } from '../hooks';
 
 const UploaderWizard = () => {
   const { version, isPackage, files } = useContext<PackageEditorStateValue>(
@@ -16,7 +16,7 @@ const UploaderWizard = () => {
   );
 
   const { toDo } = useVerifyPackage();
-  const { sending, uploadFiles } = useUploadFiles();
+  const { sending, uploadFiles, sent } = useUploadFiles();
 
   const getTasks = (): CheckListTask[] => {
     return [
@@ -34,7 +34,7 @@ const UploaderWizard = () => {
       {
         name: 'zmiany',
         label: 'Wprowadzone zmiany',
-        checked: isPackage,
+        checked: true,
       },
     ];
   };
@@ -69,10 +69,14 @@ const UploaderWizard = () => {
         <Button
           variant="contained"
           size="small"
-          disabled={toDo.length > 0 || sending}
+          disabled={toDo.length > 0 || sending || sent}
           onClick={() => uploadFiles()}
         >
-          {sending ? 'Przesyłam zmiany...' : 'Prześlij zmiany'}
+          {sent
+            ? 'Wysłane...'
+            : sending
+            ? 'Przesyłam zmiany...'
+            : 'Prześlij zmiany'}
         </Button>
       </Tooltip>
     </>

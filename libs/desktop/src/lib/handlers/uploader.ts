@@ -1,19 +1,19 @@
+import { existsSync, readFileSync } from 'fs';
 import axios, { AxiosResponse } from 'axios';
 import * as FormData from 'form-data';
-import { readFileSync } from 'fs';
-import * as _ from 'lodash';
+import { resolve } from 'path';
 import { VersionType } from '@bella/types';
 import { ApiRoutes } from '@bella/data';
 import {
   DownloaderFileDto,
+  FileUploadDto,
   IpcEventDto,
   UploadPackageInfo,
-  VersionDto,
 } from '@bella/dto';
 import { getPackageName, getPackagePath } from '../utils';
 import { handlerWrapper } from '../handler-wrapper';
 import { readUserSettings } from './user-settings';
-import { changeVersionAsCurrent } from './version';
+import { getOrCreateVersion } from './version';
 
 export const uploadPackage = async (
   version: VersionType,
@@ -27,9 +27,10 @@ export const uploadPackage = async (
       getPackagePath(userSettings.downloadTo.modpackFolder, version.major),
     );
 
-    const existingVersion = setCurrentVersion
-      ? await changeVersionAsCurrent(version)
-      : await getExistingVersion(version);
+    const existingVersion = await getOrCreateVersion(
+      version,
+      setCurrentVersion,
+    );
 
     console.group(
       `${existingVersion ? 'Updating' : 'Uploading'} package data:`,
@@ -76,21 +77,72 @@ export const uploadPackage = async (
   }, `Error while uploading package`);
 };
 
-export const uploadFiles = async (): Promise<IpcEventDto<void>> => {
-  return await handlerWrapper(async () => {}, `Error while uploading package`);
-};
-
-const getExistingVersion: (
+export const uploadFiles = async (
   version: VersionType,
-) => Promise<VersionDto> = async (version) => {
-  const route = ApiRoutes.VERSION_HISTORY;
+  filesData: Array<FileUploadDto>,
+  setCurrentVersion?: boolean,
+): Promise<IpcEventDto<Array<DownloaderFileDto>>> => {
+  return await handlerWrapper(async () => {
+    const { data: userSettings } = await readUserSettings();
 
-  const { data: history }: AxiosResponse<VersionDto[]> = await axios.get(route);
-  return _.find(
-    history ?? [],
-    (v) =>
-      v.major === version.major &&
-      (v.minor === version.minor ||
-        ([0, 1].includes(v.minor) && [0, 1].includes(version.minor))),
-  );
+    await getOrCreateVersion(version, setCurrentVersion);
+
+    const fileDataPostUrl = ApiRoutes.FILE_LIST(version.major, version.minor);
+
+    const preparedRequests = [];
+
+    console.log(`Sending ${filesData.length} files to server!`);
+
+    for (const fileData of filesData) {
+      console.log(`File ${fileData.name}`);
+
+      const filePath = resolve(
+        userSettings.downloadTo.modpackFolder,
+        fileData.savePath,
+      );
+
+      console.log(`File path: ${filePath}`);
+
+      if (!existsSync(filePath))
+        throw new Error(`Plik ${fileData.name} nie mógł być znaleziony!`);
+
+      const buffer = readFileSync(filePath);
+
+      // TODO: add check post/path based on get version files
+      preparedRequests.push(
+        axios({
+          method: 'post',
+          url: fileDataPostUrl,
+          data: fileData,
+        }).then(
+          async ({ data: dFileData }: AxiosResponse<DownloaderFileDto>) => {
+            console.log(`Received data:`, dFileData);
+
+            const sendFileUrl = ApiRoutes.FILE_LIST_UPLOAD(
+              version,
+              dFileData.id,
+            );
+
+            console.log(`Sending file for data: ${dFileData.name}`);
+
+            const formData = new FormData();
+            formData.append('file', buffer, dFileData.name);
+
+            const { data }: AxiosResponse<DownloaderFileDto> = await axios({
+              method: 'post',
+              url: sendFileUrl,
+              data: formData,
+              headers: formData.getHeaders(),
+            });
+
+            console.log(`File sent successfully!`, data);
+
+            return data;
+          },
+        ),
+      );
+    }
+
+    return await Promise.all(preparedRequests);
+  }, `Error while uploading package`);
 };

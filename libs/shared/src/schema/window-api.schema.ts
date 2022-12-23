@@ -65,7 +65,8 @@ export interface WindowFilesApi {
 
   uploadFiles: (
     version: VersionType,
-    packageData: PackageDataDto,
+    filesData: Array<FileUploadDto>,
+    setCurrentVersion?: boolean,
   ) => Promise<IpcEventDto<DownloaderFileDto[]>>;
 }
 

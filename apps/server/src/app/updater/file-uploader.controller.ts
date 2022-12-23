@@ -117,7 +117,7 @@ export class FileUploaderController {
     @Param('minor', ParseIntPipe) minor: number,
     @Body() fileData: FileUploadDto,
   ) {
-    return this.fileUploaderService.uploadFile(major, minor, fileData);
+    return this.fileUploaderService.uploadFileData(major, minor, fileData);
   }
 
   @Post('file-list/:uuid')

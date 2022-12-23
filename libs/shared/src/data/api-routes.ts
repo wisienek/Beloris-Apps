@@ -13,8 +13,8 @@ export class ApiRoutes {
   // File List
   public static FILE_LIST = (major: number, minor: number) =>
     `${ApiRoutes.SERVER_URL}/uploader/${major}/${minor}/file-list`;
-  public static FILE_LIST_UPLOAD = (major: number, minor: number) =>
-    `${ApiRoutes.FILE_LIST(major, minor)}/file`;
+  public static FILE_LIST_UPLOAD = (v: VersionType, dataId: string) =>
+    `${ApiRoutes.FILE_LIST(v.major, v.minor)}/file`;
 
   public static GET_UPDATE_FILES = (major: number, minor: number) =>
     `${ApiRoutes.SERVER_URL}/uploader/${major}/${minor}/update-files`;

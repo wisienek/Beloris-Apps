@@ -8,6 +8,7 @@ import {
   PickType,
 } from '@nestjs/swagger';
 import {
+  IsBoolean,
   IsInt,
   IsISO8601,
   IsOptional,
@@ -15,6 +16,7 @@ import {
   IsUUID,
 } from 'class-validator';
 import { DownloaderFileDto } from './downloader-file.dto';
+import { TransformBoolean } from '@bella/utils';
 
 export class VersionDto {
   @ApiProperty({
@@ -46,6 +48,8 @@ export class VersionDto {
   @ApiProperty({
     description: 'Whether the version currently applies',
   })
+  @TransformBoolean()
+  @IsBoolean()
   isCurrent: boolean;
 
   @ApiProperty({

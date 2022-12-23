@@ -41,7 +41,7 @@ export class DownloaderFileDto {
   @IsNumber()
   @IsOptional()
   @Min(0)
-  @Transform(({ value }) => value.toPrecision(2))
+  @Transform(({ value }) => value?.toPrecision(2))
   @AutoMap()
   fileSize?: number;
 

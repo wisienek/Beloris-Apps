@@ -19,7 +19,8 @@ const FileOptions = () => {
 
   const editFile = (savePath: string, options: EditFleOptions) => {
     const fileIndex = files.findIndex((f) => f.savePath === savePath);
-    if (!fileIndex || fileIndex < 0) {
+
+    if (fileIndex < 0) {
       addError(
         ErrorSeverity.ERROR,
         `Nie znaleziono pliku: ${savePath}`,
@@ -32,7 +33,7 @@ const FileOptions = () => {
     }
 
     const newFiles = [...files];
-    const fileValues = Object.values(options);
+    const fileValues = Object.entries(options);
     for (const [key, value] of fileValues) newFiles[fileIndex][key] = value;
 
     setFiles(newFiles);
