@@ -60,6 +60,7 @@ export interface WindowFilesApi {
   uploadPackage: (
     version: VersionType,
     packageData: UploadPackageInfo,
+    setCurrentVersion?: boolean,
   ) => Promise<IpcEventDto<DownloaderFileDto>>;
 
   uploadFiles: (

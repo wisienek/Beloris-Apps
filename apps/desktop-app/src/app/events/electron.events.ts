@@ -21,6 +21,8 @@ import {
   uploadPackage,
   uploadFiles,
 } from '@bella/dp';
+import { VersionType } from '@bella/types';
+import { UploadPackageInfo } from '@bella/dto';
 
 export default class ElectronEvents {
   static bootstrapElectronEvents(): Electron.IpcMain {
@@ -56,8 +58,8 @@ ipcMain.handle(IPCChannels.BUILD_PACKAGE, buildPackage);
 
 // uploader
 
-ipcMain.handle(IPCChannels.UPLOAD_PACKAGE, (event, version, packageData) =>
-  uploadPackage(event, version, packageData),
+ipcMain.handle(IPCChannels.UPLOAD_PACKAGE, (_, version: VersionType, packageData: UploadPackageInfo, setCurrentVersion?: boolean) =>
+  uploadPackage(version, packageData, setCurrentVersion),
 );
 ipcMain.handle(IPCChannels.UPLOAD_FILES, (event, version, packageData) =>
   uploadFiles(),

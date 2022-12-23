@@ -2,6 +2,7 @@ import { AutomapperModule } from '@automapper/nestjs';
 import { classes } from '@automapper/classes';
 import { Module } from '@nestjs/common';
 import {
+  BackpackProfile,
   DownloaderFileMapper,
   GameDcLinkProfile,
   VersionMapper,
@@ -13,6 +14,6 @@ import {
       strategyInitializer: classes(),
     }),
   ],
-  providers: [VersionMapper, DownloaderFileMapper, GameDcLinkProfile],
+  providers: [VersionMapper, DownloaderFileMapper, GameDcLinkProfile, BackpackProfile],
 })
 export class MapperModule {}

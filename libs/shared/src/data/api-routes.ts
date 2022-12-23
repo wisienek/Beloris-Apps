@@ -1,4 +1,5 @@
 import { ServerListEnum } from '@bella/enums';
+import { VersionType } from '@bella/types';
 
 export class ApiRoutes {
   private static SERVER_URL = 'http://localhost:3333/api';
@@ -6,6 +7,8 @@ export class ApiRoutes {
   // Version control
   public static VERSION = `${ApiRoutes.SERVER_URL}/uploader/version`;
   public static VERSION_HISTORY = `${ApiRoutes.SERVER_URL}/uploader/version/history`;
+  public static UPDATE_VERSION = (version: VersionType) =>
+    `${ApiRoutes.SERVER_URL}/uploader/version/${version.major}/${version.minor}`;
 
   // File List
   public static FILE_LIST = (major: number, minor: number) =>

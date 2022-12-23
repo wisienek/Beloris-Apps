@@ -1,20 +1,20 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository, DeepPartial } from 'typeorm';
 import { InjectMapper } from '@automapper/nestjs';
 import { Mapper } from '@automapper/core';
+import { Repository } from 'typeorm';
 import { Version } from '@bella/db';
 import {
-  CreatedVersion,
   CreateVersionDto,
   DeleteVersionDto,
+  UpdateVersionDto,
   VersionDto,
 } from '@bella/dto';
 import { FileUploaderService } from './file-uploader.service';
 import {
+  VersionConflictException,
   VersionNotFoundException,
   VersionNotUpdatableException,
-  VersionConflictException,
 } from './errors';
 
 @Injectable()
@@ -28,15 +28,18 @@ export class VersionService {
     @InjectMapper() private mapper: Mapper,
   ) {}
 
-  public async getCurrentVersion(): Promise<VersionDto> {
+  public async getCurrentVersion(
+    map = true,
+    withFiles = true,
+  ): Promise<VersionDto | Version> {
     const version = await this.versionRepository.findOne({
-      relations: ['files'],
+      relations: withFiles ? ['files'] : [],
       where: {
         isCurrent: true,
       },
     });
 
-    return this.mapper.map(version, Version, VersionDto);
+    return map ? this.mapper.map(version, Version, VersionDto) : version;
   }
 
   public async getVersionHistory(): Promise<VersionDto[]> {
@@ -54,7 +57,7 @@ export class VersionService {
     major,
     minor,
     isCurrent,
-  }: CreateVersionDto): Promise<CreatedVersion> {
+  }: CreateVersionDto): Promise<VersionDto> {
     const fromDb = await this.versionRepository.findOne({
       where: {
         major: major,
@@ -63,39 +66,36 @@ export class VersionService {
     });
     if (fromDb) throw new VersionConflictException(major, minor);
 
-    const created = await this.versionRepository.create({
+    const created = this.versionRepository.create({
       major,
       minor,
       isCurrent,
     });
-    const entitiesToSave: DeepPartial<Version>[] = [created];
 
     if (created.isCurrent) {
-      const currentVersion = await this.getCurrentVersion();
+      const currentVersion = await this.getCurrentVersion(false, false);
 
       if (currentVersion)
-        entitiesToSave.push({ ...currentVersion, isCurrent: false });
+        await this.versionRepository.save({
+          ...currentVersion,
+          isCurrent: false,
+        });
     }
 
-    const [savedOld, savedNew] = await this.versionRepository.save(
-      entitiesToSave,
-    );
+    const saved = await this.versionRepository.save(created);
 
     this.logger.debug(
       `Created version ${created.major}:${created.minor}, current: ${created.isCurrent}`,
     );
 
-    return {
-      old: this.mapper.map(savedOld, Version, VersionDto),
-      new: this.mapper.map(savedNew, Version, VersionDto),
-    };
+    return this.mapper.map(saved, Version, VersionDto);
   }
 
-  public async updateCurrentVersion({
-    major,
-    minor,
-    isCurrent,
-  }: CreateVersionDto): Promise<CreatedVersion> {
+  public async updateCurrentVersion(
+    major: number,
+    minor: number,
+    data: UpdateVersionDto,
+  ): Promise<VersionDto> {
     const fromDb = await this.versionRepository.findOne({
       where: {
         major: major,
@@ -104,30 +104,26 @@ export class VersionService {
     });
     if (!fromDb) throw new VersionNotFoundException(major, minor);
 
-    if (fromDb.isCurrent === isCurrent)
-      throw new VersionNotUpdatableException(major, minor, isCurrent);
+    if ('isCurrent' in data && fromDb.isCurrent === data.isCurrent)
+      throw new VersionNotUpdatableException(major, minor, data.isCurrent);
 
-    const entitiesToSave: DeepPartial<Version>[] = [];
-
-    if (!fromDb.isCurrent && isCurrent) {
-      const currentVersion = await this.getCurrentVersion();
+    if (!fromDb.isCurrent && data.isCurrent === true) {
+      const currentVersion = await this.getCurrentVersion(false, false);
 
       if (currentVersion)
-        entitiesToSave.push({ ...currentVersion, isCurrent: false });
+        await this.versionRepository.save({
+          ...currentVersion,
+          isCurrent: false,
+        });
     }
-    fromDb.isCurrent = isCurrent;
-    entitiesToSave.push(fromDb);
 
-    const [savedOld, savedNew] = await this.versionRepository.save(
-      entitiesToSave,
-    );
+    fromDb.isCurrent = data.isCurrent;
+
+    const updated = await this.versionRepository.save(fromDb);
 
     this.logger.debug(`Updated current version: ${major}:${minor}`);
 
-    return {
-      old: this.mapper.map(savedOld, Version, VersionDto),
-      new: this.mapper.map(savedNew, Version, VersionDto),
-    };
+    return this.mapper.map(updated, Version, VersionDto);
   }
 
   public async deleteVersion({

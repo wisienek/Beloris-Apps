@@ -1,7 +1,12 @@
 import { AutomapperProfile, InjectMapper } from '@automapper/nestjs';
-import { createMap, Mapper, MappingProfile } from '@automapper/core';
 import { Injectable } from '@nestjs/common';
-
+import {
+  createMap,
+  forMember,
+  mapFrom,
+  Mapper,
+  MappingProfile,
+} from '@automapper/core';
 import { VersionDto } from '@bella/dto';
 import { Version } from '@bella/db';
 
@@ -13,7 +18,15 @@ export class VersionMapper extends AutomapperProfile {
 
   get profile(): MappingProfile {
     return (mapper) => {
-      createMap(mapper, Version, VersionDto);
+      createMap(
+        mapper,
+        Version,
+        VersionDto,
+        forMember(
+          (d) => d.isCurrent,
+          mapFrom((s) => s.isCurrent),
+        ),
+      );
     };
   }
 }

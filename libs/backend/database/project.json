@@ -29,7 +29,13 @@
         "generate": {
           "forwardAllArgs": false,
           "commands": [
-            "yarn run typeorm -d libs/backend/database/src/data-source.ts migration:generate libs/backend/database/src/lib/migrations/{args.name}.ts"
+            "yarn run typeorm -d libs/backend/database/src/data-source.ts migration:generate libs/backend/database/src/lib/migrations/{args.name}"
+          ]
+        },
+        "revert": {
+          "forwardAllArgs": false,
+          "commands": [
+            "yarn run typeorm -d libs/backend/database/src/data-source.ts migration:revert"
           ]
         }
       }

@@ -11,23 +11,17 @@ import {
 export class Backpack {
   @PrimaryGeneratedColumn('uuid')
   @AutoMap()
-  id!: string;
-
-  @Column('text', {
-    nullable: true,
-  })
-  @AutoMap()
-  playerUuid?: string;
+  uuid!: string;
 
   @Column('text')
   @AutoMap()
   inventoryName!: string;
 
-  @Column('text', {
+  @Column('json', {
     nullable: true,
   })
   @AutoMap()
-  itemData?: string;
+  itemData?: unknown;
 
   @CreateDateColumn()
   @AutoMap()

@@ -1,12 +1,10 @@
+import Cookies from 'universal-cookie';
 import { useContext } from 'react';
 import axios from 'axios';
-import Cookies from 'universal-cookie';
-
 import { ApiRoutes } from '@bella/data';
-
 import { ErrorSeverity } from '../components/single/error-message';
-import { UserContext } from '../components/combined/use-user';
 import { ErrorContext } from '../components/combined/error-box';
+import { UserContext } from '../components/combined/use-user';
 
 export const useLogin = () => {
   const { addError } = useContext(ErrorContext);

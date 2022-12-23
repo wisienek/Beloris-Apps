@@ -1,14 +1,13 @@
 import { useState, useContext } from 'react';
 import { ErrorSeverity } from '../../single/error-message';
+import { ErrorContext } from '../../combined/error-box';
 import {
   PackageEditorStateContext,
   PackageEditorStateValue,
 } from '../sections/package-editor-state';
-import * as React from 'react';
-import { ErrorContext } from '../../combined/error-box';
 
 export const useUploadFiles = () => {
-  const { addError } = React.useContext(ErrorContext);
+  const { addError } = useContext(ErrorContext);
 
   const { version, isPackage, files, isCurrentVersion } =
     useContext<PackageEditorStateValue>(PackageEditorStateContext);
@@ -27,10 +26,8 @@ export const useUploadFiles = () => {
         return;
       }
 
-      // invoke upload
-      // FIXME: add isCurrentVersion
       window.api.files
-        .uploadPackage(version, packageInfo)
+        .uploadPackage(version, packageInfo, isCurrentVersion)
         .then(({ data, error }) => {
           setSending(false);
 
@@ -47,6 +44,8 @@ export const useUploadFiles = () => {
           }
 
           console.log(`Created package data: `, data);
+
+          addError(ErrorSeverity.SUCCESS, `Przesłano paczkę`);
         })
         .catch((error) => {
           console.error(error);

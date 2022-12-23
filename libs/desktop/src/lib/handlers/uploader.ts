@@ -13,11 +13,12 @@ import {
 import { getPackageName, getPackagePath } from '../utils';
 import { handlerWrapper } from '../handler-wrapper';
 import { readUserSettings } from './user-settings';
+import { changeVersionAsCurrent } from './version';
 
 export const uploadPackage = async (
-  event,
   version: VersionType,
   packageData: UploadPackageInfo,
+  setCurrentVersion?: boolean,
 ): Promise<IpcEventDto<DownloaderFileDto>> => {
   return await handlerWrapper(async () => {
     const { data: userSettings } = await readUserSettings();
@@ -26,12 +27,14 @@ export const uploadPackage = async (
       getPackagePath(userSettings.downloadTo.modpackFolder, version.major),
     );
 
-    const existingVersion = await getExistingVersion(version);
+    const existingVersion = setCurrentVersion
+      ? await changeVersionAsCurrent(version)
+      : await getExistingVersion(version);
 
-    console.log(
+    console.group(
       `${existingVersion ? 'Updating' : 'Uploading'} package data:`,
-      packageData,
     );
+    console.log(packageData);
 
     const { data: uploadedInfo }: AxiosResponse<DownloaderFileDto> =
       await axios({
@@ -47,10 +50,13 @@ export const uploadPackage = async (
       });
 
     console.log(`Uploaded package info`, uploadedInfo);
+    console.groupEnd();
 
+    const packageName = getPackageName(version.major);
     const formData = new FormData();
-    formData.append('file', buffer, getPackageName(version.major));
+    formData.append('file', buffer, packageName);
 
+    console.group(`Sending file ${packageName}`);
     const { data: uploadedPackage }: AxiosResponse<DownloaderFileDto> =
       await axios({
         method: 'post',
@@ -63,9 +69,10 @@ export const uploadPackage = async (
         headers: formData.getHeaders(),
       });
 
-    console.log(`Uploaded package file`, uploadedPackage);
+    console.log(`Uploaded package file:`, uploadedPackage);
+    console.groupEnd();
 
-    return null;
+    return uploadedPackage;
   }, `Error while uploading package`);
 };
 

@@ -1,12 +1,10 @@
 import React, { useContext } from 'react';
 import useFetch from 'react-fetch-hook';
 import * as _ from 'lodash';
-
-import { ApiRoutes } from '@bella/data';
 import { FileUploadDto, UploadPackageInfo, VersionDto } from '@bella/dto';
-
-import { ErrorContext } from '../../combined/error-box';
+import { ApiRoutes } from '@bella/data';
 import { ErrorSeverity } from '../../single/error-message';
+import { ErrorContext } from '../../combined/error-box';
 import { IStep } from '../../single/wizard-stepper';
 
 const stepMap: IStep[] = [
@@ -41,6 +39,7 @@ export interface PackageEditorStateValue {
   // data
   version: Record<'major' | 'minor', number>;
   handleVersionChange: (event: any, version: 'major' | 'minor') => void;
+  handleVersionSelect: (event: any) => void;
   versionHistory: VersionDto[] | undefined;
   currentVersion: VersionDto | undefined;
   isCurrentVersion: boolean;
@@ -63,6 +62,7 @@ export const PackageEditorStateContext =
     handleReset: () => null,
     version: { major: null, minor: null },
     handleVersionChange: (event: any, version: 'major' | 'minor') => null,
+    handleVersionSelect: (event: any) => null,
     versionHistory: undefined,
     currentVersion: undefined,
     isCurrentVersion: false,
@@ -102,6 +102,18 @@ const PackageEditorStateContextProvider = ({
     if (!newValue || newValue < 0 || version[type] === newValue) return;
 
     setVersion({ ...version, [type]: newValue });
+  };
+
+  const handleVersionSelect = (e: any) => {
+    const v = e.target.value;
+
+    if (typeof v !== 'string') {
+      console.log(`Not a string`, v);
+      return;
+    }
+    const [major, minor] = v.split('.').map(Number);
+
+    setVersion({ major, minor });
   };
 
   const handleCurrentVersionChange = () => {
@@ -181,6 +193,7 @@ const PackageEditorStateContextProvider = ({
         handleReset,
         version,
         handleVersionChange,
+        handleVersionSelect,
         versionHistory,
         currentVersion,
         isCurrentVersion,

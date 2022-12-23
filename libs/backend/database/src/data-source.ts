@@ -1,9 +1,10 @@
 import { DataSource, DataSourceOptions } from 'typeorm';
-import { getConfig } from './lib';
+import { getConfig, migrations } from './lib';
 
 const config = getConfig();
 const dataSource = new DataSource({
   ...config,
+  migrations,
   autoLoadEntities: true,
 } as unknown as DataSourceOptions);
 

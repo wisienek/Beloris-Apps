@@ -1,5 +1,5 @@
-import { extname } from 'path';
 import { MulterFile } from '../typings';
+import { extname } from 'path';
 import { FileType } from '@bella/enums';
 
 export const getFileExtension = (file: MulterFile | string) =>
@@ -12,7 +12,7 @@ export const getBucketDownloadPath = (
 ) => `https://${bucket}.s3.${awsRegion}.amazonaws.com/${key}`;
 
 export const getBundleKey = (major: number, file: MulterFile) =>
-  `versions/${major}/bundle${getFileExtension(file)}`;
+  `versions/${major}/bundle.tar${getFileExtension(file)}`;
 
 export const getFileKey = (
   major: number,

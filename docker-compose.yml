@@ -19,6 +19,8 @@ services:
       - ${GAME_DB_PORT}:3306
     volumes:
       - ./.docker/game_db:/var/lib/mysql
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
 
   redis:
     container_name: bella_redis

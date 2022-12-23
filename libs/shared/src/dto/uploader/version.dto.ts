@@ -1,14 +1,19 @@
-import { ApiProperty, ApiPropertyOptional, PickType } from '@nestjs/swagger';
 import { AutoMap } from '@automapper/classes';
 import { Type } from 'class-transformer';
 import {
-  IsBoolean,
+  ApiProperty,
+  ApiPropertyOptional,
+  OmitType,
+  PartialType,
+  PickType,
+} from '@nestjs/swagger';
+import {
   IsInt,
+  IsISO8601,
   IsOptional,
   IsPositive,
   IsUUID,
 } from 'class-validator';
-import { TransformBoolean } from '../../utils';
 import { DownloaderFileDto } from './downloader-file.dto';
 
 export class VersionDto {
@@ -37,23 +42,23 @@ export class VersionDto {
   @AutoMap()
   minor: number;
 
+  @AutoMap()
   @ApiProperty({
     description: 'Whether the version currently applies',
   })
-  @IsBoolean()
-  @TransformBoolean()
-  @AutoMap()
   isCurrent: boolean;
 
   @ApiProperty({
     description: 'Timestamp of creation',
   })
+  @IsISO8601()
   @AutoMap()
   createdAt: Date;
 
   @ApiProperty({
     description: 'Timestamp of last update',
   })
+  @IsISO8601()
   @AutoMap()
   updatedAt: Date;
 
@@ -61,9 +66,13 @@ export class VersionDto {
     description: `Files in current version`,
   })
   @IsOptional()
-  @AutoMap(() => [DownloaderFileDto])
+  @AutoMap(() => DownloaderFileDto)
   files: DownloaderFileDto[] = [];
 }
+
+export class UpdateVersionDto extends PartialType(
+  OmitType(VersionDto, ['major', 'minor', 'files', 'createdAt', 'updatedAt']),
+) {}
 
 export class CreateVersionDto extends PickType(VersionDto, [
   'major',
@@ -75,16 +84,3 @@ export class DeleteVersionDto extends PickType(VersionDto, [
   'major',
   'minor',
 ] as const) {}
-
-export class CreatedVersion {
-  @ApiProperty({
-    description: `Created version`,
-  })
-  new: VersionDto;
-
-  @ApiPropertyOptional({
-    description: `Old version when changing current`,
-  })
-  @IsOptional()
-  old?: VersionDto;
-}

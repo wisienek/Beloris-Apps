@@ -171,7 +171,6 @@ export class FileUploaderService {
     uuid: string,
     isPackage = false,
   ): Promise<DownloaderFileDto> {
-    this.logger.debug(`file: ${!!file}, uuid: ${uuid}`);
     if (!file || !uuid) throw new FileNotFoundException();
 
     const fileRecord = await this.filesRepository.findOne({
@@ -179,7 +178,6 @@ export class FileUploaderService {
         id: uuid,
       },
     });
-    this.logger.debug(`FileRecord: ${!!fileRecord}`);
     if (!fileRecord) throw new FileRecordNotFoundException(uuid);
 
     const fileBuffer: Buffer = file.buffer;
