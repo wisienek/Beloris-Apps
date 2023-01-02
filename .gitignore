@@ -48,6 +48,6 @@ ormconfig.json
 
 *.pem
 
-/**/*.pkvars.*
-/**/*.tfvars.*
+/**/*.pkvars*
+/**/*.tfvars*
 .terraform
