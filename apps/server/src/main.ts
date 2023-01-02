@@ -1,22 +1,21 @@
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
+import { NestFactory, Reflector } from '@nestjs/core';
+import * as cookieParser from 'cookie-parser';
+import * as session from 'express-session';
+import * as passport from 'passport';
 import {
   ClassSerializerInterceptor,
   Logger,
   ValidationPipe,
 } from '@nestjs/common';
-import { NestFactory, Reflector } from '@nestjs/core';
-
-import * as cookieParser from 'cookie-parser';
-import * as session from 'express-session';
-import * as passport from 'passport';
-
-import { AppModule } from './app/app.module';
 import { getStaticConfig, ServerConfig } from '@bella/config';
+import { AppModule } from './app/app.module';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
   const serverConfig = getStaticConfig(ServerConfig);
+  const docsPath = `${serverConfig.globalPrefix}/docs`;
 
   app.setGlobalPrefix(serverConfig.globalPrefix);
   app.enableCors({
@@ -41,7 +40,7 @@ async function bootstrap() {
       cookie: {
         maxAge: 86400000,
       },
-      secret: '##13-secrets-of-astras-and-felina@@',
+      secret: serverConfig.cookieSecret,
       resave: false,
       saveUninitialized: false,
     }),
@@ -58,7 +57,7 @@ async function bootstrap() {
     .setVersion('1.0')
     .build();
   const document = SwaggerModule.createDocument(app, docsConfig);
-  SwaggerModule.setup(`${serverConfig.globalPrefix}/docs`, app, document);
+  SwaggerModule.setup(docsPath, app, document);
 
   await app.listen(serverConfig.port);
   Logger.log(

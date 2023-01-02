@@ -16,6 +16,11 @@ export class _ServerEnv {
   @IsNotEmpty()
   @Expose()
   GLOBAL_PREFIX = 'api';
+
+  @IsString()
+  @IsNotEmpty()
+  @Expose()
+  COOKIE_SECRET: string;
 }
 
 export const ServerEnv = registerAs('server', () =>

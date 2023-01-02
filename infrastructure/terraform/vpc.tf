@@ -1,5 +1,6 @@
 module "bella_vpc" {
-  source = "registry.terraform.io/terraform-aws-modules/vpc/aws"
+  source  = "registry.terraform.io/terraform-aws-modules/vpc/aws"
+  version = "3.14.0"
 
   name = "bella_vpc"
 

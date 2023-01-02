@@ -18,4 +18,8 @@ export class ServerConfig extends BaseConfig {
   get globalPrefix() {
     return this.env.GLOBAL_PREFIX;
   }
+
+  get cookieSecret() {
+    return this.env.COOKIE_SECRET;
+  }
 }

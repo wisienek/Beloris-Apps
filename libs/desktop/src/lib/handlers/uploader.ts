@@ -48,6 +48,7 @@ export const uploadPackage = async (
             )
           : ApiRoutes.PACKAGE(version.major, version.minor),
         data: packageData,
+        withCredentials: true,
       });
 
     console.log(`Uploaded package info`, uploadedInfo);
@@ -68,6 +69,7 @@ export const uploadPackage = async (
         ),
         data: formData,
         headers: formData.getHeaders(),
+        withCredentials: true,
       });
 
     console.log(`Uploaded package file:`, uploadedPackage);
@@ -114,6 +116,7 @@ export const uploadFiles = async (
           method: 'post',
           url: fileDataPostUrl,
           data: fileData,
+          withCredentials: true,
         }).then(
           async ({ data: dFileData }: AxiosResponse<DownloaderFileDto>) => {
             console.log(`Received data:`, dFileData);
@@ -133,6 +136,7 @@ export const uploadFiles = async (
               url: sendFileUrl,
               data: formData,
               headers: formData.getHeaders(),
+              withCredentials: true,
             });
 
             console.log(`File sent successfully!`, data);

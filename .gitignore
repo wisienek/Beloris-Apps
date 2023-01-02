@@ -39,6 +39,7 @@ testem.log
 .DS_Store
 Thumbs.db
 
+.data/
 .env
 .env.test
 .docker/
@@ -47,5 +48,6 @@ ormconfig.json
 
 *.pem
 
-/**/*.tfvars
+/**/*.pkvars.*
+/**/*.tfvars.*
 .terraform

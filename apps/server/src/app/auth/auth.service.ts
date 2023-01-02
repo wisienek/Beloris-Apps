@@ -4,7 +4,6 @@ import {
   Inject,
   Injectable,
   Logger,
-  UnauthorizedException,
 } from '@nestjs/common';
 import * as DiscordOauth2 from 'discord-oauth2';
 import { Request, Response } from 'express';
@@ -19,6 +18,7 @@ import { DiscordConfig } from '@bella/config';
 import { TokenDto } from '@bella/dto';
 
 import { DiscordService } from '../discord';
+import { NoTokenException } from './errors';
 
 @Injectable()
 export class AuthService {
@@ -81,7 +81,7 @@ export class AuthService {
   }
 
   public async fetchUser(token: TokenDto): Promise<DiscordOauth2.User> {
-    if (!token) throw new UnauthorizedException(`No token!`);
+    if (!token) throw new NoTokenException();
 
     const cacheKey = AuthService.getUserCacheKey(token.access_token);
 
@@ -104,7 +104,7 @@ export class AuthService {
     token: TokenDto,
     server: ServerListEnum,
   ): Promise<DiscordOauth2.Member> {
-    if (!token) throw new UnauthorizedException(`No token!`);
+    if (!token) throw new NoTokenException();
     if (!server) throw new BadRequestException(`No ServerID provided!`);
 
     const cacheKey = AuthService.getMemberCacheKey(token.access_token, server);

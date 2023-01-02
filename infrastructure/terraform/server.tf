@@ -3,7 +3,7 @@ data "aws_ami" "server_image" {
 
   filter {
     name   = "name"
-    values = ["amzn2-ami-kernel-5.10-*"]
+    values = ["ubuntu-jammy-22.04-amd64-server-*"]
   }
 
   filter {
@@ -25,8 +25,8 @@ resource "aws_instance" "server_image_instance" {
   vpc_security_group_ids = [element(module.server_sg, 0).security_group_id]
 
   root_block_device {
-    volume_type = "gp2"
-    volume_size = 20
+    volume_type = "gp3"
+    volume_size = 25
   }
 
   tags = {
@@ -36,6 +36,11 @@ resource "aws_instance" "server_image_instance" {
   lifecycle {
     ignore_changes = [ami]
   }
+
+  depends_on = [
+    module.server_sg,
+    module.bella_vpc
+  ]
 }
 
 resource "aws_eip" "server_eip" {

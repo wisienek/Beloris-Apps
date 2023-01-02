@@ -14,7 +14,8 @@
         "tsConfig": "apps/server/tsconfig.app.json",
         "assets": [
           "apps/server/src/assets"
-        ]
+        ],
+        "generatePackageJson": true
       },
       "configurations": {
         "production": {
@@ -27,6 +28,25 @@
               "with": "apps/server/src/environments/environment.prod.ts"
             }
           ]
+        }
+      }
+    },
+    "dockerize": {
+      "executor": "@nx-tools/nx-docker:build",
+      "options": {
+        "file": "./docker/api/Dockerfile",
+        "push": true,
+        "platforms": ["linux/amd64"],
+        "context": ".",
+        "build-args": [
+          "APP_DIR=apps/server",
+          "NODE_LIBS=mysql2"
+        ]
+      },
+      "configurations": {
+        "local": {
+          "push": false,
+          "tags": ["bella-server"]
         }
       }
     },
