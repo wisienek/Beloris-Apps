@@ -10,8 +10,10 @@ export const sortRolesForServers: (
   for (const role of roles) {
     const server = getDcByRole(role);
     if (!server) throw new Error(`No server for ${role}`);
+    if(!data[server])
+      data[server] = [];
 
-    data[server] = (data[server] ?? []).push(role);
+    data[server].push(role);
   }
 
   return data;

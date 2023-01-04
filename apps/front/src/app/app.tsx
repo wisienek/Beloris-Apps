@@ -4,7 +4,7 @@ import { Route } from 'react-router-dom';
 import MainPage from './pages/main-page';
 import SettingsPage from './pages/settings-page';
 import { ErrorBox } from './components/combined/error-box';
-import OuterLayerDrawer from './components/combined/outer-layer-drawer';
+import OuterLayerDrawer from './components/drawer-menu/sections/outer-layer-drawer';
 import PackageEditorPage from './pages/package-editor';
 import PackageEditorStateContextProvider from './components/package-editor/sections/package-editor-state';
 import { useLogin } from './hooks';

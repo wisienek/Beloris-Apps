@@ -4,7 +4,7 @@ import axios from 'axios';
 import { ApiRoutes } from '@bella/data';
 import { ErrorSeverity } from '../components/single/error-message';
 import { ErrorContext } from '../components/combined/error-box';
-import { UserContext } from '../components/combined/use-user';
+import { UserContext } from '../components/context/user-context';
 
 export const useLogin = () => {
   const { addError } = useContext(ErrorContext);

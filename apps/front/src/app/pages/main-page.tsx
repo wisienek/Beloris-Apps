@@ -1,27 +1,23 @@
-import * as React from 'react';
+import { useContext, useState, useMemo, ChangeEvent } from 'react';
+import { Skeleton, Container, Grid, Paper } from '@mui/material';
 import useFetch from 'react-fetch-hook';
 import * as _ from 'lodash';
-
-import { Skeleton, Container, Grid, Paper } from '@mui/material';
-
-import { ApiRoutes } from '@bella/data';
 import { DownloaderFileDto, FileListDto } from '@bella/dto';
-
+import { ApiRoutes } from '@bella/data';
+import VersionMenuSection from '../components/main-page/sections/version-menu-section';
 import LinearProgressWithLabel from '../components/single/linear-progress-with-label';
-import VersionDetails from '../components/combined/version-details';
-import VersionMenu from '../components/combined/version-menu';
-import { Copyright } from '../components/single/copyright';
-import Title from '../components/single/title';
-import FileTableV2Container from '../components/combined/files-table-v2';
+import VersionSummary from '../components/main-page/sections/version-summary';
 import { SettingsContext, SettingsContextValue } from '../settings/settings';
+import FileTableV2Container from '../components/combined/files-table-v2';
 import NoVersionModal from '../components/single/no-version-modal';
+import { Copyright } from '../components/single/copyright';
 
 function DashboardContent() {
-  const { settings } = React.useContext<SettingsContextValue>(SettingsContext);
-  const [choseFilesOpen, setChoseFilesOpen] = React.useState<boolean>(false);
-  const [filesToDownload, setFilesToDownload] = React.useState<
-    DownloaderFileDto[]
-  >([]);
+  const { settings } = useContext<SettingsContextValue>(SettingsContext);
+  const [choseFilesOpen, setChoseFilesOpen] = useState<boolean>(false);
+  const [filesToDownload, setFilesToDownload] = useState<DownloaderFileDto[]>(
+    [],
+  );
   const filesToDownloadFetch = useFetch<FileListDto>(
     ApiRoutes.GET_UPDATE_FILES(
       settings?.version?.currentVersion?.major ?? 0,
@@ -32,7 +28,7 @@ function DashboardContent() {
     },
   );
 
-  const isSameVersion = React.useMemo<boolean>(() => {
+  const isSameVersion = useMemo<boolean>(() => {
     if (
       !settings?.version?.currentVersion ||
       !filesToDownloadFetch?.data?.version
@@ -48,7 +44,7 @@ function DashboardContent() {
   }, [settings?.version?.currentVersion, filesToDownloadFetch.data]);
 
   const toggleFileToDownload = (
-    event: React.ChangeEvent<HTMLInputElement>,
+    event: ChangeEvent<HTMLInputElement>,
     file: DownloaderFileDto,
   ) => {
     event.preventDefault();
@@ -74,50 +70,18 @@ function DashboardContent() {
 
       <Grid container spacing={3}>
         <Grid item xs={12} md={8} lg={9}>
-          <Paper
-            sx={{
-              p: 2,
-              display: 'flex',
-              flexDirection: 'column',
-              height: '100%',
-            }}
-          >
-            {filesToDownloadFetch.isLoading && <Skeleton animation="wave" />}
-            {filesToDownloadFetch.data && (
-              <>
-                <Title>Podsumowanie wersji serwerowej</Title>
-                <VersionDetails
-                  isLoading={filesToDownloadFetch.isLoading}
-                  error={filesToDownloadFetch?.error}
-                  fetchedVersion={filesToDownloadFetch.data.version}
-                  fetchedFilesToDownload={filesToDownloadFetch.data.files}
-                  downloadedVersion={settings?.version?.currentVersion}
-                  isSameVersion={isSameVersion}
-                />
-              </>
-            )}
-          </Paper>
+          <VersionSummary
+            isSameVersion={isSameVersion}
+            filesToDownloadFetch={filesToDownloadFetch}
+          />
         </Grid>
 
         <Grid item xs={12} md={4} lg={3}>
-          <Paper
-            sx={{
-              p: 2,
-              display: 'flex',
-              flexDirection: 'column',
-              height: '100%',
-            }}
-          >
-            <Title>Menu wersji</Title>
-            {filesToDownloadFetch.isLoading && <Skeleton animation="wave" />}
-            <br />
-            <VersionMenu
-              settings={settings}
-              isLoading={filesToDownloadFetch.isLoading}
-              chooserToggle={toggleFileContainer}
-              isSameVersion={isSameVersion}
-            />
-          </Paper>
+          <VersionMenuSection
+            isSameVersion={isSameVersion}
+            filesToDownloadFetch={filesToDownloadFetch}
+            toggleFileContainer={toggleFileContainer}
+          />
         </Grid>
 
         <Grid item xs={12}>

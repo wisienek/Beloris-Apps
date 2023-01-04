@@ -40,4 +40,6 @@ export class ApiRoutes {
   public static MEMBER_ADMIN = `${ApiRoutes.SERVER_URL}/auth/me/${ServerListEnum.BELORIS_ADMIN}`;
   public static MEMBER_Main_ROLES = `${ApiRoutes.MEMBER_Main}/roles`;
   public static MEMBER_ADMIN_ROLES = `${ApiRoutes.MEMBER_ADMIN}/roles`;
+  // test
+  public static ROLES_TEST = `${ApiRoutes.SERVER_URL}/auth/test`;
 }

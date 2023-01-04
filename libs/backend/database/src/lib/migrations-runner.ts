@@ -13,6 +13,6 @@ export const migrationsRunner = async () => {
     migrations,
   }).initialize();
 
-  await connection.runMigrations({ transaction: 'all' });
+  await connection.runMigrations({ transaction: 'each' });
   await connection.destroy();
 };

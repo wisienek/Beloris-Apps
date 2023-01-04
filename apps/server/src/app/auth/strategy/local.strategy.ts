@@ -19,7 +19,6 @@ export class LocalStrategy extends PassportStrategy(Strategy) {
 
   async validate(request: Request): Promise<DiscordOauth2.User> {
     const token = request.cookies[CookiesEnum.DISCORD_TOKEN];
-    console.log(token);
     if (!token) throw new NoTokenException(CookiesEnum.DISCORD_TOKEN);
 
     const parsedToken: TokenDto = JSON.parse(token);

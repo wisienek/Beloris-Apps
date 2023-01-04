@@ -1,24 +1,22 @@
-import * as React from 'react';
-
-import { Button, Grid } from '@mui/material';
 import SettingsIcon from '@mui/icons-material/Settings';
+import { Button, Grid } from '@mui/material';
 import { Link } from 'react-router-dom';
-
-import { UserSettings } from '@bella/schema';
+import { useContext } from 'react';
+import { SettingsContext, SettingsContextValue } from '../../settings/settings';
 
 export interface VersionMenuArgs {
   isLoading: boolean;
   chooserToggle: () => void;
   isSameVersion: boolean;
-  settings: UserSettings;
 }
 
 const VersionMenu = ({
-  settings,
   isLoading,
   chooserToggle,
   isSameVersion,
 }: VersionMenuArgs) => {
+  const { settings } = useContext<SettingsContextValue>(SettingsContext);
+
   return (
     <Grid container direction="column" spacing={2} columns={1}>
       <Grid item alignItems="center" justifyContent="center">

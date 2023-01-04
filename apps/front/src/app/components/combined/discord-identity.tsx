@@ -12,7 +12,7 @@ import {
 import { styled } from '@mui/material/styles';
 import LogoutIcon from '@mui/icons-material/Logout';
 
-import { UserContext } from './use-user';
+import { UserContext } from '../context/user-context';
 import Tooltip from '../single/tooltip';
 
 const AvatarWrapper = styled(Avatar)(

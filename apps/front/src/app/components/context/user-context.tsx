@@ -8,7 +8,7 @@ import { ApiRoutes } from '@bella/data';
 
 import Cookies from 'universal-cookie';
 import { CookiesEnum } from '@bella/enums';
-import { ErrorContext } from './error-box';
+import { ErrorContext } from '../combined/error-box';
 import { ErrorSeverity } from '../single/error-message';
 
 export interface UserContextValue {

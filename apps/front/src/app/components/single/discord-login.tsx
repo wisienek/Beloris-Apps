@@ -6,7 +6,7 @@ import Cookies from 'universal-cookie';
 
 import { ApiRoutes } from '@bella/data';
 
-import { UserContext, UserContextValue } from '../combined/use-user';
+import { UserContext, UserContextValue } from '../context/user-context';
 import DiscordIdentity from '../combined/discord-identity';
 
 const DiscordLogin = () => {

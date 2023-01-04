@@ -1,4 +1,4 @@
-import * as React from 'react';
+import { ReactNode, useContext, useState } from 'react';
 import { Link } from 'react-router-dom';
 import {
   Box,
@@ -12,19 +12,19 @@ import {
 } from '@mui/material';
 import { Menu, ChevronLeft } from '@mui/icons-material/';
 import SettingsIcon from '@mui/icons-material/Settings';
-
-import { AppBar } from '../single/app-bar';
-import { Drawer } from '../single/drawer';
-import { MainListItems, SecondaryListItems } from '../single/list-items';
-import Bg from '../../../assets/images/background.png';
-import { UserContext } from './use-user';
+import { MainListItems, SecondaryListItems } from '../molecules/list-items';
+import Bg from '../../../../assets/images/background.png';
+import { UserContext } from '../../context/user-context';
+import { AppBar } from '../../single/app-bar';
+import { Drawer } from '../../single/drawer';
+import TestingNav from '../molecules/testing-nav';
 
 const mdTheme = createTheme();
 
-const OuterLayerDrawer = ({ children }: { children: React.ReactNode }) => {
-  const { user, belorisAdminMember } = React.useContext(UserContext);
+const OuterLayerDrawer = ({ children }: { children: ReactNode }) => {
+  const { user, belorisAdminMember } = useContext(UserContext);
+  const [open, setOpen] = useState(false);
 
-  const [open, setOpen] = React.useState(false);
   const toggleDrawer = () => setOpen(!open);
 
   return (
@@ -78,14 +78,21 @@ const OuterLayerDrawer = ({ children }: { children: React.ReactNode }) => {
           <Divider />
           <List component="nav">
             <MainListItems />
-            {user && (
+            {user ? (
               <>
                 <Divider sx={{ my: 1 }} />
                 <SecondaryListItems
                   user={user}
                   adminMember={belorisAdminMember}
                 />
+                {belorisAdminMember ? (
+                  <TestingNav member={belorisAdminMember} />
+                ) : (
+                  <></>
+                )}
               </>
+            ) : (
+              <></>
             )}
           </List>
         </Drawer>

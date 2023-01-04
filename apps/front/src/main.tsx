@@ -4,7 +4,7 @@ import { HashRouter } from 'react-router-dom';
 
 import App from './app/app';
 import { ErrorBoxContext } from './app/components/combined/error-box';
-import { UserProvider } from './app/components/combined/use-user';
+import { UserProvider } from './app/components/context/user-context';
 import ThemeProvider from './app/components/theme/ThemeProvider';
 import SettingsContextProvider from './app/settings/settings';
 
