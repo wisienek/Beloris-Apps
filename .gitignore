@@ -48,6 +48,10 @@ ormconfig.json
 
 *.pem
 
+# terraform
 /**/*.pkvars*
 /**/*.tfvars*
+infrastructure/**/test
 .terraform
+*.tfstate*
+.terraform.lock.hcl
