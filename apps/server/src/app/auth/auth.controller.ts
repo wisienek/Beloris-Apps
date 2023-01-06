@@ -4,7 +4,11 @@ import { ApiOkResponse, ApiParam, ApiTags } from '@nestjs/swagger';
 import { Request, Response } from 'express';
 import { join } from 'path';
 
-import { DCAdminServerRoles, DCMainServerRoles, ServerListEnum } from '@bella/enums';
+import {
+  DCAdminServerRoles,
+  DCMainServerRoles,
+  ServerListEnum,
+} from '@bella/enums';
 import { TokenDto } from '@bella/dto';
 
 import { AuthService } from './auth.service';
@@ -82,7 +86,7 @@ export class AuthController {
     return this.authService.fetchMemberRoles(user, server);
   }
 
-  @Auth(DCAdminServerRoles.MOD_MEISTER, DCAdminServerRoles.NARRATOR, DCMainServerRoles.NARRATOR)
+  @Auth(DCAdminServerRoles.MOD_MEISTER)
   @Get('test')
   test() {
     return 'OK';
