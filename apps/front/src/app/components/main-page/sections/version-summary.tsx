@@ -28,11 +28,7 @@ const VersionSummary = (data: VersionSummaryArgs) => {
           height: '100%',
         }}
       >
-        {data.filesToDownloadFetch.isLoading || true ? (
-          <VersionMenuLoader />
-        ) : (
-          <></>
-        )}
+        {data.filesToDownloadFetch.isLoading ? <VersionMenuLoader /> : <></>}
 
         {data.filesToDownloadFetch.data ? (
           <>

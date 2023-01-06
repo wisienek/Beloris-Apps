@@ -9,7 +9,7 @@ export class FileConflictException extends ConflictException {
     fileAction: FileAction,
   ) {
     super(
-      `file for version ${major}:${minor} and savePath ${savePath} [${fileAction}] already exists, use Patch`,
+      `Plik dla wersji ${major}:${minor} i zapisie ${savePath} [${fileAction}] już istnieje, użyj patczka!`,
     );
   }
 }

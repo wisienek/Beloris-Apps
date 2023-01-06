@@ -201,11 +201,11 @@ export class FileUploaderService {
     this.logger.debug(
       `Uploading ${isPackage ? 'bundle' : 'file'} with size: ${fileSize}Mb`,
     );
-    // await this.awsService.upload(
-    //   fileKey,
-    //   fileBuffer,
-    //   this.awsConfig.uploaderBucket,
-    // );
+    await this.awsService.upload(
+      fileKey,
+      fileBuffer,
+      this.awsConfig.uploaderBucket,
+    );
     this.logger.debug(
       `Uploaded ${isPackage ? 'bundle' : 'file'} file: ${downloadPath}`,
     );

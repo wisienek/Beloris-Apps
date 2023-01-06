@@ -1,8 +1,10 @@
 import { IpcEventDto } from '@bella/dto';
+import { ElectronLogger } from './utils';
 
 export const handlerWrapper = async <U>(
   fn: () => U | Promise<U>,
-  errorMessage?: string,
+  logger?: ElectronLogger,
+  message?: string,
 ): Promise<IpcEventDto<U>> => {
   let replyMessage: IpcEventDto<U>;
 
@@ -20,7 +22,8 @@ export const handlerWrapper = async <U>(
       data: null,
     };
 
-    console.error(replyMessage.error);
+    (logger ?? console).error(replyMessage.error);
+    message && (logger ?? console).error(message);
   }
 
   return replyMessage;

@@ -18,7 +18,7 @@ import {
   ApiTags,
 } from '@nestjs/swagger';
 import { AllowedFileSizes, AllowedUploaderFileExtensions } from '@bella/data';
-import { DCTestServerRoles, FileType } from '@bella/enums';
+import { DCAdminServerRoles, FileType } from '@bella/enums';
 import {
   FileListDto,
   GetFileListDto,
@@ -65,7 +65,7 @@ export class FileUploaderController {
     return await this.fileUploaderService.getFileList(data, major, minor);
   }
 
-  @Auth(DCTestServerRoles.MOD_MASTER)
+  @Auth(DCAdminServerRoles.MOD_MEISTER)
   @Post('package')
   async createPackageData(
     @Param('major', ParseIntPipe) major: number,
@@ -74,7 +74,7 @@ export class FileUploaderController {
     return await this.fileUploaderService.createPackageData(major, fileData);
   }
 
-  @Auth(DCTestServerRoles.MOD_MASTER)
+  @Auth(DCAdminServerRoles.MOD_MEISTER)
   @Patch('package/:uuid')
   updatePackageData(
     @Param('uuid', ParseUUIDPipe) uuid: string,
@@ -83,7 +83,7 @@ export class FileUploaderController {
     return this.fileUploaderService.updateFileData(uuid, fileData);
   }
 
-  @Auth(DCTestServerRoles.MOD_MASTER)
+  @Auth(DCAdminServerRoles.MOD_MEISTER)
   @Post('package/:uuid')
   @ApiParam({
     name: 'uuid',
@@ -115,7 +115,7 @@ export class FileUploaderController {
     );
   }
 
-  @Auth(DCTestServerRoles.MOD_MASTER)
+  @Auth(DCAdminServerRoles.MOD_MEISTER)
   @Post('file-list')
   async uploadFileData(
     @Param('major', ParseIntPipe) major: number,
@@ -125,7 +125,7 @@ export class FileUploaderController {
     return this.fileUploaderService.uploadFileData(major, minor, fileData);
   }
 
-  @Auth(DCTestServerRoles.MOD_MASTER)
+  @Auth(DCAdminServerRoles.MOD_MEISTER)
   @Post('file-list/:uuid')
   @ApiParam({
     name: 'uuid',

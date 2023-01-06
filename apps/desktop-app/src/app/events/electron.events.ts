@@ -18,8 +18,7 @@ import {
   logout,
   getDownloaderFiles,
   buildPackage,
-  uploadPackage,
-  uploadFiles,
+  UploaderHandler,
 } from '@bella/dp';
 import { VersionType } from '@bella/types';
 import { FileUploadDto, UploadPackageInfo } from '@bella/dto';
@@ -29,6 +28,11 @@ export default class ElectronEvents {
     return ipcMain;
   }
 }
+
+// init handlers
+const uploaderHandler = new UploaderHandler();
+
+// handle events
 
 ipcMain.handle(IPCChannels.GET_APP_VERSION, () => {
   console.log(`Fetching application version... [v${environment.version}]`);
@@ -65,7 +69,7 @@ ipcMain.handle(
     version: VersionType,
     packageData: UploadPackageInfo,
     setCurrentVersion?: boolean,
-  ) => uploadPackage(version, packageData, setCurrentVersion),
+  ) => uploaderHandler.uploadPackage(version, packageData, setCurrentVersion),
 );
 ipcMain.handle(
   IPCChannels.UPLOAD_FILES,
@@ -74,7 +78,7 @@ ipcMain.handle(
     version: VersionType,
     filesData: Array<FileUploadDto>,
     setCurrentVersion?: boolean,
-  ) => uploadFiles(version, filesData, setCurrentVersion),
+  ) => uploaderHandler.uploadFiles(version, filesData, setCurrentVersion),
 );
 
 // Handle App termination

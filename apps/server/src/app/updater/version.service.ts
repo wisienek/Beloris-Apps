@@ -42,6 +42,23 @@ export class VersionService {
     return map ? this.mapper.map(version, Version, VersionDto) : version;
   }
 
+  public async getSpecificVersion(
+    major: number,
+    minor: number,
+    map = true,
+    withFiles = true,
+  ): Promise<VersionDto | Version> {
+    const version = await this.versionRepository.findOne({
+      relations: withFiles ? ['files'] : [],
+      where: {
+        major,
+        minor,
+      },
+    });
+
+    return map ? this.mapper.map(version, Version, VersionDto) : version;
+  }
+
   public async getVersionHistory(): Promise<VersionDto[]> {
     const history = await this.versionRepository.find({
       order: {

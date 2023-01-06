@@ -53,6 +53,8 @@ export const useUploadFiles = () => {
         })
         .catch((error) => {
           console.error(error);
+        })
+        .finally(() => {
           setSending(false);
         });
     } else {
@@ -107,6 +109,7 @@ export const useUploadFiles = () => {
           console.log(`Created files data: `, data);
 
           addError(ErrorSeverity.SUCCESS, `Przesłano pliki`);
+          setSent(true);
         })
         .catch((error) => {
           console.error(error);

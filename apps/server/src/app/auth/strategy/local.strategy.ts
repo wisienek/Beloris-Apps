@@ -1,13 +1,10 @@
 import { PassportStrategy } from '@nestjs/passport';
-import { Injectable } from '@nestjs/common';
-
 import * as DiscordOauth2 from 'discord-oauth2';
+import { Injectable } from '@nestjs/common';
 import { Strategy } from 'passport-local';
 import { Request } from 'express';
-
 import { CookiesEnum } from '@bella/enums';
 import { TokenDto } from '@bella/dto';
-
 import { NoTokenException, NoUserException } from '../errors';
 import { AuthService } from '../auth.service';
 

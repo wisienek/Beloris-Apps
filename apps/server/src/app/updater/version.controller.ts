@@ -1,7 +1,23 @@
-import { Body, Controller, Delete, Get, Param, ParseIntPipe, Patch, Post } from '@nestjs/common';
 import { ApiOkResponse, ApiTags } from '@nestjs/swagger';
-import { CreateVersionDto, DeleteVersionDto, UpdateVersionDto, VersionDto } from '@bella/dto';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  ParseIntPipe,
+  Patch,
+  Post,
+} from '@nestjs/common';
+import { DCAdminServerRoles } from '@bella/enums';
+import {
+  CreateVersionDto,
+  DeleteVersionDto,
+  UpdateVersionDto,
+  VersionDto,
+} from '@bella/dto';
 import { VersionService } from './version.service';
+import { Auth } from '../auth';
 
 @ApiTags('Uploader - Versions')
 @Controller('uploader/version')
@@ -17,6 +33,7 @@ export class VersionController {
     return await this.versionService.getCurrentVersion();
   }
 
+  @Auth(DCAdminServerRoles.MOD_MEISTER)
   @Post()
   @ApiOkResponse({
     type: VersionDto,
@@ -27,6 +44,7 @@ export class VersionController {
     return await this.versionService.createVersion(data);
   }
 
+  @Auth(DCAdminServerRoles.MOD_MEISTER)
   @Patch(':major/:minor')
   @ApiOkResponse({
     type: VersionDto,
@@ -36,11 +54,12 @@ export class VersionController {
   async updateVersion(
     @Param('major', ParseIntPipe) major: number,
     @Param('minor', ParseIntPipe) minor: number,
-    @Body() data: UpdateVersionDto
+    @Body() data: UpdateVersionDto,
   ) {
     return await this.versionService.updateCurrentVersion(major, minor, data);
   }
 
+  @Auth(DCAdminServerRoles.MOD_MEISTER)
   @Delete()
   @ApiOkResponse({
     type: VersionDto,
@@ -58,5 +77,13 @@ export class VersionController {
   })
   async getVersionHistory() {
     return await this.versionService.getVersionHistory();
+  }
+
+  @Get(':major/:minor')
+  async getVersion(
+    @Param('major', ParseIntPipe) major: number,
+    @Param('minor', ParseIntPipe) minor: number,
+  ) {
+    return await this.versionService.getSpecificVersion(major, minor);
   }
 }

@@ -1,5 +1,5 @@
-import { ApiProperty } from '@nestjs/swagger';
-import { IsBoolean } from 'class-validator';
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
+import { IsBoolean, IsOptional } from 'class-validator';
 
 import { DownloaderFileDto } from './downloader-file.dto';
 import { TransformBoolean } from '../../utils';
@@ -23,10 +23,11 @@ export class FileListDto {
 }
 
 export class GetFileListDto {
-  @ApiProperty({
+  @ApiPropertyOptional({
     description: 'Should return only required files?',
   })
-  @TransformBoolean()
+  @IsOptional()
   @IsBoolean()
+  @TransformBoolean()
   requiredOnly = false;
 }

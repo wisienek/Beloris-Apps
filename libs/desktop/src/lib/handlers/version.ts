@@ -70,3 +70,13 @@ export const getOrCreateVersion: (
 
   return createdVersion;
 };
+
+export const getVersion: (version: VersionType) => Promise<VersionDto> = async (
+  v,
+) => {
+  const { data: version } = await axios({
+    method: 'get',
+    url: ApiRoutes.UPDATE_VERSION(v),
+  });
+  return version;
+};
