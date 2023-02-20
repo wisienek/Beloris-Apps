@@ -1,3 +1,3 @@
 locals {
-  ami_name  = "linux-game-server-${var.env}"
+  ami_name  = "api-and-forum-${var.env}"
 }

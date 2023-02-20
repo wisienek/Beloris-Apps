@@ -18,7 +18,7 @@ import {
   logout,
   getDownloaderFiles,
   buildPackage,
-  UploaderHandler,
+  uploaderHandler,
 } from '@bella/dp';
 import { VersionType } from '@bella/types';
 import { FileUploadDto, UploadPackageInfo } from '@bella/dto';
@@ -28,9 +28,6 @@ export default class ElectronEvents {
     return ipcMain;
   }
 }
-
-// init handlers
-const uploaderHandler = new UploaderHandler();
 
 // handle events
 

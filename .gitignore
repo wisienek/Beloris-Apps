@@ -44,8 +44,7 @@ tools/**/test
 Thumbs.db
 
 .data/
-.env
-.env.test
+*.env
 .docker/
 ormconfig.json
 *.js.map

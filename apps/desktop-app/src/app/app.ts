@@ -7,6 +7,7 @@ import { format } from 'url';
 import { IPCChannels } from '@bella/enums';
 import { Store, StoreKeys } from '@bella/dp';
 import 'dotenv/config';
+import * as process from "process";
 
 export default class App {
   // Keep a global reference of the window object, if you don't, the window will
@@ -164,9 +165,10 @@ export default class App {
     // so this class has no dependencies. This
     // makes the code easier to write tests for
 
-    Sentry.init({
-      dsn: `https://${process.env['ELECTRON_SENTRY_KEY']}.ingest.sentry.io/${process.env['ELECTRON_SENTRY_ID']}`,
-    });
+    if( 'ELECTRON_SENTRY_KEY' in process.env && 'ELECTRON_SENTRY_ID' in process.env)
+      Sentry.init({
+        dsn: `https://${process.env.ELEKTRON_SENTRY_KEY}.ingest.sentry.io/${process.env.ELECTRON_SENTRY_ID}`,
+      });
 
     App.BrowserWindow = browserWindow;
     App.application = app;
@@ -180,6 +182,6 @@ export default class App {
     App.application.on('window-all-closed', App.onWindowAllClosed); // Quit when all windows are closed.
     App.application.on('ready', App.onReady); // App is ready to load data
     App.application.on('activate', App.onActivate); // App is activated
-    App.application.on('open-url', App.onOpenUrl);
+    App.application.on('open-url', App.onOpenUrl); // App will open url
   }
 }

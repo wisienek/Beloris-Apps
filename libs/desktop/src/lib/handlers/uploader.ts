@@ -179,3 +179,5 @@ export class UploaderHandler {
     return data;
   }
 }
+
+export const uploaderHandler = new UploaderHandler();
