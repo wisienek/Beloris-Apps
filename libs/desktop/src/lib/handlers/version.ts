@@ -1,82 +1,64 @@
-import axios, { AxiosResponse } from 'axios';
+import { AxiosInstance, AxiosResponse } from 'axios';
 import * as _ from 'lodash';
 import { CreateVersionDto, UpdateVersionDto, VersionDto } from '@bella/dto';
 import { VersionType } from '@bella/types';
 import { ApiRoutes } from '@bella/data';
+import { ElectronLogger, getInstance } from '../utils';
 
-export const changeVersionAsCurrent: (
-  v: VersionType,
-  isCurrent: boolean,
-) => Promise<VersionDto> = async (version, isCurrent) => {
-  console.group(
-    `Updating current version to ${version.major}:${version.minor}`,
-  );
+class VersionHandler {
+  private readonly logger = new ElectronLogger(VersionHandler.name);
+  private readonly axiosInstance: AxiosInstance = getInstance();
 
-  const url = ApiRoutes.UPDATE_VERSION(version);
-  const data: UpdateVersionDto = {
-    isCurrent,
-  };
+  public async changeVersionAsCurrent(version: VersionType, isCurrent: boolean): Promise<VersionDto> {
+    this.logger.log(`Updating current version to ${version.major}:${version.minor}`);
 
-  const { data: updatedVersion }: AxiosResponse<VersionDto> = await axios({
-    method: 'patch',
-    url,
-    data,
-  });
+    const url = ApiRoutes.UPDATE_VERSION(version);
+    const data: UpdateVersionDto = {
+      isCurrent,
+    };
 
-  console.log(`Updated version`, updatedVersion);
-  console.groupEnd();
+    const { data: updatedVersion }: AxiosResponse<VersionDto> = await this.axiosInstance.patch(url, data);
 
-  return updatedVersion;
-};
+    this.logger.log(`Updated version`, updatedVersion);
 
-export const getExistingVersion: (
-  version: VersionType,
-) => Promise<VersionDto> = async (version) => {
-  const route = ApiRoutes.VERSION_HISTORY;
-
-  const { data: history }: AxiosResponse<VersionDto[]> = await axios.get(route);
-  return _.find(
-    history ?? [],
-    (v) =>
-      v.major === version.major &&
-      (v.minor === version.minor ||
-        ([0, 1].includes(v.minor) && [0, 1].includes(version.minor))),
-  );
-};
-
-export const getOrCreateVersion: (
-  version: VersionType,
-  isCurrent: boolean,
-) => Promise<VersionDto> = async (v, isCurrent) => {
-  const gotVersion = await getExistingVersion(v);
-  if (gotVersion) {
-    if (gotVersion.isCurrent !== isCurrent)
-      return await changeVersionAsCurrent(v, isCurrent);
-
-    return gotVersion;
+    return updatedVersion;
   }
 
-  const createVersionUrl = ApiRoutes.VERSION;
-  const data: CreateVersionDto = {
-    ...v,
-    isCurrent,
-  };
+  public async getExistingVersion(version: VersionType): Promise<VersionDto> {
+    const route = ApiRoutes.VERSION_HISTORY;
 
-  const { data: createdVersion }: AxiosResponse<VersionDto> = await axios({
-    method: 'post',
-    url: createVersionUrl,
-    data,
-  });
+    const { data: history }: AxiosResponse<VersionDto[]> = await this.axiosInstance.get(route);
+    return _.find(
+      history ?? [],
+      (v) =>
+        v.major === version.major &&
+        (v.minor === version.minor || ([0, 1].includes(v.minor) && [0, 1].includes(version.minor))),
+    );
+  }
 
-  return createdVersion;
-};
+  public async getOrCreateVersion(version: VersionType, isCurrent: boolean): Promise<VersionDto> {
+    const gotVersion = await this.getExistingVersion(version);
+    if (gotVersion) {
+      if (gotVersion.isCurrent !== isCurrent) return await this.changeVersionAsCurrent(version, isCurrent);
 
-export const getVersion: (version: VersionType) => Promise<VersionDto> = async (
-  v,
-) => {
-  const { data: version } = await axios({
-    method: 'get',
-    url: ApiRoutes.UPDATE_VERSION(v),
-  });
-  return version;
-};
+      return gotVersion;
+    }
+
+    const createVersionUrl = ApiRoutes.VERSION;
+    const data: CreateVersionDto = {
+      ...version,
+      isCurrent,
+    };
+
+    const { data: createdVersion }: AxiosResponse<VersionDto> = await this.axiosInstance.post(createVersionUrl, data);
+
+    return createdVersion;
+  }
+
+  public async getVersion(v: VersionType): Promise<VersionDto> {
+    const { data: version } = await this.axiosInstance.get(ApiRoutes.UPDATE_VERSION(v));
+    return version;
+  }
+}
+
+export const versionHandler = new VersionHandler();

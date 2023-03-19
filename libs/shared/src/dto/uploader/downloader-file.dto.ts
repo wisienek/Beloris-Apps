@@ -1,16 +1,7 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import { Exclude, Transform } from 'class-transformer';
+import { Exclude } from 'class-transformer';
 import { AutoMap } from '@automapper/classes';
-import {
-  IsBoolean,
-  IsEnum,
-  IsNumber,
-  IsOptional,
-  IsString,
-  IsUrl,
-  IsUUID,
-  Min,
-} from 'class-validator';
+import { IsBoolean, IsEnum, IsNumber, IsOptional, IsString, IsUrl, IsUUID, Min } from 'class-validator';
 import { FileAction, FileType } from '../../enums';
 import { TransformBoolean } from '../../utils';
 import { VersionDto } from './version.dto';
@@ -41,7 +32,6 @@ export class DownloaderFileDto {
   @IsNumber()
   @IsOptional()
   @Min(0)
-  @Transform(({ value }) => value?.toPrecision(2))
   @AutoMap()
   fileSize?: number;
 
@@ -70,8 +60,7 @@ export class DownloaderFileDto {
   downloadPath?: string;
 
   @ApiProperty({
-    description:
-      'Where to save given file on pc (relative from .minecraft folder)',
+    description: 'Where to save given file on pc (relative from .minecraft folder)',
   })
   @IsString()
   @AutoMap()
@@ -110,5 +99,5 @@ export class DownloaderFileDto {
   })
   @IsEnum(FileAction)
   @AutoMap()
-  fileAction!: FileAction;
+  fileAction: FileAction = FileAction.DOWNLOAD;
 }

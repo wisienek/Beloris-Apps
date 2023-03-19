@@ -2,24 +2,14 @@ import { AxiosInstance, AxiosResponse } from 'axios';
 import { existsSync, readFileSync } from 'fs';
 import * as FormData from 'form-data';
 import { resolve } from 'path';
+import { DownloaderFileDto, FileUploadDto, IpcEventDto, UploadPackageInfo } from '@bella/dto';
 import { VersionType } from '@bella/types';
 import { ApiRoutes } from '@bella/data';
 import { FileType } from '@bella/enums';
-import {
-  DownloaderFileDto,
-  FileUploadDto,
-  IpcEventDto,
-  UploadPackageInfo,
-} from '@bella/dto';
-import { getOrCreateVersion, getVersion } from './version';
+import { ElectronLogger, getPackageName, getPackagePath, getInstance } from '../utils';
 import { handlerWrapper } from '../handler-wrapper';
 import { readUserSettings } from './user-settings';
-import {
-  ElectronLogger,
-  getPackageName,
-  getPackagePath,
-  getInstance,
-} from '../utils';
+import { versionHandler } from './version';
 
 export class UploaderHandler {
   private readonly logger = new ElectronLogger(UploaderHandler.name);
@@ -34,37 +24,25 @@ export class UploaderHandler {
       async () => {
         const { data: userSettings } = await readUserSettings();
 
-        const buffer = readFileSync(
-          getPackagePath(userSettings.downloadTo.modpackFolder, version.major),
-        );
+        const buffer = readFileSync(getPackagePath(userSettings.downloadTo.modpackFolder, version.major));
 
-        await getOrCreateVersion({ ...version, minor: 1 }, setCurrentVersion);
-        const existingVersion = await getVersion({ ...version, minor: 1 });
+        this.logger.log(`Get Or create version: ${JSON.stringify({ ...version, minor: 1 })}`);
+        await versionHandler.getOrCreateVersion({ ...version, minor: 1 }, setCurrentVersion);
+        const existingVersion = await versionHandler.getVersion({ ...version, minor: 1 });
 
-        const hasPackageFile = existingVersion.files.find(
-          (f) => f.fileType === FileType.BUNDLE || f.isPrimaryBundle,
-        );
+        const hasPackageFile = existingVersion.files.find((f) => f.fileType === FileType.BUNDLE || f.isPrimaryBundle);
 
         this.logger
-          .debug(
-            `${hasPackageFile ? `Updating` : 'Uploading'} package data for ${
-              existingVersion.id
-            }:`,
-          )
+          .debug(`${hasPackageFile ? `Updating` : 'Uploading'} package data for ${existingVersion.id}:`)
           .debug(packageData);
 
-        const { data: uploadedInfo }: AxiosResponse<DownloaderFileDto> =
-          await this.axiosInstance({
-            method: hasPackageFile ? 'patch' : 'post',
-            url: hasPackageFile
-              ? ApiRoutes.PACKAGE_EDIT(
-                  version.major,
-                  version.minor,
-                  existingVersion.id,
-                )
-              : ApiRoutes.PACKAGE(version.major, version.minor),
-            data: packageData,
-          });
+        const { data: uploadedInfo }: AxiosResponse<DownloaderFileDto> = await this.axiosInstance({
+          method: hasPackageFile ? 'patch' : 'post',
+          url: hasPackageFile
+            ? ApiRoutes.PACKAGE_EDIT(version.major, version.minor, existingVersion.id)
+            : ApiRoutes.PACKAGE(version.major, version.minor),
+          data: packageData,
+        });
 
         this.logger.debug(`Uploaded package info`).debug(uploadedInfo);
 
@@ -73,17 +51,14 @@ export class UploaderHandler {
         formData.append('file', buffer, packageName);
 
         this.logger.debug(`Sending file ${packageName}`);
-        const { data: uploadedPackage }: AxiosResponse<DownloaderFileDto> =
-          await this.axiosInstance({
-            method: 'post',
-            url: ApiRoutes.PACKAGE_UPLOAD(
-              version.major,
-              version.minor,
-              uploadedInfo.id,
-            ),
-            data: formData,
-            headers: formData.getHeaders(),
-          });
+        const { data: uploadedPackage }: AxiosResponse<DownloaderFileDto> = await this.axiosInstance({
+          method: 'post',
+          url: ApiRoutes.PACKAGE_UPLOAD(version.major, version.minor, uploadedInfo.id),
+          maxContentLength: Infinity,
+          maxBodyLength: Infinity,
+          data: formData,
+          headers: formData.getHeaders(),
+        });
 
         this.logger.debug(`Uploaded package file:`).debug(uploadedPackage);
 
@@ -103,14 +78,11 @@ export class UploaderHandler {
       async () => {
         const { data: userSettings } = await readUserSettings();
 
-        await getOrCreateVersion(version, setCurrentVersion);
+        await versionHandler.getOrCreateVersion(version, setCurrentVersion);
 
-        const versionFiles = await getVersion(version);
+        const versionFiles = await versionHandler.getVersion(version);
 
-        const fileDataPostUrl = ApiRoutes.FILE_LIST(
-          version.major,
-          version.minor,
-        );
+        const fileDataPostUrl = ApiRoutes.FILE_LIST(version.major, version.minor);
 
         const preparedRequests = [];
 
@@ -119,15 +91,11 @@ export class UploaderHandler {
         for (const fileData of filesData) {
           this.logger.debug(`File ${fileData.name}`);
 
-          const filePath = resolve(
-            userSettings.downloadTo.modpackFolder,
-            fileData.savePath,
-          );
+          const filePath = resolve(userSettings.downloadTo.modpackFolder, fileData.savePath);
 
           this.logger.debug(`File path: ${filePath}`);
 
-          if (!existsSync(filePath))
-            throw new Error(`Plik ${fileData.name} nie mógł być znaleziony!`);
+          if (!existsSync(filePath)) throw new Error(`Plik ${fileData.name} nie mógł być znaleziony!`);
 
           const buffer = readFileSync(filePath);
 
@@ -138,8 +106,7 @@ export class UploaderHandler {
               url: fileDataPostUrl,
               data: fileData,
             }).then(
-              async ({ data }: AxiosResponse<DownloaderFileDto>) =>
-                await this.updateFileData(data, buffer, version),
+              async ({ data }: AxiosResponse<DownloaderFileDto>) => await this.updateFileData(data, buffer, version),
             ),
           );
         }
@@ -165,14 +132,12 @@ export class UploaderHandler {
     const formData = new FormData();
     formData.append('file', buffer, dFileData.name);
 
-    const { data }: AxiosResponse<DownloaderFileDto> = await this.axiosInstance(
-      {
-        method: 'post',
-        url: sendFileUrl,
-        data: formData,
-        headers: formData.getHeaders(),
-      },
-    );
+    const { data }: AxiosResponse<DownloaderFileDto> = await this.axiosInstance({
+      method: 'post',
+      url: sendFileUrl,
+      data: formData,
+      headers: formData.getHeaders(),
+    });
 
     this.logger.debug(`File sent successfully!`).debug(data);
 

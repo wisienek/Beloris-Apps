@@ -35,15 +35,19 @@ const WizardFile = ({ file }: WizardFileArgs) => {
           <Box>
             <Typography variant="subtitle2" gutterBottom>
               Waga paczki:{' '}
-              <b>
-                {fileSizeFormat(file.fileSize)} /{' '}
-                {fileSizeFormat(AllowedFileSizes.bundle)}
-              </b>
+              <Typography
+                variant="body2"
+                paragraph={false}
+                noWrap={true}
+                sx={file.fileSize > AllowedFileSizes.bundle ? { color: 'red' } : {}}
+              >
+                {fileSizeFormat(file.fileSize)} / {' ' + fileSizeFormat(AllowedFileSizes.bundle)}
+              </Typography>
             </Typography>
             <CustomLinearProgress
               color="primary"
               variant="determinate"
-              value={(file.fileSize / AllowedFileSizes.bundle) * 100}
+              value={Math.min(Math.round((file.fileSize / AllowedFileSizes.bundle) * 100), 100)}
             />
           </Box>
         ) : null}
@@ -54,11 +58,7 @@ const WizardFile = ({ file }: WizardFileArgs) => {
             justifyContent: 'flex-end',
           }}
         >
-          <WizardFileControls
-            file={file}
-            isPackageFile={isPackageFile}
-            deleteSelection={() => null}
-          />
+          <WizardFileControls file={file} isPackageFile={isPackageFile} deleteSelection={() => null} />
         </Box>
       </Box>
     </Grid>

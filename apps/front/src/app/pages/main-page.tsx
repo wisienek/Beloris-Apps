@@ -15,9 +15,7 @@ import { Copyright } from '../components/single/copyright';
 function DashboardContent() {
   const { settings } = useContext<SettingsContextValue>(SettingsContext);
   const [choseFilesOpen, setChoseFilesOpen] = useState<boolean>(false);
-  const [filesToDownload, setFilesToDownload] = useState<DownloaderFileDto[]>(
-    [],
-  );
+  const [filesToDownload, setFilesToDownload] = useState<DownloaderFileDto[]>([]);
   const filesToDownloadFetch = useFetch<FileListDto>(
     ApiRoutes.GET_UPDATE_FILES(
       settings?.version?.currentVersion?.major ?? 0,
@@ -29,24 +27,15 @@ function DashboardContent() {
   );
 
   const isSameVersion = useMemo<boolean>(() => {
-    if (
-      !settings?.version?.currentVersion ||
-      !filesToDownloadFetch?.data?.version
-    )
-      return false;
+    if (!settings?.version?.currentVersion || !filesToDownloadFetch?.data?.version) return false;
 
     return (
-      settings.version.currentVersion.minor ===
-        filesToDownloadFetch.data.version.minor &&
-      settings.version.currentVersion.major ===
-        filesToDownloadFetch.data.version.major
+      settings.version.currentVersion.minor === filesToDownloadFetch.data.version.minor &&
+      settings.version.currentVersion.major === filesToDownloadFetch.data.version.major
     );
   }, [settings?.version?.currentVersion, filesToDownloadFetch.data]);
 
-  const toggleFileToDownload = (
-    event: ChangeEvent<HTMLInputElement>,
-    file: DownloaderFileDto,
-  ) => {
+  const toggleFileToDownload = (event: ChangeEvent<HTMLInputElement>, file: DownloaderFileDto) => {
     event.preventDefault();
 
     _.includes(filesToDownload, file)
@@ -70,10 +59,7 @@ function DashboardContent() {
 
       <Grid container spacing={3}>
         <Grid item xs={12} md={8} lg={9}>
-          <VersionSummary
-            isSameVersion={isSameVersion}
-            filesToDownloadFetch={filesToDownloadFetch}
-          />
+          <VersionSummary isSameVersion={isSameVersion} filesToDownloadFetch={filesToDownloadFetch} />
         </Grid>
 
         <Grid item xs={12} md={4} lg={3}>

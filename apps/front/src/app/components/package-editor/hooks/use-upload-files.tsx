@@ -1,10 +1,7 @@
 import { useState, useContext } from 'react';
 import { ErrorSeverity } from '../../single/error-message';
 import { ErrorContext } from '../../combined/error-box';
-import {
-  PackageEditorStateContext,
-  PackageEditorStateValue,
-} from '../sections/package-editor-state';
+import { PackageEditorStateContext, PackageEditorStateValue } from '../sections/package-editor-state';
 import { isFileData } from '../../../utils/file-data.guard';
 import { FileUploadDto } from '@bella/dto';
 
@@ -35,13 +32,7 @@ export const useUploadFiles = () => {
           setSending(false);
 
           if (error) {
-            addError(
-              ErrorSeverity.ERROR,
-              error.message,
-              false,
-              null,
-              `Przesyłanie paczki`,
-            );
+            addError(ErrorSeverity.ERROR, error.message, false, null, `Przesyłanie paczki`);
 
             return;
           }
@@ -49,6 +40,7 @@ export const useUploadFiles = () => {
           console.log(`Created package data: `, data);
 
           addError(ErrorSeverity.SUCCESS, `Przesłano paczkę`);
+          window.api.windows.notify(`Uploader`, `Przesłano paczkę ${packageInfo.name}`);
           setSent(true);
         })
         .catch((error) => {
@@ -59,25 +51,13 @@ export const useUploadFiles = () => {
         });
     } else {
       if (files.length === 0) {
-        addError(
-          ErrorSeverity.ERROR,
-          'Brak zmian do przesłania!',
-          false,
-          null,
-          `Przesyłanie plików`,
-        );
+        addError(ErrorSeverity.ERROR, 'Brak zmian do przesłania!', false, null, `Przesyłanie plików`);
 
         return;
       }
 
       if (files.some((f) => !isFileData(f))) {
-        addError(
-          ErrorSeverity.ERROR,
-          'Dziwne dane...',
-          false,
-          null,
-          `Sprawdzanie plików`,
-        );
+        addError(ErrorSeverity.ERROR, 'Dziwne dane...', false, null, `Sprawdzanie plików`);
 
         console.error(files);
 
@@ -95,13 +75,7 @@ export const useUploadFiles = () => {
           setSending(false);
 
           if (error) {
-            addError(
-              ErrorSeverity.ERROR,
-              error.message,
-              false,
-              null,
-              `Przesyłanie plików`,
-            );
+            addError(ErrorSeverity.ERROR, error.message, false, null, `Przesyłanie plików`);
 
             return;
           }

@@ -18,11 +18,11 @@ export const handlerWrapper = async <U>(
   } catch (err) {
     replyMessage = {
       failed: true,
-      error: err?.isAxiosError ? err.response.data : err,
+      error: err?.isAxiosError ? err?.response?.data ?? err?.request : err,
       data: null,
     };
 
-    (logger ?? console).error(replyMessage.error);
+    (logger ?? console).error(typeof err === 'string' ? err : JSON.stringify(err, null, 2));
     message && (logger ?? console).error(message);
   }
 

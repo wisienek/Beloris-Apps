@@ -1,12 +1,14 @@
 import React, { FC, ChangeEvent, useState } from 'react';
 import * as _ from 'lodash';
+import DeleteForeverOutlinedIcon from '@mui/icons-material/DeleteForeverOutlined';
+import FileDownloadOutlinedIcon from '@mui/icons-material/FileDownloadOutlined';
+import MoreHorizOutlinedIcon from '@mui/icons-material/MoreHorizOutlined';
 import {
   Tooltip,
   Divider,
   Box,
   FormControl,
   InputLabel,
-  Card,
   Checkbox,
   Table,
   TableBody,
@@ -21,11 +23,6 @@ import {
   CardHeader,
   Skeleton,
 } from '@mui/material';
-
-import FileDownloadOutlinedIcon from '@mui/icons-material/FileDownloadOutlined';
-import MoreHorizOutlinedIcon from '@mui/icons-material/MoreHorizOutlined';
-import DeleteForeverOutlinedIcon from '@mui/icons-material/DeleteForeverOutlined';
-
 import { DownloaderFileDto, FileListDto } from '@bella/dto';
 import { FileAction } from '@bella/enums';
 
@@ -33,19 +30,13 @@ interface FileTableV2WrapperProps {
   filesdto: FileListDto;
   filesToDownload: DownloaderFileDto[];
   setFilesToDownload: (files: DownloaderFileDto[]) => void;
-  toggleFileToDownload: (
-    event: React.ChangeEvent,
-    file: DownloaderFileDto,
-  ) => void;
+  toggleFileToDownload: (event: React.ChangeEvent, file: DownloaderFileDto) => void;
 }
 
 interface FileTableV2Props {
   data: FileListDto;
   filesToDownload: DownloaderFileDto[];
-  toggleFileToDownload: (
-    event: React.ChangeEvent,
-    file: DownloaderFileDto,
-  ) => void;
+  toggleFileToDownload: (event: React.ChangeEvent, file: DownloaderFileDto) => void;
 }
 
 interface Filters {
@@ -55,7 +46,7 @@ interface Filters {
 type FileActionType = typeof FileAction[keyof typeof FileAction];
 
 const getStatusLabel = (status: FileActionType): JSX.Element => {
-  const map = {
+  const map: Record<FileAction, { text: string; element: JSX.Element }> = {
     [FileAction.DELETE]: {
       text: 'Usuń',
       element: <DeleteForeverOutlinedIcon color="error" />,
@@ -69,7 +60,8 @@ const getStatusLabel = (status: FileActionType): JSX.Element => {
       element: <MoreHorizOutlinedIcon color="warning" />,
     },
   };
-  const { text, element }: any = map[status];
+
+  const { text, element } = map[status];
 
   return (
     <Tooltip arrow title={text} placement="right">
@@ -78,20 +70,11 @@ const getStatusLabel = (status: FileActionType): JSX.Element => {
   );
 };
 
-const applyFilters = (
-  files: DownloaderFileDto[],
-  filters: Filters,
-): DownloaderFileDto[] => {
-  return files.filter(
-    (file) => !(filters.status && file.fileAction !== filters.status),
-  );
+const applyFilters = (files: DownloaderFileDto[], filters: Filters): DownloaderFileDto[] => {
+  return files.filter((file) => !(filters.status && file.fileAction !== filters.status));
 };
 
-const applyPagination = (
-  files: DownloaderFileDto[],
-  page: number,
-  limit: number,
-): DownloaderFileDto[] => {
+const applyPagination = (files: DownloaderFileDto[], page: number, limit: number): DownloaderFileDto[] => {
   return files.slice(page * limit, page * limit + limit);
 };
 
@@ -101,10 +84,7 @@ function FileTableV2Container({
   setFilesToDownload,
   toggleFileToDownload,
 }: FileTableV2WrapperProps) {
-  const rows = React.useMemo(
-    () => filesdto ?? { version: null, files: [] },
-    [filesdto],
-  );
+  const rows = React.useMemo(() => filesdto ?? { version: null, files: [] }, [filesdto]);
 
   React.useEffect(() => {
     setFilesToDownload(filesdto?.files ?? []);
@@ -118,21 +98,13 @@ function FileTableV2Container({
           <Skeleton variant="rectangular" />
         </>
       ) : (
-        <FileTableV2
-          data={rows}
-          filesToDownload={filesToDownload}
-          toggleFileToDownload={toggleFileToDownload}
-        />
+        <FileTableV2 data={rows} filesToDownload={filesToDownload} toggleFileToDownload={toggleFileToDownload} />
       )}
     </>
   );
 }
 
-const FileTableV2: FC<FileTableV2Props> = ({
-  data,
-  filesToDownload,
-  toggleFileToDownload,
-}) => {
+const FileTableV2: FC<FileTableV2Props> = ({ data, filesToDownload, toggleFileToDownload }) => {
   const [page, setPage] = useState<number>(0);
   const [limit, setLimit] = useState<number>(5);
   const [filters, setFilters] = useState<Filters>({
@@ -183,18 +155,13 @@ const FileTableV2: FC<FileTableV2Props> = ({
   const paginatedFiles = applyPagination(filteredFiles, page, limit);
 
   return (
-    <Card>
+    <>
       <CardHeader
         action={
           <Box width={150}>
             <FormControl fullWidth variant="outlined">
               <InputLabel>Zmiana</InputLabel>
-              <Select
-                value={filters.status || 'all'}
-                onChange={handleStatusChange}
-                label="Status"
-                autoWidth
-              >
+              <Select value={filters.status || 'all'} onChange={handleStatusChange} label="Status" autoWidth>
                 {statusOptions.map((statusOption) => (
                   <MenuItem key={statusOption.id} value={statusOption.id}>
                     {statusOption.name}
@@ -214,61 +181,37 @@ const FileTableV2: FC<FileTableV2Props> = ({
           <TableHead>
             <TableRow>
               <TableCell>
-                <Typography
-                  fontWeight="bold"
-                  variant="body1"
-                  color="text.primary"
-                >
+                <Typography fontWeight="bold" variant="body1" color="text.primary">
                   id
                 </Typography>
               </TableCell>
 
               <TableCell>
-                <Typography
-                  fontWeight="bold"
-                  variant="body1"
-                  color="text.primary"
-                >
+                <Typography fontWeight="bold" variant="body1" color="text.primary">
                   Lokacja
                 </Typography>
               </TableCell>
 
               <TableCell>
-                <Typography
-                  fontWeight="bold"
-                  variant="body1"
-                  color="text.primary"
-                >
+                <Typography fontWeight="bold" variant="body1" color="text.primary">
                   Nazwa
                 </Typography>
               </TableCell>
 
               <TableCell>
-                <Typography
-                  fontWeight="bold"
-                  variant="body1"
-                  color="text.primary"
-                >
+                <Typography fontWeight="bold" variant="body1" color="text.primary">
                   Rozmiar
                 </Typography>
               </TableCell>
 
               <TableCell align="center">
-                <Typography
-                  fontWeight="bold"
-                  variant="body1"
-                  color="text.primary"
-                >
+                <Typography fontWeight="bold" variant="body1" color="text.primary">
                   Zmiana
                 </Typography>
               </TableCell>
 
               <TableCell align="center">
-                <Typography
-                  fontWeight="bold"
-                  variant="body1"
-                  color="text.primary"
-                >
+                <Typography fontWeight="bold" variant="body1" color="text.primary">
                   Zastosować?
                 </Typography>
               </TableCell>
@@ -293,39 +236,25 @@ const FileTableV2: FC<FileTableV2Props> = ({
                   </TableCell>
 
                   <TableCell>
-                    <Typography
-                      variant="body1"
-                      color="text.primary"
-                      gutterBottom
-                      noWrap
-                    >
+                    <Typography variant="body1" color="text.primary" gutterBottom noWrap>
                       {file.name}
                     </Typography>
                   </TableCell>
 
                   <TableCell>
-                    <Typography
-                      variant="body1"
-                      color="text.primary"
-                      gutterBottom
-                      noWrap
-                    >
-                      {file.fileSize.toPrecision(2)} Mb
+                    <Typography variant="body1" color="text.primary" gutterBottom noWrap>
+                      {file?.fileSize || `idk`} Mb
                     </Typography>
                   </TableCell>
 
-                  <TableCell align="center">
-                    {getStatusLabel(file.fileAction)}
-                  </TableCell>
+                  <TableCell align="center">{getStatusLabel(file.fileAction)}</TableCell>
 
                   <TableCell align="center">
                     <Checkbox
                       color="primary"
                       disabled={file.required}
                       defaultChecked={file.required}
-                      onChange={(event: ChangeEvent<HTMLInputElement>) =>
-                        toggleFileToDownload(event, file)
-                      }
+                      onChange={(event: ChangeEvent<HTMLInputElement>) => toggleFileToDownload(event, file)}
                       value={isFileSelected}
                     />
                   </TableCell>
@@ -346,12 +275,10 @@ const FileTableV2: FC<FileTableV2Props> = ({
           rowsPerPage={limit}
           rowsPerPageOptions={[5, 10, 25, 30]}
           labelRowsPerPage="Rzędów na stronę:"
-          labelDisplayedRows={(options) =>
-            `${options.from}/${options.to}, max ${options.count}`
-          }
+          labelDisplayedRows={(options) => `${options.from}/${options.to}, max ${options.count}`}
         />
       </Box>
-    </Card>
+    </>
   );
 };
 

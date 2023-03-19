@@ -13,6 +13,9 @@ export class S3Service {
         accessKeyId: config.accessKey,
         secretAccessKey: config.keySecret,
       },
+      httpOptions: {
+        timeout: 30 * 60 * 1000, // 30 minutes
+      },
       apiVersion: '2010-12-01',
     });
   }

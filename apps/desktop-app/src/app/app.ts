@@ -1,5 +1,5 @@
 import * as Sentry from '@sentry/electron';
-import { BrowserWindow, shell, screen } from 'electron';
+import { BrowserWindow, screen } from 'electron';
 import { rendererAppName, rendererAppPort } from './constants';
 import { join, resolve } from 'path';
 import * as process from 'process';
@@ -32,24 +32,10 @@ export default class App {
   }
 
   private static onClose() {
-    // Dereference the window object, usually you would store windows
-    // in an array if your app supports multi windows, this is the time
-    // when you should delete the corresponding element.
     App.mainWindow = null;
   }
 
-  private static async onRedirect(event: any, url: string) {
-    if (url !== App.mainWindow.webContents.getURL()) {
-      // this is a normal external redirect, open it in a new browser window
-      event.preventDefault();
-      await shell.openExternal(url).catch((error) => App.Logger.error(error));
-    }
-  }
-
   private static onReady() {
-    // This method will be called when Electron has finished
-    // initialization and is ready to create browser windows.
-    // Some APIs can only be used after this event occurs.
     App.initProtocol();
 
     App.initMainWindow();
@@ -83,7 +69,6 @@ export default class App {
     const height = Math.min(1100, workAreaSize.height || 1100);
 
     // Create the browser window.
-
     App.mainWindow = new BrowserWindow({
       width: width,
       height: height,
@@ -99,7 +84,6 @@ export default class App {
     App.mainWindow.setMenu(null);
     App.mainWindow.center();
 
-    // if main window is ready to show, close the splash window and show the main window
     App.mainWindow.once('ready-to-show', () => {
       App.mainWindow.show();
 
@@ -108,17 +92,8 @@ export default class App {
       });
     });
 
-    // handle all external redirects in a new browser window
-    // App.mainWindow.webContents.on('will-navigate', App.onRedirect);
-    // App.mainWindow.webContents.on('new-window', (event, url, frameName, disposition, options) => {
-    //     App.onRedirect(event, url);
-    // });
-
     // Emitted when the window is closed.
     App.mainWindow.on('closed', () => {
-      // Dereference the window object, usually you would store windows
-      // in an array if your app supports multi windows, this is the time
-      // when you should delete the corresponding element.
       App.mainWindow = null;
     });
   }
@@ -167,15 +142,7 @@ export default class App {
   }
 
   static main(app: Electron.App, browserWindow: typeof BrowserWindow) {
-    // we pass the Electron.App object and the
-    // Electron.BrowserWindow into this function
-    // so this class has no dependencies. This
-    // makes the code easier to write tests for
-
-    if ('ELECTRON_SENTRY_KEY' in process.env && 'ELECTRON_SENTRY_ID' in process.env)
-      Sentry.init({
-        dsn: `https://${process.env.ELECTRON_SENTRY_KEY}.ingest.sentry.io/${process.env.ELECTRON_SENTRY_ID}`,
-      });
+    App.setupSentry();
 
     if (process.platform === 'win32') {
       app.setAppUserModelId(`Beloris Updater`);
@@ -194,5 +161,13 @@ export default class App {
     App.application.on('activate', App.onActivate); // App is activated
     App.application.on('open-url', (e, url) => App.onOpenUrl(e, [url])); // App will open url
     App.application.on('second-instance', App.onOpenUrl);
+  }
+
+  private static setupSentry() {
+    if ('ELECTRON_SENTRY_KEY' in process.env && 'ELECTRON_SENTRY_ID' in process.env)
+      Sentry.init({
+        dsn: `https://${process.env.ELECTRON_SENTRY_KEY}.ingest.sentry.io/${process.env.ELECTRON_SENTRY_ID}`,
+        environment: App.isDevelopmentMode() ? 'development' : 'production',
+      });
   }
 }
