@@ -23,11 +23,11 @@ export class ElectronLogger {
   debug: winston.LeveledLogMethod;
   silly: winston.LeveledLogMethod;
   child: typeof winston.child;
-  log = (...message: string[]) => {
+  log = (...message: any[]) => {
     this.coreLogger.defaultMeta = {
       service: `Electron`,
     };
-    this.coreLogger.log('debug', message?.[0] ?? '');
+    this.coreLogger.log('debug', ElectronLogger.sanitizeText(message));
   };
 
   constructor(private readonly context: string) {
@@ -37,10 +37,7 @@ export class ElectronLogger {
         winston.format.timestamp({ format: 'YYYY-MM-DD HH:mm:ss' }),
         ElectronLogger.combineMessageAndSplat(),
         winston.format.printf(
-          (info) =>
-            `[ELECTRON] ${app.getVersion()} - ${info.timestamp} [${context}] ${
-              info.level
-            }: ${info.message}`,
+          (info) => `[ELECTRON] ${app.getVersion()} - ${info.timestamp} [${context}] ${info.level}: ${info.message}`,
         ),
       ),
       transports: [
@@ -56,18 +53,22 @@ export class ElectronLogger {
     Object.setPrototypeOf(this, Object.getPrototypeOf(winstonLogger));
     this.coreLogger = winstonLogger;
 
-    for (const key of Object.keys(winstonLogger))
-      this[key] = winstonLogger[key];
+    for (const key of Object.keys(winstonLogger)) this[key] = winstonLogger[key];
   }
 
   private static combineMessageAndSplat() {
     return {
       transform(info) {
         const { [Symbol.for('splat')]: args = [], message } = info;
+        const sanitizedMessage = ElectronLogger.sanitizeText([message, ...args]);
         // eslint-disable-next-line no-param-reassign
-        info.message = format(message, ...args);
+        info.message = format(sanitizedMessage);
         return info;
       },
     };
+  }
+
+  private static sanitizeText(args: any[]): string {
+    return args.map((a) => (typeof a !== 'string' ? JSON.stringify(a, null, 2) : a)).join('\t');
   }
 }

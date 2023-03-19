@@ -32,6 +32,7 @@ const DiscordLogin = () => {
     });
 
     await window.api.utilities.openExternalLink(loginUrl);
+    // await window.api.windows.openLogin(loginUrl);
   };
 
   return (
@@ -43,12 +44,7 @@ const DiscordLogin = () => {
           <DiscordIdentity />
         ) : (
           <FormControl variant="outlined" fullWidth>
-            <Fab
-              variant="extended"
-              color="primary"
-              aria-label="Zaloguj przez Discord"
-              onClick={() => loginLink()}
-            >
+            <Fab variant="extended" color="primary" aria-label="Zaloguj przez Discord" onClick={() => loginLink()}>
               <Discord sx={{ mr: 3 }} />
               <Typography variant="subtitle1">Zaloguj przez Discord</Typography>
             </Fab>

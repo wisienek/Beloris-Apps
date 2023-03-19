@@ -4,6 +4,8 @@ import { app, BrowserWindow } from 'electron';
 import App from './app/app';
 
 export default class Main {
+  // public static Logger = new ElectronLogger(Main.name);
+
   static initialize() {
     if (SquirrelEvents.handleEvents()) {
       // squirrel event handled (except first run event) and app will exit in 1000ms, so don't do anything else

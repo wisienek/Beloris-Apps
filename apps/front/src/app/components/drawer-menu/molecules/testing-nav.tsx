@@ -1,10 +1,5 @@
 import { Fragment } from 'react';
-import {
-  ListItemButton,
-  ListItemIcon,
-  ListItemText,
-  ListSubheader,
-} from '@mui/material';
+import { ListItemButton, ListItemIcon, ListItemText, ListSubheader } from '@mui/material';
 import ConstructionIcon from '@mui/icons-material/Construction';
 import { GuildMember } from 'discord.js';
 import { useTest } from '../hooks';
@@ -14,7 +9,7 @@ export interface TestingNavArgs {
 }
 
 const TestingNav = (data: TestingNavArgs) => {
-  const { sendTestAuth, testing } = useTest();
+  const { sendTestAuth, testing, sendNotification } = useTest();
 
   return (
     <Fragment>
@@ -22,7 +17,7 @@ const TestingNav = (data: TestingNavArgs) => {
         Testy
       </ListSubheader>
 
-      <ListItemButton onClick={() => sendTestAuth()}>
+      <ListItemButton onClick={() => sendNotification()}>
         <ListItemIcon>
           <ConstructionIcon />
         </ListItemIcon>

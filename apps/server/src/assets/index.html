@@ -1,61 +1,62 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Document</title>
+<head>
+  <meta charset="UTF-8"/>
+  <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Document</title>
 
-    <script>
-      const saveUrl = 'http://localhost:3333/api/auth/save';
-      const redirectUrl = 'http://localhost:3333/api/me';
+  <script>
+    const saveUrl = 'http://localhost:3333/api/auth/save';
+    const redirectUrl = 'http://localhost:3333/api/me';
 
-      console.log(`sending fetch!`);
+    console.log(`sending fetch!`);
 
-      function getCookie(cname) {
-        const name = cname + "=";
-        const ca = document.cookie.split(';');
-        for(let i=0; i<ca.length; i++) {
-          let c = ca[i];
-          while (c.charAt(0) === ' ') c = c.substring(1);
-          if (c.indexOf(name) === 0) return c.substring(name.length, c.length);
-        }
-        return "";
+    function getCookie(cname) {
+      const name = cname + '=';
+      const ca = document.cookie.split(';');
+      for (let i = 0; i < ca.length; i++) {
+        let c = ca[i];
+        while (c.charAt(0) === ' ') c = c.substring(1);
+        if (c.indexOf(name) === 0) return c.substring(name.length, c.length);
       }
+      return '';
+    }
 
-      (async () => {
-        try {
-          fetch(saveUrl, {
-            method: 'POST',
-            mode: 'cors',
-            cache: 'no-cache',
-            credentials: 'same-origin',
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            redirect: 'follow',
-            referrerPolicy: 'no-referrer',
-            body: JSON.stringify({
-              hash: new URL(document.URL).hash,
-            }),
-          }).then(res => res.json())
-            .then(result => {
-              console.log(`Got user: `, result);
+    (async () => {
+      try {
+        fetch(saveUrl, {
+          method: 'POST',
+          mode: 'cors',
+          cache: 'no-cache',
+          credentials: 'same-origin',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          redirect: 'follow',
+          referrerPolicy: 'no-referrer',
+          body: JSON.stringify({
+            hash: new URL(document.URL).hash,
+          }),
+        })
+          .then((res) => res.json())
+          .then((result) => {
+            console.log(`Got user: `, result);
 
-              if(result.username) {
+            if (result.username) {
+              const cookie = getCookie('DISCORD_TOKEN');
+              console.log(cookie);
 
-                const cookie = getCookie('DISCORD_TOKEN');
-                console.log(cookie);
-
-                window.location = 'bella://settings?cookie='+cookie;
-              }
-            })
-            .catch(er => console.error(er));
-        } catch (err) {
-          console.error(err);
-        }
-      })();
-    </script>
-  </head>
-  <body></body>
+              window.location = 'bella://settings?cookie=' + cookie;
+              // window.location = 'bellatest://'; //'?cookie=' + cookie;
+            }
+          })
+          .catch((er) => console.error(er));
+      } catch (err) {
+        console.error(err);
+      }
+    })();
+  </script>
+</head>
+<body></body>
 </html>

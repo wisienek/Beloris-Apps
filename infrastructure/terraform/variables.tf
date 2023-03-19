@@ -8,7 +8,20 @@ variable "server_instance_type" {
   default = "t2.micro"
 }
 
-variable "server_key_name" {
-  type = string
-  default = "server_key"
+variable "env" {
+  default = "stage"
+
+  validation {
+    condition = contains(["stage", "prod"], var.env)
+    error_message = "Invalid environment"
+  }
+}
+
+variable "db_pass" {
+  description = "Database password"
+
+  validation {
+    condition = length(var.db_pass) > 5
+    error_message = "Password must be at least 5 characters long"
+  }
 }

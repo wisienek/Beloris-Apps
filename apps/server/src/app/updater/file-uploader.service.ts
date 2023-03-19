@@ -44,10 +44,7 @@ export class FileUploaderService {
     @InjectMapper() private mapper: Mapper,
   ) {}
 
-  public async getFilesToUpdate(
-    major: number,
-    minor: number,
-  ): Promise<FileListDto> {
+  public async getFilesToUpdate(major: number, minor: number): Promise<FileListDto> {
     const currentVersion = await this.versionRepository.findOne({
       where: {
         isCurrent: true,
@@ -55,8 +52,7 @@ export class FileUploaderService {
     });
     if (!currentVersion) throw new CurrentVersionNotFoundException();
 
-    if (currentVersion.major === major && currentVersion.minor === minor)
-      return new FileListDto(currentVersion, null);
+    if (currentVersion.major === major && currentVersion.minor === minor) return new FileListDto(currentVersion, null);
 
     const sameMajor = currentVersion.major === major;
 
@@ -65,12 +61,7 @@ export class FileUploaderService {
         where: {
           version: {
             major: currentVersion.major,
-            minor: Raw(
-              (alias) =>
-                `${alias} > ${sameMajor ? minor : 0} and ${alias} <= ${
-                  currentVersion.minor
-                }`,
-            ),
+            minor: Raw((alias) => `${alias} > ${sameMajor ? minor : 0} and ${alias} <= ${currentVersion.minor}`),
           },
         },
         order: {
@@ -88,11 +79,7 @@ export class FileUploaderService {
     };
   }
 
-  public async getFileList(
-    data: GetFileListDto,
-    major: number,
-    minor: number,
-  ): Promise<FileListDto> {
+  public async getFileList(data: GetFileListDto, major: number, minor: number): Promise<FileListDto> {
     const version = await this.versionRepository.findOneOrFail({
       where: {
         major,
@@ -115,11 +102,7 @@ export class FileUploaderService {
     };
   }
 
-  public async uploadFileData(
-    major: number,
-    minor: number,
-    data: FileUploadDto,
-  ): Promise<DownloaderFileDto> {
+  public async uploadFileData(major: number, minor: number, data: FileUploadDto): Promise<DownloaderFileDto> {
     if (!data) throw new FileDataNotFoundException();
 
     const existsInDB = await this.filesRepository.findOne({
@@ -132,13 +115,7 @@ export class FileUploaderService {
         fileAction: data.fileAction,
       },
     });
-    if (existsInDB)
-      throw new FileConflictException(
-        major,
-        minor,
-        data.savePath,
-        data.fileAction,
-      );
+    if (existsInDB) throw new FileConflictException(major, minor, data.savePath, data.fileAction);
 
     const version = await this.getVersion(major, minor);
 
@@ -182,33 +159,16 @@ export class FileUploaderService {
 
     const fileBuffer: Buffer = file.buffer;
     const hash: string = getFileHash(fileBuffer);
-    const fileKey: string = isPackage
-      ? getBundleKey(major, file)
-      : getFileKey(major, minor, file, fileRecord.name);
-    const fileSize = Number(
-      (fileBuffer.byteLength / (1_024 * 1_000)).toPrecision(2),
-    );
-    const downloadPath = getBucketDownloadPath(
-      fileKey,
-      this.awsConfig.uploaderBucket,
-      this.awsConfig.region,
-    );
+    const fileKey: string = isPackage ? getBundleKey(major, file) : getFileKey(major, minor, file, fileRecord.name);
+    const fileSize = Number((fileBuffer.byteLength / (1_024 * 1_000)).toPrecision(2));
+    const downloadPath = getBucketDownloadPath(fileKey, this.awsConfig.uploaderBucket, this.awsConfig.region);
     // const fileType = determineFileType(file);
 
-    if (fileRecord.hash !== hash)
-      throw new FileHashConflictException(fileRecord.hash, hash);
+    if (fileRecord.hash !== hash) throw new FileHashConflictException(fileRecord.hash, hash);
 
-    this.logger.debug(
-      `Uploading ${isPackage ? 'bundle' : 'file'} with size: ${fileSize}Mb`,
-    );
-    await this.awsService.upload(
-      fileKey,
-      fileBuffer,
-      this.awsConfig.uploaderBucket,
-    );
-    this.logger.debug(
-      `Uploaded ${isPackage ? 'bundle' : 'file'} file: ${downloadPath}`,
-    );
+    this.logger.debug(`Uploading ${isPackage ? 'bundle' : 'file'} with size: ${fileSize}Mb`);
+    await this.awsService.upload(fileKey, fileBuffer, this.awsConfig.uploaderBucket);
+    this.logger.debug(`Uploaded ${isPackage ? 'bundle' : 'file'} file: ${downloadPath}`);
 
     const saved = await this.filesRepository.save({
       ...fileRecord,
@@ -220,10 +180,7 @@ export class FileUploaderService {
     return this.mapper.map(saved, DownloaderFile, DownloaderFileDto);
   }
 
-  public async createPackageData(
-    major: number,
-    fileData: UploadPackageInfo,
-  ): Promise<DownloaderFileDto> {
+  public async createPackageData(major: number, fileData: UploadPackageInfo): Promise<DownloaderFileDto> {
     const version = await this.getVersion(major, 1, true);
 
     const foundOne = await this.filesRepository.findOne({
@@ -232,13 +189,7 @@ export class FileUploaderService {
         isPrimaryBundle: true,
       },
     });
-    if (foundOne)
-      throw new FileConflictException(
-        major,
-        1,
-        fileData.savePath,
-        FileAction.DOWNLOAD,
-      );
+    if (foundOne) throw new FileConflictException(major, 1, fileData.savePath, FileAction.DOWNLOAD);
 
     const oldBundle = await this.filesRepository.find({
       relations: ['version'],
@@ -275,11 +226,7 @@ export class FileUploaderService {
     return foundFile;
   }
 
-  private async getVersion(
-    major: number,
-    minor: number = 1,
-    create?: boolean,
-  ): Promise<Version> {
+  private async getVersion(major: number, minor = 1, create?: boolean): Promise<Version> {
     const foundVersion = await this.versionRepository.findOne({
       where: {
         major,

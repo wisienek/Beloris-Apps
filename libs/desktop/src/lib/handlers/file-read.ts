@@ -3,32 +3,19 @@ import { sync } from 'glob-promise';
 import { dialog } from 'electron';
 import { parse, sep } from 'path';
 import * as tar from 'tar';
+import { FileDialogInputDto, FileUploadDto, IpcEventDto, PackageDataDto } from '@bella/dto';
+import { AllowedUploaderFileExtensions, IpcFileMap, packerFiles } from '@bella/data';
 import { getFileHash } from '@bella/core';
 import { FileAction } from '@bella/enums';
-import {
-  FileDialogInputDto,
-  FileUploadDto,
-  IpcEventDto,
-  PackageDataDto,
-} from '@bella/dto';
-import {
-  AllowedUploaderFileExtensions,
-  IpcFileMap,
-  packerFiles,
-} from '@bella/data';
+import { getPackageName, getPackagePath } from '../utils';
 import { handlerWrapper } from '../handler-wrapper';
 import { readUserSettings } from './user-settings';
-import { getPackageName, getPackagePath } from '../utils';
 
-export const openFileDialog = async (
-  event,
-  { fileType }: FileDialogInputDto,
-): Promise<IpcEventDto<string>> => {
+export const openFileDialog = async (event, { fileType }: FileDialogInputDto): Promise<IpcEventDto<string>> => {
   return await handlerWrapper(
     async () => {
       const resolvedFileType = IpcFileMap[fileType];
-      if (!resolvedFileType)
-        throw new Error(`Nie podano poprawnego typu pliku wejściowego!`);
+      if (!resolvedFileType) throw new Error(`Nie podano poprawnego typu pliku wejściowego!`);
 
       const { canceled, filePaths } = await dialog.showOpenDialog(
         Object.assign(
@@ -36,9 +23,7 @@ export const openFileDialog = async (
             title: fileType,
             buttonLabel: 'Wybierz',
           },
-          Array.isArray(resolvedFileType)
-            ? { properties: resolvedFileType }
-            : { filters: [resolvedFileType] },
+          Array.isArray(resolvedFileType) ? { properties: resolvedFileType } : { filters: [resolvedFileType] },
         ),
       );
 
@@ -51,26 +36,20 @@ export const openFileDialog = async (
   );
 };
 
-export const getDownloaderFiles = async (): Promise<
-  IpcEventDto<FileUploadDto[]>
-> => {
+export const getDownloaderFiles = async (): Promise<IpcEventDto<FileUploadDto[]>> => {
   return await handlerWrapper(
     async () => {
       const { data: settings } = await readUserSettings();
 
-      if (!settings || !settings?.downloadTo?.modpackFolder)
-        throw new Error(`Brak ustawionego folderu modpacka!`);
+      if (!settings || !settings?.downloadTo?.modpackFolder) throw new Error(`Brak ustawionego folderu modpacka!`);
 
       const folderLocation = settings.downloadTo.modpackFolder;
 
-      const foundFiles = sync(
-        `**/*.{${AllowedUploaderFileExtensions.join(',')}}`,
-        {
-          cwd: folderLocation,
-          nonull: false,
-          nocase: true,
-        },
-      );
+      const foundFiles = sync(`**/*.{${AllowedUploaderFileExtensions.join(',')}}`, {
+        cwd: folderLocation,
+        nonull: false,
+        nocase: true,
+      });
 
       return foundFiles.map((filePath) => ({
         name: parse(filePath.split(sep).at(-1)).name,
@@ -84,25 +63,18 @@ export const getDownloaderFiles = async (): Promise<
   );
 };
 
-export const buildPackage = async (
-  event,
-  version: number,
-): Promise<IpcEventDto<PackageDataDto>> => {
+export const buildPackage = async (event, version: number): Promise<IpcEventDto<PackageDataDto>> => {
   return await handlerWrapper(
     async () => {
       const { data: settings } = await readUserSettings();
 
       const modpackFolder = settings.downloadTo.modpackFolder;
       const readDirectory = readdirSync(modpackFolder);
-      const existingFiles = readDirectory.filter((f) =>
-        packerFiles.includes(f),
-      );
+      const existingFiles = readDirectory.filter((f) => packerFiles.includes(f));
 
       if (existingFiles.length !== packerFiles.length)
         throw new Error(
-          `Za mało plików aby spakowac paczkę; ${packerFiles
-            .filter((f) => !existingFiles.includes(f))
-            .join(', ')}`,
+          `Za mało plików aby spakowac paczkę; ${packerFiles.filter((f) => !existingFiles.includes(f)).join(', ')}`,
         );
 
       const filePath = getPackagePath(modpackFolder, version);

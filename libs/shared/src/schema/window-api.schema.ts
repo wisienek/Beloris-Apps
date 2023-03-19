@@ -1,3 +1,5 @@
+import { VersionType } from '@bella/types';
+import { UserSettings } from './user-settings.schema';
 import {
   DownloaderFileDto,
   FileDialogInputDto,
@@ -7,8 +9,6 @@ import {
   TokenDto,
   UploadPackageInfo,
 } from '../dto';
-import { UserSettings } from './user-settings.schema';
-import { VersionType } from '@bella/types';
 
 type Platform =
   | 'aix'
@@ -31,9 +31,7 @@ export interface WindowAppApi {
 export interface WindowSettingsApi {
   getUserSettings: () => Promise<IpcEventDto<UserSettings>>;
 
-  saveUserSettings: (
-    data: Partial<UserSettings>,
-  ) => Promise<IpcEventDto<boolean>>;
+  saveUserSettings: (data: Partial<UserSettings>) => Promise<IpcEventDto<boolean>>;
 }
 
 export interface WindowUtilitiesApi {
@@ -47,15 +45,11 @@ export interface WindowSessionApi {
 }
 
 export interface WindowFilesApi {
-  openFileDialog: (
-    data: FileDialogInputDto,
-  ) => Promise<IpcEventDto<string | string[]>>;
+  openFileDialog: (data: FileDialogInputDto) => Promise<IpcEventDto<string | string[]>>;
 
   getDownloaderFiles: () => Promise<IpcEventDto<FileUploadDto[]>>;
 
-  buildModpackPackage: (
-    version: number,
-  ) => Promise<IpcEventDto<PackageDataDto>>;
+  buildModpackPackage: (version: number) => Promise<IpcEventDto<PackageDataDto>>;
 
   uploadPackage: (
     version: VersionType,
@@ -70,10 +64,16 @@ export interface WindowFilesApi {
   ) => Promise<IpcEventDto<DownloaderFileDto[]>>;
 }
 
+export interface WindowsApi {
+  openLogin: (url: string) => Promise<void>;
+  notify: (title: string, message: string) => Promise<IpcEventDto<boolean>>;
+}
+
 export interface WindowApi {
   app: WindowAppApi;
   settings: WindowSettingsApi;
   utilities: WindowUtilitiesApi;
   session: WindowSessionApi;
   files: WindowFilesApi;
+  windows: WindowsApi;
 }

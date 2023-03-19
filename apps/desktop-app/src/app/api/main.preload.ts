@@ -19,65 +19,42 @@ const windowApi: WindowApi = {
   },
   settings: {
     getUserSettings: () => ipcRenderer.invoke(IPCChannels.GET_USER_SETTINGS),
-    saveUserSettings: (data: Partial<UserSettings>) =>
-      ipcRenderer.invoke(IPCChannels.SAVE_USER_SETTINGS, data),
+    saveUserSettings: (data: Partial<UserSettings>) => ipcRenderer.invoke(IPCChannels.SAVE_USER_SETTINGS, data),
   },
   files: {
-    openFileDialog: (data: FileDialogInputDto) =>
-      ipcRenderer.invoke(IPCChannels.OPEN_FILE_DIALOG, data),
+    openFileDialog: (data: FileDialogInputDto) => ipcRenderer.invoke(IPCChannels.OPEN_FILE_DIALOG, data),
 
     getDownloaderFiles: () =>
-      ipcRenderer.invoke(IPCChannels.LIST_DOWNLOADER_FILES) as Promise<
-        IpcEventDto<FileUploadDto[]>
-      >,
+      ipcRenderer.invoke(IPCChannels.LIST_DOWNLOADER_FILES) as Promise<IpcEventDto<FileUploadDto[]>>,
 
     buildModpackPackage: (version: number) =>
-      ipcRenderer.invoke(IPCChannels.BUILD_PACKAGE, version) as Promise<
-        IpcEventDto<PackageDataDto>
+      ipcRenderer.invoke(IPCChannels.BUILD_PACKAGE, version) as Promise<IpcEventDto<PackageDataDto>>,
+
+    uploadPackage: (version: VersionType, packageData: UploadPackageInfo, setCurrentVersion?: boolean) =>
+      ipcRenderer.invoke(IPCChannels.UPLOAD_PACKAGE, version, packageData, setCurrentVersion) as Promise<
+        IpcEventDto<DownloaderFileDto>
       >,
 
-    uploadPackage: (
-      version: VersionType,
-      packageData: UploadPackageInfo,
-      setCurrentVersion?: boolean,
-    ) =>
-      ipcRenderer.invoke(
-        IPCChannels.UPLOAD_PACKAGE,
-        version,
-        packageData,
-        setCurrentVersion,
-      ) as Promise<IpcEventDto<DownloaderFileDto>>,
-
-    uploadFiles: (
-      version: VersionType,
-      filesData: FileUploadDto[],
-      setCurrentVersion?: boolean,
-    ) =>
-      ipcRenderer.invoke(
-        IPCChannels.UPLOAD_FILES,
-        version,
-        filesData,
-        setCurrentVersion,
-      ) as Promise<IpcEventDto<DownloaderFileDto[]>>,
+    uploadFiles: (version: VersionType, filesData: FileUploadDto[], setCurrentVersion?: boolean) =>
+      ipcRenderer.invoke(IPCChannels.UPLOAD_FILES, version, filesData, setCurrentVersion) as Promise<
+        IpcEventDto<DownloaderFileDto[]>
+      >,
   },
   utilities: {
     openExternalLink: (link: string) =>
-      ipcRenderer.invoke(IPCChannels.OPEN_EXTERNAL_LINK, link) as Promise<
-        IpcEventDto<boolean>
-      >,
+      ipcRenderer.invoke(IPCChannels.OPEN_EXTERNAL_LINK, link) as Promise<IpcEventDto<boolean>>,
   },
   session: {
-    getSession: () =>
-      ipcRenderer.invoke(IPCChannels.GET_SESSION) as Promise<
-        IpcEventDto<TokenDto>
-      >,
-    logout: () =>
-      ipcRenderer.invoke(IPCChannels.LOGOUT) as Promise<IpcEventDto<boolean>>,
+    getSession: () => ipcRenderer.invoke(IPCChannels.GET_SESSION) as Promise<IpcEventDto<TokenDto>>,
+    logout: () => ipcRenderer.invoke(IPCChannels.LOGOUT) as Promise<IpcEventDto<boolean>>,
     receiveSession: (func) => {
-      ipcRenderer.on(IPCChannels.SET_SESSION, (event, ...args) =>
-        func(...args),
-      );
+      ipcRenderer.on(IPCChannels.SET_SESSION, (event, ...args) => func(...args));
     },
+  },
+  windows: {
+    openLogin: (url: string) => ipcRenderer.invoke(IPCChannels.OPEN_LOGIN_LINK, url) as Promise<void>,
+    notify: (title: string, message: string) =>
+      ipcRenderer.invoke(IPCChannels.NOTIFICATION, title, message) as Promise<IpcEventDto<boolean>>,
   },
 };
 

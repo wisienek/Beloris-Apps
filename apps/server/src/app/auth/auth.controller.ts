@@ -1,16 +1,9 @@
 import { Controller, Get, Param, Post, Req, Res } from '@nestjs/common';
 import { ApiOkResponse, ApiParam, ApiTags } from '@nestjs/swagger';
-
 import { Request, Response } from 'express';
 import { join } from 'path';
-
-import {
-  DCAdminServerRoles,
-  DCMainServerRoles,
-  ServerListEnum,
-} from '@bella/enums';
+import { DCAdminServerRoles, ServerListEnum } from '@bella/enums';
 import { TokenDto } from '@bella/dto';
-
 import { AuthService } from './auth.service';
 import { Auth, DcUser } from './guard';
 
@@ -62,10 +55,7 @@ export class AuthController {
   @ApiOkResponse({
     description: 'Get user data from server',
   })
-  getMeOnServer(
-    @Param('server') server: ServerListEnum,
-    @DcUser() user: TokenDto,
-  ) {
+  getMeOnServer(@Param('server') server: ServerListEnum, @DcUser() user: TokenDto) {
     return this.authService.fetchMember(user, server);
   }
 
@@ -79,10 +69,7 @@ export class AuthController {
   @ApiOkResponse({
     description: 'Member roles',
   })
-  getMineRolesOnServer(
-    @Param('server') server: ServerListEnum,
-    @DcUser() user: TokenDto,
-  ) {
+  getMineRolesOnServer(@Param('server') server: ServerListEnum, @DcUser() user: TokenDto) {
     return this.authService.fetchMemberRoles(user, server);
   }
 

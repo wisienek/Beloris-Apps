@@ -1,34 +1,36 @@
-import { IpcMainEvent, shell } from 'electron';
+import { IpcMainEvent, shell, IpcMainInvokeEvent } from 'electron';
 import { IpcEventDto } from '@bella/dto';
+import { ElectronLogger } from '../utils';
 
-export const openExternalLink = async (
-  event: IpcMainEvent,
-  link: string,
-): Promise<IpcEventDto<boolean>> => {
-  let replyMessage: IpcEventDto<boolean>;
+export class ExternalLinksHandler {
+  private readonly logger = new ElectronLogger(ExternalLinksHandler.name);
 
-  try {
-    await shell.openExternal(link);
+  public async openExternalLink(event: IpcMainEvent, link: string): Promise<IpcEventDto<boolean>> {
+    let replyMessage: IpcEventDto<boolean>;
 
-    replyMessage = {
-      failed: false,
-      data: true,
-    };
-  } catch (err) {
-    replyMessage = {
-      error: err,
-      failed: false,
-    };
+    try {
+      await shell.openExternal(link);
 
-    console.error(`Error while Opening external link`, err);
+      replyMessage = {
+        failed: false,
+        data: true,
+      };
+    } catch (err) {
+      replyMessage = {
+        error: err,
+        failed: false,
+      };
+
+      console.error(`Error while Opening external link`, err);
+    }
+
+    return replyMessage;
   }
 
-  return replyMessage;
-};
+  public async openLoginLink(event: IpcMainInvokeEvent, ...rest): Promise<void> {
+    this.logger.log(`will open`, ...rest);
+    return;
+  }
+}
 
-export const openLoginLink = async (
-  event: IpcMainEvent,
-  link: string,
-): Promise<void> => {
-  return;
-};
+export const externalLinksHandler = new ExternalLinksHandler();

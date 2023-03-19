@@ -1,25 +1,26 @@
 import * as Sentry from '@sentry/electron';
 import { BrowserWindow, shell, screen } from 'electron';
 import { rendererAppName, rendererAppPort } from './constants';
-import { environment } from '../environments/environment';
-import { join } from 'path';
+import { join, resolve } from 'path';
+import * as process from 'process';
 import { format } from 'url';
-import { IPCChannels } from '@bella/enums';
-import { Store, StoreKeys } from '@bella/dp';
 import 'dotenv/config';
-import * as process from "process";
+import { Store, StoreKeys } from '@bella/dp';
+import { IPCChannels } from '@bella/enums';
+import { ElectronLogger } from '@bella/dp';
+import { environment } from '../environments/environment';
 
 export default class App {
-  // Keep a global reference of the window object, if you don't, the window will
-  // be closed automatically when the JavaScript object is garbage collected.
+  private static Logger = new ElectronLogger(App.name);
+
   static mainWindow: Electron.BrowserWindow;
   static application: Electron.App;
   static BrowserWindow;
+  static Protocol: string;
 
   public static isDevelopmentMode() {
     const isEnvironmentSet: boolean = 'ELECTRON_IS_DEV' in process.env;
-    const getFromEnvironment: boolean =
-      parseInt(process.env.ELECTRON_IS_DEV, 10) === 1;
+    const getFromEnvironment: boolean = parseInt(process.env.ELECTRON_IS_DEV, 10) === 1;
 
     return isEnvironmentSet ? getFromEnvironment : !environment.production;
   }
@@ -41,7 +42,7 @@ export default class App {
     if (url !== App.mainWindow.webContents.getURL()) {
       // this is a normal external redirect, open it in a new browser window
       event.preventDefault();
-      await shell.openExternal(url).catch((error) => console.error(error));
+      await shell.openExternal(url).catch((error) => App.Logger.error(error));
     }
   }
 
@@ -56,8 +57,16 @@ export default class App {
   }
 
   private static initProtocol(): void {
-    console.log(`Registering Protocol bella::`);
-    App.application.setAsDefaultProtocolClient('bella');
+    App.Protocol = 'bella'; //!App.application.isPackaged ? 'bellatest' : 'bella';
+    App.Logger.log(`Registering Protocol ${App.Protocol}::`);
+
+    if (!App.application.isPackaged && process.platform === 'win32') {
+      App.Logger.log(process.execPath, process.argv);
+
+      App.application.setAsDefaultProtocolClient(App.Protocol, process.execPath, [resolve(process.argv[2])]);
+    } else {
+      App.application.setAsDefaultProtocolClient(App.Protocol);
+    }
   }
 
   private static onActivate() {
@@ -119,9 +128,7 @@ export default class App {
     if (!App.application.isPackaged) {
       App.mainWindow
         .loadURL(`http://localhost:${rendererAppPort}`)
-        .catch((error) =>
-          console.error(`Error while loading unpackaged app:`, error),
-        );
+        .catch((error) => App.Logger.error(`Error while loading unpackaged app:`, error));
     } else {
       App.mainWindow
         .loadURL(
@@ -131,23 +138,23 @@ export default class App {
             slashes: true,
           }),
         )
-        .catch((error) =>
-          console.error(`Error while loading packaged app:`, error),
-        );
+        .catch((error) => App.Logger.error(`Error while loading packaged app:`, error));
     }
   }
 
-  static onOpenUrl(event: Event, url: string) {
+  static onOpenUrl(event: Event, args: string[]) {
+    const url = args.find((str: string) => str.includes(`${App.Protocol}://`))?.replace(`${App.Protocol}://`, '');
+
     if (url.includes('?cookie')) {
       try {
         const cookie = JSON.parse(decodeURIComponent(url.split('?cookie=')[1]));
-        console.log(`Logged in from redirect`, cookie);
+        App.Logger.log(`Logged in from redirect`, cookie);
 
         Store.set(StoreKeys.SESSION, cookie);
 
         App.mainWindow.webContents.send(IPCChannels.SET_SESSION, cookie);
       } catch (error) {
-        console.error(`Error while decoding cookie`, error);
+        App.Logger.error(`Error while decoding cookie`, error);
       }
     }
   }
@@ -165,23 +172,27 @@ export default class App {
     // so this class has no dependencies. This
     // makes the code easier to write tests for
 
-    if( 'ELECTRON_SENTRY_KEY' in process.env && 'ELECTRON_SENTRY_ID' in process.env)
+    if ('ELECTRON_SENTRY_KEY' in process.env && 'ELECTRON_SENTRY_ID' in process.env)
       Sentry.init({
-        dsn: `https://${process.env.ELEKTRON_SENTRY_KEY}.ingest.sentry.io/${process.env.ELECTRON_SENTRY_ID}`,
+        dsn: `https://${process.env.ELECTRON_SENTRY_KEY}.ingest.sentry.io/${process.env.ELECTRON_SENTRY_ID}`,
       });
+
+    if (process.platform === 'win32') {
+      app.setAppUserModelId(`Beloris Updater`);
+    }
 
     App.BrowserWindow = browserWindow;
     App.application = app;
 
     const gotLock = app.requestSingleInstanceLock();
 
-    if (gotLock)
-      App.application.on('second-instance', App.handleSecondInstance);
+    if (gotLock) App.application.on('second-instance', App.handleSecondInstance);
     else App.application.quit();
 
     App.application.on('window-all-closed', App.onWindowAllClosed); // Quit when all windows are closed.
     App.application.on('ready', App.onReady); // App is ready to load data
     App.application.on('activate', App.onActivate); // App is activated
-    App.application.on('open-url', App.onOpenUrl); // App will open url
+    App.application.on('open-url', (e, url) => App.onOpenUrl(e, [url])); // App will open url
+    App.application.on('second-instance', App.onOpenUrl);
   }
 }

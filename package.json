@@ -4,6 +4,7 @@
   "description": "Apps made for Beloris server group",
   "version": "0.0.1",
   "license": "MIT",
+  "main": "dist/apps/desktop-app/main.js",
   "scripts": {
     "typeorm": "ts-node --project libs/backend/database/tsconfig.lib.json -r tsconfig-paths/register ./node_modules/typeorm/cli.js",
     "db:drop": "nx run backend-database:typeorm:drop",
@@ -73,7 +74,8 @@
         "role": "Viewer",
         "schemes": [
           "bella",
-          "beloris"
+          "beloris",
+          "bellatest"
         ]
       }
     ]

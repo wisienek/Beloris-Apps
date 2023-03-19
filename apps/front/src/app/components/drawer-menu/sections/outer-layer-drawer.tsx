@@ -9,6 +9,7 @@ import {
   CssBaseline,
   createTheme,
   ThemeProvider,
+  Avatar,
 } from '@mui/material';
 import { Menu, ChevronLeft } from '@mui/icons-material/';
 import SettingsIcon from '@mui/icons-material/Settings';
@@ -36,9 +37,7 @@ const OuterLayerDrawer = ({ children }: { children: ReactNode }) => {
           <Toolbar
             sx={{
               pr: '24px',
-              ...(!open
-                ? { justifyContent: 'space-between' }
-                : { justifyContent: 'flex-end' }),
+              ...(!open ? { justifyContent: 'space-between' } : { justifyContent: 'flex-end' }),
             }}
           >
             <IconButton
@@ -55,9 +54,16 @@ const OuterLayerDrawer = ({ children }: { children: ReactNode }) => {
             </IconButton>
 
             <Link to="/settings">
-              <IconButton sx={{ color: mdTheme.palette.common.white }}>
-                <SettingsIcon />
-              </IconButton>
+              {user ? (
+                <Avatar
+                  alt={user.username}
+                  src={`https://cdn.discordapp.com/avatars/${user.id}/${user.avatar}`}
+                ></Avatar>
+              ) : (
+                <IconButton sx={{ color: mdTheme.palette.common.white }}>
+                  <SettingsIcon />
+                </IconButton>
+              )}
             </Link>
           </Toolbar>
         </AppBar>
@@ -81,15 +87,8 @@ const OuterLayerDrawer = ({ children }: { children: ReactNode }) => {
             {user ? (
               <>
                 <Divider sx={{ my: 1 }} />
-                <SecondaryListItems
-                  user={user}
-                  adminMember={belorisAdminMember}
-                />
-                {belorisAdminMember ? (
-                  <TestingNav member={belorisAdminMember} />
-                ) : (
-                  <></>
-                )}
+                <SecondaryListItems user={user} adminMember={belorisAdminMember} />
+                {belorisAdminMember ? <TestingNav member={belorisAdminMember} /> : <></>}
               </>
             ) : (
               <></>
@@ -102,9 +101,7 @@ const OuterLayerDrawer = ({ children }: { children: ReactNode }) => {
           sx={{
             display: 'flex',
             backgroundColor: (theme) =>
-              theme.palette.mode === 'light'
-                ? theme.palette.grey[100]
-                : theme.palette.grey[900],
+              theme.palette.mode === 'light' ? theme.palette.grey[100] : theme.palette.grey[900],
             marginTop: '64px',
             flexGrow: 1,
             height: 'calc(100vh - 64px)',

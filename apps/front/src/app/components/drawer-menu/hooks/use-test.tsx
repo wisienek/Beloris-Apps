@@ -20,5 +20,9 @@ export const useTest = () => {
       .finally(() => setTesting(false));
   };
 
-  return { sendTestAuth, testing };
+  const sendNotification = () => {
+    window.api.windows.notify(`Test title`, `test body`);
+  };
+
+  return { sendTestAuth, testing, sendNotification };
 };
