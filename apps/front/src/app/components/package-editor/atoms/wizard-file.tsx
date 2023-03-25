@@ -14,7 +14,7 @@ export interface WizardFileArgs {
 
 // TODO: add normal file support
 const WizardFile = ({ file }: WizardFileArgs) => {
-  const isPackageFile = 'hash' in file;
+  const isPackageFile = 'fileSize' in file;
 
   return (
     <Grid item>

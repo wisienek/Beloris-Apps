@@ -9,7 +9,7 @@ import ListItemIcon from '@mui/material/ListItemIcon';
 import Checkbox from '@mui/material/Checkbox';
 import Button from '@mui/material/Button';
 import Divider from '@mui/material/Divider';
-import { Box, useTheme } from '@mui/material';
+import Box from '@mui/material/Box';
 
 function not(a: readonly number[], b: readonly number[]) {
   return a.filter((value) => b.indexOf(value) === -1);
@@ -175,10 +175,15 @@ export default function TransferList({
           gap: 2,
         }}
       >
-        <Grid item xs={12} md={4}>
+        <Grid item xs={20} md={5} sx={{ p: '0 !important' }}>
           {customList('Do wyboru', left)}
         </Grid>
-        <Grid item xs={3} md={1}>
+        <Grid
+          item
+          xs={3}
+          md={1}
+          sx={{ p: '0 !important', display: 'flex', justifyContent: 'center', alignItems: 'center' }}
+        >
           <Grid container direction="column" alignItems="center">
             <Button
               sx={{ my: 0.5 }}
@@ -202,7 +207,7 @@ export default function TransferList({
             </Button>
           </Grid>
         </Grid>
-        <Grid item xs={12} md={4}>
+        <Grid item xs={20} md={5} sx={{ p: '0 !important' }}>
           {customList('Wybrane', right)}
         </Grid>
       </Grid>

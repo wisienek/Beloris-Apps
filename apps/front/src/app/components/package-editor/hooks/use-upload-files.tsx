@@ -41,7 +41,10 @@ export const useUploadFiles = () => {
           console.log(`Created package data: `, data);
 
           addError(ErrorSeverity.SUCCESS, `Przesłano paczkę`);
-          window.api.windows.notify(`Uploader`, `Przesłano paczkę ${packageInfo.name}`);
+          window.api.windows.notify(
+            `Uploader`,
+            `Przesłano paczkę ${packageInfo.name} do wersji ${version.major}.${version.minor}`,
+          );
           setSent(true);
         })
         .catch((error) => {
@@ -83,7 +86,11 @@ export const useUploadFiles = () => {
 
           console.log(`Created files data: `, data);
 
-          addError(ErrorSeverity.SUCCESS, `Przesłano pliki`);
+          addError(ErrorSeverity.SUCCESS, `Przesłano pliki`, true);
+          window.api.windows.notify(
+            `Przesłano pliki`,
+            `Zakończono przesyłanie plików do wersji ${version.major}.${version.minor}!`,
+          );
           setSent(true);
         })
         .catch((error) => {

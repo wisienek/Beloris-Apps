@@ -1,6 +1,5 @@
+import { BrowserWindow, screen, globalShortcut } from 'electron';
 import * as Sentry from '@sentry/electron';
-import { BrowserWindow, screen } from 'electron';
-import { rendererAppName, rendererAppPort } from './constants';
 import { join, resolve } from 'path';
 import * as process from 'process';
 import { format } from 'url';
@@ -8,6 +7,7 @@ import 'dotenv/config';
 import { Store, StoreKeys } from '@bella/dp';
 import { IPCChannels } from '@bella/enums';
 import { ElectronLogger } from '@bella/dp';
+import { rendererAppName, rendererAppPort } from './constants';
 import { environment } from '../environments/environment';
 
 export default class App {
@@ -37,6 +37,7 @@ export default class App {
 
   private static onReady() {
     App.initProtocol();
+    App.registerShortcuts();
 
     App.initMainWindow();
     App.loadMainWindow();
@@ -55,9 +56,12 @@ export default class App {
     }
   }
 
+  private static registerShortcuts() {
+    globalShortcut.register('f5', () => App.mainWindow.reload());
+    globalShortcut.register('CommandOrControl+R', () => App.mainWindow.reload());
+  }
+
   private static onActivate() {
-    // On macOS it's common to re-create a window in the app when the
-    // dock icon is clicked and there are no other windows open.
     if (App.mainWindow === null) {
       App.onReady();
     }

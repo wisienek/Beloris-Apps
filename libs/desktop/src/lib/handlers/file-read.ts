@@ -56,6 +56,7 @@ export const getDownloaderFiles = async (): Promise<IpcEventDto<FileUploadDto[]>
         savePath: filePath,
         required: true,
         fileAction: FileAction.DOWNLOAD,
+        hash: '',
       }));
     },
     null,
