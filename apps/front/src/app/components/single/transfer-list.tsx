@@ -9,7 +9,7 @@ import ListItemIcon from '@mui/material/ListItemIcon';
 import Checkbox from '@mui/material/Checkbox';
 import Button from '@mui/material/Button';
 import Divider from '@mui/material/Divider';
-import { Box } from '@mui/material';
+import { Box, useTheme } from '@mui/material';
 
 function not(a: readonly number[], b: readonly number[]) {
   return a.filter((value) => b.indexOf(value) === -1);
@@ -60,8 +60,7 @@ export default function TransferList({
     setChecked(newChecked);
   };
 
-  const numberOfChecked = (items: readonly number[]) =>
-    intersection(checked, items).length;
+  const numberOfChecked = (items: readonly number[]) => intersection(checked, items).length;
 
   const handleToggleAll = (items: readonly number[]) => () => {
     if (numberOfChecked(items) === items.length) {
@@ -101,19 +100,14 @@ export default function TransferList({
   };
 
   const customList = (title: React.ReactNode, items: readonly number[]) => (
-    <Card>
+    <Card sx={{ flexGrow: 1 }}>
       <CardHeader
         sx={{ px: 2, py: 1 }}
         avatar={
           <Checkbox
             onClick={handleToggleAll(items)}
-            checked={
-              numberOfChecked(items) === items.length && items.length !== 0
-            }
-            indeterminate={
-              numberOfChecked(items) !== items.length &&
-              numberOfChecked(items) !== 0
-            }
+            checked={numberOfChecked(items) === items.length && items.length !== 0}
+            indeterminate={numberOfChecked(items) !== items.length && numberOfChecked(items) !== 0}
             disabled={items.length === 0}
             inputProps={{
               'aria-label': 'wszystkie wybrane',
@@ -124,43 +118,39 @@ export default function TransferList({
         subheader={`${numberOfChecked(items)}/${items.length} Wybranych`}
       />
       <Divider />
-      <List
-        sx={{
-          width: 200,
-          height: 230,
-          bgcolor: 'background.paper',
-          overflow: 'auto',
-        }}
-        dense
-        component="div"
-        role="list"
-      >
-        {items.map((value: number) => {
-          const labelId = `transfer-list-all-item-${allItems[value]}-label`;
+      <Box sx={{ maxHeight: '45vh', overflowY: 'auto' }}>
+        <List
+          sx={{
+            bgcolor: 'background.paper',
+            overflowY: 'auto',
+            overflowX: 'hidden',
+          }}
+          dense
+          component="div"
+          role="list"
+        >
+          {items.map((value: number) => {
+            const labelId = `transfer-list-all-item-${allItems[value]}-label`;
 
-          return (
-            <ListItem
-              key={`${title}-${value}`}
-              role="listitem"
-              button
-              onClick={handleToggle(value)}
-            >
-              <ListItemIcon>
-                <Checkbox
-                  checked={checked.indexOf(value) !== -1}
-                  tabIndex={-1}
-                  disableRipple
-                  inputProps={{
-                    'aria-labelledby': labelId,
-                  }}
-                />
-              </ListItemIcon>
-              <ListItemText id={labelId} primary={allItems[value]} />
-            </ListItem>
-          );
-        })}
-        <ListItem />
-      </List>
+            return (
+              <ListItem key={`${title}-${value}`} role="listitem" button onClick={handleToggle(value)}>
+                <ListItemIcon>
+                  <Checkbox
+                    checked={checked.indexOf(value) !== -1}
+                    tabIndex={-1}
+                    disableRipple
+                    inputProps={{
+                      'aria-labelledby': labelId,
+                    }}
+                  />
+                </ListItemIcon>
+                <ListItemText id={labelId} primary={allItems[value]} />
+              </ListItem>
+            );
+          })}
+          <ListItem />
+        </List>
+      </Box>
     </Card>
   );
 
@@ -169,11 +159,26 @@ export default function TransferList({
       sx={{
         display: 'flex',
         flexDirection: 'column',
+        alignItems: 'center',
+        justifyContent: 'center',
+        width: '100%',
       }}
     >
-      <Grid container spacing={2} justifyContent="center" alignItems="center">
-        <Grid item>{customList('Do wyboru', left)}</Grid>
-        <Grid item>
+      <Grid
+        container
+        spacing={2}
+        justifyContent="space-between"
+        alignItems="stretch"
+        sx={{
+          maxWidth: '100%',
+          margin: '0 auto',
+          gap: 2,
+        }}
+      >
+        <Grid item xs={12} md={4}>
+          {customList('Do wyboru', left)}
+        </Grid>
+        <Grid item xs={3} md={1}>
           <Grid container direction="column" alignItems="center">
             <Button
               sx={{ my: 0.5 }}
@@ -197,11 +202,13 @@ export default function TransferList({
             </Button>
           </Grid>
         </Grid>
-        <Grid item>{customList('Wybrane', right)}</Grid>
+        <Grid item xs={12} md={4}>
+          {customList('Wybrane', right)}
+        </Grid>
       </Grid>
 
       <Button
-        sx={{ my: 0.5, mt: 2 }}
+        sx={{ my: 0.5, mt: 2, width: '20%', minWidth: '138px' }}
         variant="contained"
         size="large"
         aria-label="zaakceptuj"

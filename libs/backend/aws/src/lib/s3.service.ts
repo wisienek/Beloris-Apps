@@ -43,12 +43,13 @@ export class S3Service {
     });
   }
 
-  async upload(key: string, data: AWS.S3.Body, bucket: string) {
+  async upload(key: string, data: AWS.S3.Body, bucket: string, shouldBePublic = false) {
     return this.s3
       .putObject({
         Bucket: bucket,
         Body: data,
         Key: key,
+        ACL: shouldBePublic ? 'public-read' : 'bucket-owner-full-control',
       })
       .promise();
   }

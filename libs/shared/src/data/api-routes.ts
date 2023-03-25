@@ -14,7 +14,7 @@ export class ApiRoutes {
   public static FILE_LIST = (major: number, minor: number) =>
     `${ApiRoutes.SERVER_URL}/uploader/${major}/${minor}/file-list`;
   public static FILE_LIST_UPLOAD = (v: VersionType, dataId: string) =>
-    `${ApiRoutes.FILE_LIST(v.major, v.minor)}/file`;
+    `${ApiRoutes.FILE_LIST(v.major, v.minor)}/${dataId}`;
 
   public static GET_UPDATE_FILES = (major: number, minor: number) =>
     `${ApiRoutes.SERVER_URL}/uploader/${major}/${minor}/update-files`;
@@ -22,16 +22,10 @@ export class ApiRoutes {
   // Packages
   public static PACKAGE = (major: number, minor: number) =>
     `${ApiRoutes.SERVER_URL}/uploader/${major}/${minor}/package`;
-  public static PACKAGE_UPLOAD = (
-    major: number,
-    minor: number,
-    infoUUID: string,
-  ) => `${ApiRoutes.PACKAGE(major, minor)}/${infoUUID}`;
-  public static PACKAGE_EDIT = (
-    major: number,
-    minor: number,
-    infoUUID: string,
-  ) => `${ApiRoutes.PACKAGE(major, minor)}/${infoUUID}`;
+  public static PACKAGE_UPLOAD = (major: number, minor: number, infoUUID: string) =>
+    `${ApiRoutes.PACKAGE(major, minor)}/${infoUUID}`;
+  public static PACKAGE_EDIT = (major: number, minor: number, infoUUID: string) =>
+    `${ApiRoutes.PACKAGE(major, minor)}/${infoUUID}`;
 
   // User
   public static LOGIN = `${ApiRoutes.SERVER_URL}/auth/login`;

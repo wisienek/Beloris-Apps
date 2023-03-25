@@ -1,9 +1,6 @@
 import { Logger, UseInterceptors } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
-import {
-  FileUnsupportedMimeException,
-  FileUnsupportedExtensionException,
-} from '../errors';
+import { FileUnsupportedMimeException, FileUnsupportedExtensionException } from '../errors';
 import { getFileExtension } from '../utils';
 
 export function UploadedFileInterceptor(
@@ -18,49 +15,27 @@ export function UploadedFileInterceptor(
         files: maxFiles,
         fileSize: maxFileSize,
       },
-      fileFilter: (request: Request, file, callback) => {
-        if (!allowedFileExtensions && !allowedMimeTypes)
-          return callback(null, true);
+      fileFilter: (request: Request, file: Express.Multer.File, callback) => {
+        if (!allowedFileExtensions && !allowedMimeTypes) return callback(null, true);
 
         if (allowedMimeTypes?.length > 0) {
-          const fileTypesPattern = new RegExp(
-            `${allowedMimeTypes.map((type) => `${type}`).join('|')}`,
-          );
+          const fileTypesPattern = new RegExp(`${allowedMimeTypes.map((type) => `${type}`).join('|')}`);
 
           if (!fileTypesPattern.test(file.mimetype)) {
-            Logger.warn(
-              'Unsupported mime type',
-              file.mimetype,
-              file.filename,
-              file.originalname,
-            );
-            return callback(
-              new FileUnsupportedMimeException(file.mimetype, allowedMimeTypes),
-              false,
-            );
+            Logger.warn('Unsupported mime type', file.mimetype, file.filename, file.originalname);
+            return callback(new FileUnsupportedMimeException(file.mimetype, allowedMimeTypes), false);
           }
         }
 
         if (allowedFileExtensions?.length > 0) {
-          const fileExtensionsPattern = new RegExp(
-            `${allowedFileExtensions.map((ext) => `${ext}`).join('|')}`,
-          );
+          const fileExtensionsPattern = new RegExp(`${allowedFileExtensions.map((ext) => `${ext}`).join('|')}`);
           const extension = getFileExtension(file);
 
           if (!fileExtensionsPattern.test(extension)) {
             Logger.warn(
-              'Unsupported file type',
-              extension,
-              file.filename,
-              file.originalname,
+              `Unsupported file type: ext=${extension}, name=${file.filename}, originalName=${file.originalname}`,
             );
-            return callback(
-              new FileUnsupportedExtensionException(
-                extension,
-                allowedFileExtensions,
-              ),
-              false,
-            );
+            return callback(new FileUnsupportedExtensionException(extension, allowedFileExtensions), false);
           }
         }
 

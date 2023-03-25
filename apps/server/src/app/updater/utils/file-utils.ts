@@ -1,28 +1,20 @@
-import { MulterFile } from '../typings';
 import { extname } from 'path';
+import 'Multer';
 import { FileType } from '@bella/enums';
 
-export const getFileExtension = (file: MulterFile | string) =>
+export const getFileExtension = (file: Express.Multer.File | string) =>
   typeof file === 'string' ? extname(file) : extname(file.originalname);
 
-export const getBucketDownloadPath = (
-  key: string,
-  bucket: string,
-  awsRegion: string,
-) => `https://${bucket}.s3.${awsRegion}.amazonaws.com/${key}`;
+export const getBucketDownloadPath = (key: string, bucket: string, awsRegion: string) =>
+  `https://${bucket}.s3.${awsRegion}.amazonaws.com/${key}`;
 
-export const getBundleKey = (major: number, file: MulterFile) =>
+export const getCFDownloadPath = (key: string, cloudFrontDistribution: string) => `${cloudFrontDistribution}/${key}`;
+
+export const getBundleKey = (major: number, file: Express.Multer.File) =>
   `versions/${major}/bundle.tar${getFileExtension(file)}`;
 
-export const getFileKey = (
-  major: number,
-  minor: number,
-  file: MulterFile,
-  name: string,
-) =>
-  `versions/${major}/${minor}/${sanitizeName(
-    `${name}${getFileExtension(file)}` ?? file.originalname,
-  )}`;
+export const getFileKey = (major: number, minor: number, file: Express.Multer.File, name: string) =>
+  `versions/${major}/${minor}/${sanitizeName(`${name}${getFileExtension(file)}` ?? file.originalname)}`;
 
 export const sanitizeName = (fileName: string) => {
   const ext = getFileExtension(fileName);
@@ -31,7 +23,7 @@ export const sanitizeName = (fileName: string) => {
   return `${name}${ext}`;
 };
 
-export const determineFileType = (file: MulterFile): FileType => {
+export const determineFileType = (file: Express.Multer.File): FileType => {
   const ext = getFileExtension(file).replace('.', '').replace('_old', '');
 
   switch (ext) {

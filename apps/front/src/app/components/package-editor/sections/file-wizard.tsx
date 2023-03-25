@@ -39,12 +39,13 @@ const FileWizard = () => {
           </Button>
           <br />
           {files && (
-            <Box>
+            <Box sx={{ width: '100%' }}>
               <Typography
                 variant="subtitle1"
                 gutterBottom
                 sx={{
                   color: theme.palette.warning.main,
+                  textAlign: 'center',
                 }}
               >
                 Wybierz pliki, które przesłać

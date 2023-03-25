@@ -1,17 +1,12 @@
 import { useContext, useState } from 'react';
 import { ErrorSeverity } from '../../single/error-message';
 import { ErrorContext } from '../../combined/error-box';
-import {
-  PackageEditorStateContext,
-  PackageEditorStateValue,
-} from '../sections/package-editor-state';
+import { PackageEditorStateContext, PackageEditorStateValue } from '../sections/package-editor-state';
 import { FileUploadDto } from '@bella/dto';
 
 export const useFiles = () => {
   const { addError } = useContext(ErrorContext);
-  const { files, setFiles } = useContext<PackageEditorStateValue>(
-    PackageEditorStateContext,
-  );
+  const { files, setFiles } = useContext<PackageEditorStateValue>(PackageEditorStateContext);
 
   const [filesMap, setFilesMap] = useState<Record<number, string>>({});
   const [selectedFiles, setSelectedFiles] = useState<number[]>([]);
@@ -24,13 +19,7 @@ export const useFiles = () => {
     const filesFetch = await window.api.files.getDownloaderFiles();
 
     if (filesFetch.error) {
-      addError(
-        ErrorSeverity.ERROR,
-        filesFetch?.error?.message,
-        false,
-        null,
-        `Inteligentne szukanie plików`,
-      );
+      addError(ErrorSeverity.ERROR, filesFetch?.error?.message, false, null, `Inteligentne szukanie plików`);
 
       return;
     }
@@ -49,16 +38,13 @@ export const useFiles = () => {
     }
 
     const filteredFiles = files.filter(
-      (file) =>
-        !('hash' in file) &&
-        selectedFiles.some((f) => filesMap[f] === file.savePath),
+      (file) => !('fileSize' in file) && selectedFiles.some((f) => filesMap[f] === file.savePath),
     ) as FileUploadDto[];
 
     const mappedNewFiles = { ...filesMap };
     const keys = Object.keys(filesMap);
 
-    for (const i of keys)
-      if (!selectedFiles.includes(Number(i))) delete mappedNewFiles[i];
+    for (const i of keys) if (!selectedFiles.includes(Number(i))) delete mappedNewFiles[i];
 
     setFiles(filteredFiles);
     setFilesMap(mappedNewFiles);

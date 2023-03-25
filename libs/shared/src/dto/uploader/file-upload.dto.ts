@@ -10,13 +10,7 @@ import {
   MinLength,
 } from 'class-validator';
 import { TransformBoolean } from '../../utils';
-import {
-  ApiProperty,
-  IntersectionType,
-  OmitType,
-  PartialType,
-  PickType,
-} from '@nestjs/swagger';
+import { ApiProperty, IntersectionType, OmitType, PartialType, PickType } from '@nestjs/swagger';
 import { FileAction } from '../../enums';
 
 export class FileUploadDto {
@@ -26,7 +20,7 @@ export class FileUploadDto {
     description: 'File name',
   })
   @MinLength(3)
-  @MaxLength(32)
+  @MaxLength(255)
   name: string;
 
   @IsString()
@@ -52,6 +46,12 @@ export class FileUploadDto {
   })
   @IsEnum(FileAction)
   fileAction: FileAction;
+
+  @ApiProperty({
+    description: 'hashed file',
+  })
+  @IsString()
+  hash: string;
 }
 
 export class UploadedS3FileDto {
@@ -76,9 +76,7 @@ export class UploadedS3FileDto {
   downloadPath: string;
 }
 
-export class EditFleOptions extends PartialType(
-  PickType(FileUploadDto, ['required', 'fileAction'] as const),
-) {}
+export class EditFleOptions extends PartialType(PickType(FileUploadDto, ['required', 'fileAction'] as const)) {}
 
 export class UploadPackageInfo extends IntersectionType(
   OmitType(UploadedS3FileDto, ['downloadPath'] as const),
@@ -86,4 +84,5 @@ export class UploadPackageInfo extends IntersectionType(
 ) {}
 
 export class UpdateFileInfo extends PartialType(FileUploadDto) {}
+
 export class UpdatePackageFileInfo extends PartialType(UploadPackageInfo) {}

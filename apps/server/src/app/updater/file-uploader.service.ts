@@ -18,8 +18,7 @@ import {
   UploadPackageInfo,
   VersionDto,
 } from '@bella/dto';
-import { getBucketDownloadPath, getBundleKey, getFileKey } from './utils';
-import { MulterFile } from './typings';
+import { determineFileType, getBundleKey, getCFDownloadPath, getFileKey } from './utils';
 import {
   FileConflictException,
   FileDataNotFoundException,
@@ -131,7 +130,7 @@ export class FileUploaderService {
     uuid: string,
     updateData: UpdateFileInfo | UpdatePackageFileInfo,
   ): Promise<DownloaderFileDto> {
-    const foundData = await this.getPackageFileForVersion(uuid);
+    const foundData = await this.getFileForVersion(uuid);
 
     const updated = await this.filesRepository.save({
       ...foundData,
@@ -144,7 +143,7 @@ export class FileUploaderService {
   public async handleUploadFile(
     major: number,
     minor: number,
-    file: MulterFile,
+    file: Express.Multer.File,
     uuid: string,
     isPackage = false,
   ): Promise<DownloaderFileDto> {
@@ -161,17 +160,18 @@ export class FileUploaderService {
     const hash: string = getFileHash(fileBuffer);
     const fileKey: string = isPackage ? getBundleKey(major, file) : getFileKey(major, minor, file, fileRecord.name);
     const fileSize = Number((fileBuffer.byteLength / (1_024 * 1_000)).toPrecision(2));
-    const downloadPath = getBucketDownloadPath(fileKey, this.awsConfig.uploaderBucket, this.awsConfig.region);
-    // const fileType = determineFileType(file);
+    const downloadPath = getCFDownloadPath(fileKey, this.awsConfig.cfDistribution);
+    const fileType = determineFileType(file);
 
-    if (fileRecord.hash !== hash) throw new FileHashConflictException(fileRecord.hash, hash);
+    if (fileRecord.hash !== hash) throw new FileHashConflictException(fileRecord.hash ?? 'null', hash);
 
-    this.logger.debug(`Uploading ${isPackage ? 'bundle' : 'file'} with size: ${fileSize}Mb`);
-    await this.awsService.upload(fileKey, fileBuffer, this.awsConfig.uploaderBucket);
+    this.logger.debug(`Uploading ${isPackage ? 'bundle' : 'file'} ${fileRecord.name} with size: ${fileSize}Mb`);
+    await this.awsService.upload(fileKey, fileBuffer, this.awsConfig.uploaderBucket, true);
     this.logger.debug(`Uploaded ${isPackage ? 'bundle' : 'file'} file: ${downloadPath}`);
 
     const saved = await this.filesRepository.save({
       ...fileRecord,
+      fileType,
       hash,
       fileSize,
       downloadPath,
@@ -217,9 +217,9 @@ export class FileUploaderService {
     return this.mapper.map(savedRecord, DownloaderFile, DownloaderFileDto);
   }
 
-  private async getPackageFileForVersion(id: string): Promise<DownloaderFile> {
+  private async getFileForVersion(id: string): Promise<DownloaderFile> {
     const foundFile = await this.filesRepository.findOne({
-      where: { version: { id }, isPrimaryBundle: true },
+      where: { id },
     });
     if (!foundFile) throw new FileDataNotFoundException();
 

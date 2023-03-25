@@ -1,6 +1,6 @@
 import { registerAs } from '@nestjs/config';
 import { validateUtil } from '../../../validate.util';
-import { IsNotEmpty, IsString } from 'class-validator';
+import { IsNotEmpty, IsString, IsUrl } from 'class-validator';
 import { Expose } from 'class-transformer';
 
 export class _AwsEnv {
@@ -23,8 +23,11 @@ export class _AwsEnv {
   @IsNotEmpty()
   @Expose()
   AWS_SECRET_ACCESS_KEY: string;
+
+  @IsUrl()
+  @IsNotEmpty()
+  @Expose()
+  AWS_CLOUDFRONT_DISTRIBUTION_URL: string;
 }
 
-export const AwsEnv = registerAs('aws', () =>
-  validateUtil(process.env, _AwsEnv),
-);
+export const AwsEnv = registerAs('aws', () => validateUtil(process.env, _AwsEnv));

@@ -1,6 +1,6 @@
-import { Inject, Injectable } from '@nestjs/common';
-import { BaseConfig } from '../../../base.config';
-import { _AwsEnv, AwsEnv } from './aws.env';
+import {Inject, Injectable} from '@nestjs/common';
+import {BaseConfig} from '../../../base.config';
+import {_AwsEnv, AwsEnv} from './aws.env';
 
 @Injectable()
 export class AwsConfig extends BaseConfig {
@@ -25,5 +25,9 @@ export class AwsConfig extends BaseConfig {
 
   get keySecret() {
     return this.env.AWS_SECRET_ACCESS_KEY;
+  }
+
+  get cfDistribution() {
+    return this.env.AWS_CLOUDFRONT_DISTRIBUTION_URL;
   }
 }

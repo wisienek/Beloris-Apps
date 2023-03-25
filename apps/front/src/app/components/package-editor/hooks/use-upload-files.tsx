@@ -17,8 +17,9 @@ export const useUploadFiles = () => {
   const uploadFiles = async () => {
     setSending(true);
 
-    if (isPackage) {
-      const packageInfo = files[0];
+    const packageInfo = files[0];
+
+    if ('fileSize' in packageInfo) {
       if (!('hash' in packageInfo)) {
         console.error(`Package info is not instance of UploadPackageInfo`);
 

@@ -10,6 +10,7 @@ import { ElectronLogger, getPackageName, getPackagePath, getInstance } from '../
 import { handlerWrapper } from '../handler-wrapper';
 import { readUserSettings } from './user-settings';
 import { versionHandler } from './version';
+import { getFileHash } from '@bella/core';
 
 export class UploaderHandler {
   private readonly logger = new ElectronLogger(UploaderHandler.name);
@@ -82,8 +83,6 @@ export class UploaderHandler {
 
         const versionFiles = await versionHandler.getVersion(version);
 
-        const fileDataPostUrl = ApiRoutes.FILE_LIST(version.major, version.minor);
-
         const preparedRequests = [];
 
         this.logger.debug(`Sending ${filesData.length} files to server!`);
@@ -98,11 +97,16 @@ export class UploaderHandler {
           if (!existsSync(filePath)) throw new Error(`Plik ${fileData.name} nie mógł być znaleziony!`);
 
           const buffer = readFileSync(filePath);
+          fileData.hash = getFileHash(buffer);
 
-          // TODO: add check post/path based on get version files
+          const existsFile = versionFiles.files.find((file) => file.name === fileData.name);
+          const fileDataPostUrl = existsFile
+            ? `${ApiRoutes.FILE_LIST(version.major, version.minor)}/${existsFile.id}`
+            : ApiRoutes.FILE_LIST(version.major, version.minor);
+
           preparedRequests.push(
             this.axiosInstance({
-              method: 'post',
+              method: existsFile ? 'patch' : 'post',
               url: fileDataPostUrl,
               data: fileData,
             }).then(
@@ -123,6 +127,7 @@ export class UploaderHandler {
     buffer: Buffer,
     version: VersionType,
   ): Promise<DownloaderFileDto> {
+    if (!dFileData.id) throw new Error(`Brak id pliku do przesłania!`);
     this.logger.debug(`Received data:`).debug(dFileData);
 
     const sendFileUrl = ApiRoutes.FILE_LIST_UPLOAD(version, dFileData.id);
@@ -130,12 +135,20 @@ export class UploaderHandler {
     this.logger.debug(`Sending file for data: ${dFileData.name}`);
 
     const formData = new FormData();
-    formData.append('file', buffer, dFileData.name);
+
+    const splitPath = dFileData.savePath.split('/');
+    const fileNameWithExt = splitPath[splitPath.length - 1];
+
+    this.logger.debug(`updatefileData uploading file:`, dFileData, fileNameWithExt);
+
+    formData.append('file', buffer, fileNameWithExt);
 
     const { data }: AxiosResponse<DownloaderFileDto> = await this.axiosInstance({
       method: 'post',
       url: sendFileUrl,
       data: formData,
+      maxContentLength: Infinity,
+      maxBodyLength: Infinity,
       headers: formData.getHeaders(),
     });
 

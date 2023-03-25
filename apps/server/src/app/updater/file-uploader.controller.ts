@@ -10,13 +10,7 @@ import {
   Query,
   UploadedFile,
 } from '@nestjs/common';
-import {
-  ApiConsumes,
-  ApiNotFoundResponse,
-  ApiOkResponse,
-  ApiParam,
-  ApiTags,
-} from '@nestjs/swagger';
+import { ApiConsumes, ApiNotFoundResponse, ApiOkResponse, ApiParam, ApiTags } from '@nestjs/swagger';
 import { AllowedFileSizes, AllowedUploaderFileExtensions } from '@bella/data';
 import { DCAdminServerRoles, FileType } from '@bella/enums';
 import {
@@ -26,10 +20,10 @@ import {
   UploadPackageInfo,
   UploadedS3FileDto,
   UpdatePackageFileInfo,
+  UpdateFileInfo,
 } from '@bella/dto';
 import { FileUploaderService } from './file-uploader.service';
 import { UploadedFileInterceptor } from './validators';
-import { MulterFile } from './typings';
 import { ApiFile } from './utils';
 import { Auth } from '../auth';
 
@@ -42,10 +36,7 @@ export class FileUploaderController {
   @ApiOkResponse({
     description: 'List of changes from last version',
   })
-  async getUpdateFiles(
-    @Param('major', ParseIntPipe) major: number,
-    @Param('minor', ParseIntPipe) minor: number,
-  ) {
+  async getUpdateFiles(@Param('major', ParseIntPipe) major: number, @Param('minor', ParseIntPipe) minor: number) {
     return await this.fileUploaderService.getFilesToUpdate(major, minor);
   }
 
@@ -67,19 +58,13 @@ export class FileUploaderController {
 
   @Auth(DCAdminServerRoles.MOD_MEISTER)
   @Post('package')
-  async createPackageData(
-    @Param('major', ParseIntPipe) major: number,
-    @Body() fileData: UploadPackageInfo,
-  ) {
+  async createPackageData(@Param('major', ParseIntPipe) major: number, @Body() fileData: UploadPackageInfo) {
     return await this.fileUploaderService.createPackageData(major, fileData);
   }
 
   @Auth(DCAdminServerRoles.MOD_MEISTER)
   @Patch('package/:uuid')
-  updatePackageData(
-    @Param('uuid', ParseUUIDPipe) uuid: string,
-    @Body() fileData: UpdatePackageFileInfo,
-  ) {
+  updatePackageData(@Param('uuid', ParseUUIDPipe) uuid: string, @Body() fileData: UpdatePackageFileInfo) {
     return this.fileUploaderService.updateFileData(uuid, fileData);
   }
 
@@ -104,15 +89,9 @@ export class FileUploaderController {
   async uploadPackageFile(
     @Param('major', ParseIntPipe) major: number,
     @Param('uuid', ParseUUIDPipe) uuid: string,
-    @UploadedFile() file: MulterFile,
+    @UploadedFile() file: Express.Multer.File,
   ) {
-    return await this.fileUploaderService.handleUploadFile(
-      major,
-      1,
-      file,
-      uuid,
-      true,
-    );
+    return await this.fileUploaderService.handleUploadFile(major, 1, file, uuid, true);
   }
 
   @Auth(DCAdminServerRoles.MOD_MEISTER)
@@ -137,19 +116,19 @@ export class FileUploaderController {
   })
   @ApiConsumes('multipart/form-data')
   @ApiFile()
-  @UploadedFileInterceptor(15_000_000, 1, null, AllowedUploaderFileExtensions)
+  @UploadedFileInterceptor(AllowedFileSizes[FileType.MOD], 1, null, AllowedUploaderFileExtensions)
   async uploadFile(
     @Param('major', ParseIntPipe) major: number,
     @Param('minor', ParseIntPipe) minor: number,
     @Param('uuid', ParseUUIDPipe) uuid: string,
-    @UploadedFile() file: MulterFile,
+    @UploadedFile() file: Express.Multer.File,
   ) {
-    return this.fileUploaderService.handleUploadFile(
-      major,
-      minor,
-      file,
-      uuid,
-      false,
-    );
+    return this.fileUploaderService.handleUploadFile(major, minor, file, uuid, false);
+  }
+
+  @Auth(DCAdminServerRoles.MOD_MEISTER)
+  @Patch('file-list/:uuid')
+  updateFileData(@Param('uuid', ParseUUIDPipe) uuid: string, @Body() fileData: UpdateFileInfo) {
+    return this.fileUploaderService.updateFileData(uuid, fileData);
   }
 }
