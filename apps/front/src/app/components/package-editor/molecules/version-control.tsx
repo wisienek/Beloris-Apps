@@ -10,31 +10,31 @@ import {
   Stack,
   Typography,
 } from '@mui/material';
+import { VersionType } from '@bella/types';
+import { PackageEditorStateContext, PackageEditorStateValue } from '../sections/package-editor-state';
 import AntSwitch from '../../single/ant-switch';
-import {
-  PackageEditorStateContext,
-  PackageEditorStateValue,
-} from '../sections/package-editor-state';
 
 const VersionControl = () => {
-  const {
-    version,
-    currentVersion,
-    handleVersionChange,
-    handleVersionSelect,
-    versionHistory,
-  } = useContext<PackageEditorStateValue>(PackageEditorStateContext);
+  const { version, currentVersion, handleVersionChange, handleVersionSelect, versionHistory } =
+    useContext<PackageEditorStateValue>(PackageEditorStateContext);
 
   const [newVersion, setNewVersion] = useState<boolean>(false);
 
+  const latestVersion = (versionHistory ?? []).reduce(
+    (prev: VersionType, current: VersionType) => {
+      if (current.major > prev.major) {
+        return current;
+      } else if (current.major === prev.major && current.minor > prev.minor) {
+        return current;
+      }
+      return prev;
+    },
+    { major: 0, minor: 0 },
+  );
+
   return (
     <>
-      <Stack
-        direction="row"
-        spacing={1}
-        alignItems="center"
-        justifyContent="space-between"
-      >
+      <Stack direction="row" spacing={1} alignItems="center" justifyContent="space-between">
         <Typography>Istniejąca wersja</Typography>
         <AntSwitch
           defaultChecked={newVersion}
@@ -61,9 +61,7 @@ const VersionControl = () => {
                 placeholder={`${currentVersion?.major ?? 0}`}
                 value={version?.major ?? 0}
                 onChange={(e) => handleVersionChange(e, 'major')}
-                startAdornment={
-                  <InputAdornment position="start">V</InputAdornment>
-                }
+                startAdornment={<InputAdornment position="start">V</InputAdornment>}
                 label="Główna"
               />
             </FormControl>
@@ -76,9 +74,7 @@ const VersionControl = () => {
                 placeholder={`${currentVersion?.minor ?? 0}`}
                 value={version?.minor ?? 0}
                 onChange={(e) => handleVersionChange(e, 'minor')}
-                startAdornment={
-                  <InputAdornment position="start">v</InputAdornment>
-                }
+                startAdornment={<InputAdornment position="start">v</InputAdornment>}
                 label="mała"
               />
             </FormControl>
@@ -91,6 +87,7 @@ const VersionControl = () => {
                 labelId="select-existing-version-label"
                 id="select-existing-version"
                 value={`${version?.major}.${version?.minor}`}
+                defaultValue={`${latestVersion?.major}.${latestVersion?.minor}`}
                 label="Wersja"
                 onChange={(e) => handleVersionSelect(e)}
               >

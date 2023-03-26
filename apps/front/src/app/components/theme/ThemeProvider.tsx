@@ -26,34 +26,19 @@ const ThemeProviderWrapper: FC<ThemeProviderWrapperArgs> = ({ children }: ThemeP
     <ThemeContext.Provider value={setThemeName}>
       <ThemeProvider theme={theme}>
         <GlobalStyles
-          styles={
-            {
-              // FIXME: Change scrollbar.
-              // scrollbarColor: `#2b2b2b #6b6b6b`,
-              // '&::-webkit-scrollbar, & *::-webkit-scrollbar': {
-              //   backgroundColor: '#6b6b6b',
-              // },
-              // '&::-webkit-scrollbar-thumb, & *::-webkit-scrollbar-thumb': {
-              //   borderRadius: 12,
-              //   backgroundColor: '#2b2b2b',
-              //   minHeight: 24,
-              //   width: 6,
-              //   border: `2px solid #6b6b6b`,
-              // },
-              // '&::-webkit-scrollbar-thumb:focus, & *::-webkit-scrollbar-thumb:focus': {
-              //   backgroundColor: '#959595',
-              // },
-              // '&::-webkit-scrollbar-thumb:active, & *::-webkit-scrollbar-thumb:active': {
-              //   backgroundColor: '#959595',
-              // },
-              // '&::-webkit-scrollbar-thumb:hover, & *::-webkit-scrollbar-thumb:hover': {
-              //   backgroundColor: '#959595',
-              // },
-              // '&::-webkit-scrollbar-corner, & *::-webkit-scrollbar-corner': {
-              //   backgroundColor: '#6b6b6b',
-              // },
-            }
-          }
+          styles={{
+            scrollbarColor: `#e6e6e6 rgb(255 255 255 / 10%)`,
+            '&::-webkit-scrollbar, & *::-webkit-scrollbar': {
+              width: '10px',
+              height: '10px',
+              backgroundColor: 'rgb(255 255 255 / 10%)',
+            },
+            '&::-webkit-scrollbar-thumb, & *::-webkit-scrollbar-thumb': {
+              backgroundColor: '#e6e6e6',
+              backgroundImage: 'none',
+              borderRadius: '10px',
+            },
+          }}
         />
         {children}
       </ThemeProvider>

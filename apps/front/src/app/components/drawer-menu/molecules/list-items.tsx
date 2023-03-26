@@ -1,17 +1,12 @@
-import * as React from 'react';
-import { Link } from 'react-router-dom';
-import {
-  ListItemButton,
-  ListItemIcon,
-  ListItemText,
-  ListSubheader,
-} from '@mui/material';
-import DashboardIcon from '@mui/icons-material/Dashboard';
-import PeopleIcon from '@mui/icons-material/People';
-import ImportExportRoundedIcon from '@mui/icons-material/ImportExportRounded';
 import { GuildMember } from 'discord.js';
-
+import { Link } from 'react-router-dom';
+import * as React from 'react';
+import { ListItemButton, ListItemIcon, ListItemText, ListSubheader } from '@mui/material';
+import DashboardIcon from '@mui/icons-material/Dashboard';
+import * as Icons from '@mui/icons-material';
+import { NavbarOptions } from '@bella/enums';
 import { User } from '@bella/types';
+import { useTest, useNavbar } from '../hooks';
 
 export const MainListItems = () => {
   return (
@@ -31,36 +26,90 @@ export interface SecondaryListItemsArgs {
   adminMember: GuildMember;
 }
 
-export const SecondaryListItems = ({
-  user,
-  adminMember,
-}: SecondaryListItemsArgs) => {
+export const SecondaryListItems = ({ user, adminMember }: SecondaryListItemsArgs) => {
+  const { navbarOptions } = useNavbar();
+  const { sendTestAuth, testing, sendNotification } = useTest();
+
+  const testingAssociationMap = {
+    Powiadomienia: {
+      onClick: sendNotification,
+    },
+  };
+
   return user ? (
     <React.Fragment>
-      <ListSubheader component="div" inset>
-        Użytkownik
-      </ListSubheader>
-
-      <ListItemButton>
-        <ListItemIcon>
-          <PeopleIcon />
-        </ListItemIcon>
-        <ListItemText primary="Skiny" />
-      </ListItemButton>
-
-      {adminMember && (
+      {navbarOptions[NavbarOptions.PUBLIC]?.length > 0 ? (
         <>
           <ListSubheader component="div" inset>
-            Admin
+            Użytkownik
           </ListSubheader>
 
-          <ListItemButton component={Link} to="/mods-wizard">
-            <ListItemIcon>
-              <ImportExportRoundedIcon />
-            </ListItemIcon>
-            <ListItemText primary="Edytowanie paczki" />
-          </ListItemButton>
+          {navbarOptions[NavbarOptions.PUBLIC]?.map((item, i) => (
+            <ListItemButton key={`${NavbarOptions.PUBLIC}-${i}`}>
+              <ListItemIcon>{React.createElement(Icons[item.icon])}</ListItemIcon>
+              <ListItemText primary={item.name} />
+            </ListItemButton>
+          ))}
         </>
+      ) : (
+        <></>
+      )}
+
+      {adminMember ? (
+        <>
+          {navbarOptions[NavbarOptions.ADMIN]?.length > 0 ? (
+            <>
+              <ListSubheader component="div" inset>
+                Admin
+              </ListSubheader>
+
+              {navbarOptions[NavbarOptions.ADMIN]?.map((item, i) => (
+                <ListItemButton
+                  key={`${NavbarOptions.ADMIN}-${i}`}
+                  {...(item?.to
+                    ? {
+                        component: Link,
+                        to: item.to,
+                      }
+                    : {})}
+                >
+                  <ListItemIcon>{React.createElement(Icons[item.icon])}</ListItemIcon>
+                  <ListItemText primary={item.name} />
+                </ListItemButton>
+              ))}
+            </>
+          ) : (
+            <></>
+          )}
+
+          {navbarOptions[NavbarOptions.TESTING]?.length > 0 ? (
+            <>
+              <ListSubheader component="div" inset>
+                Testowe
+              </ListSubheader>
+
+              {navbarOptions[NavbarOptions.TESTING]?.map((item, i) => (
+                <ListItemButton
+                  key={`${NavbarOptions.TESTING}-${i}`}
+                  {...(testingAssociationMap[item.name] ?? {})}
+                  {...(item?.to
+                    ? {
+                        component: Link,
+                        to: item.to,
+                      }
+                    : {})}
+                >
+                  <ListItemIcon>{React.createElement(Icons[item.icon])}</ListItemIcon>
+                  <ListItemText primary={item.name} />
+                </ListItemButton>
+              ))}
+            </>
+          ) : (
+            <></>
+          )}
+        </>
+      ) : (
+        <></>
       )}
     </React.Fragment>
   ) : (

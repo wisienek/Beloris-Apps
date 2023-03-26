@@ -1,3 +1,4 @@
+export * from './navbar-options.enum';
 export * from './ipc-file-chose.enum';
 export * from './ipc-channels.enum';
 export * from './file-action.enum';

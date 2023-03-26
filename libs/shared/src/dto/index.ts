@@ -1,4 +1,5 @@
-export * from './auth';
 export * from './uploader';
-export * from './ipc';
+export * from './navbar';
 export * from './game';
+export * from './auth';
+export * from './ipc';

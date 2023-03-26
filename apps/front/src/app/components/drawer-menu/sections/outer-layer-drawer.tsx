@@ -18,7 +18,6 @@ import Bg from '../../../../assets/images/background.png';
 import { UserContext } from '../../context/user-context';
 import { AppBar } from '../../single/app-bar';
 import { Drawer } from '../../single/drawer';
-import TestingNav from '../molecules/testing-nav';
 
 const mdTheme = createTheme();
 
@@ -88,7 +87,6 @@ const OuterLayerDrawer = ({ children }: { children: ReactNode }) => {
               <>
                 <Divider sx={{ my: 1 }} />
                 <SecondaryListItems user={user} adminMember={belorisAdminMember} />
-                {belorisAdminMember ? <TestingNav member={belorisAdminMember} /> : <></>}
               </>
             ) : (
               <></>
