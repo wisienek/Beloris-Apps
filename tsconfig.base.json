@@ -21,7 +21,6 @@
       "@bella/core": ["libs/core/src/index.ts"],
       "@bella/data": ["libs/shared/src/data/index.ts"],
       "@bella/db": ["libs/backend/database/src/index.ts"],
-      "@bella/dp": ["libs/desktop/src/index.ts"],
       "@bella/dto": ["libs/shared/src/dto/index.ts"],
       "@bella/enums": ["libs/shared/src/enums/index.ts"],
       "@bella/mapper": ["libs/backend/mapper/src/index.ts"],

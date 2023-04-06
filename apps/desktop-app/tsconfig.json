@@ -1,19 +1,27 @@
 {
-  "extends": "../../tsconfig.base.json",
-  "compilerOptions": {
-    "types": ["node"]
-  },
-  "include": ["**/*.ts"],
-  "target": "es5",
-  "module": "commonjs",
-  "sourceMap": true,
-  "strict": true,
-  "homepage": ".",
-  "outDir": "../../build",
-  "rootDir": "../../",
-  "noEmitOnError": true,
-  "main": "build/electron/main.js",
-  "typeRoots": [
-    "../../node_modules/@types"
-  ]
+	"extends": "../../tsconfig.base.json",
+	"compilerOptions": {
+		"types": [
+			"node"
+		]
+	},
+	"include": [
+		"**/*.ts"
+	],
+	"target": "es6",
+	"module": "commonjs",
+	"sourceMap": true,
+	"strict": true,
+	"homepage": ".",
+	"outDir": "../../build",
+	"rootDir": "../../",
+	"esModuleInterop": true,
+	"noEmitOnError": true,
+	"noImplicitAny": true,
+	"moduleResolution": "node",
+	"allowSyntheticDefaultImports": true,
+	"main": "build/electron/main.js",
+	"typeRoots": [
+		"../../node_modules/@types"
+	]
 }
