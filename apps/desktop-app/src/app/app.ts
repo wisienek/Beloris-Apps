@@ -4,11 +4,11 @@ import { join, resolve } from 'path';
 import * as process from 'process';
 import { format } from 'url';
 import 'dotenv/config';
-import { Store, StoreKeys } from '@bella/dp';
 import { IPCChannels } from '@bella/enums';
-import { ElectronLogger } from '@bella/dp';
 import { rendererAppName, rendererAppPort } from './constants';
 import { environment } from '../environments/environment';
+import { Store, StoreKeys } from '../store';
+import { ElectronLogger } from '../utils';
 
 export default class App {
   private static Logger = new ElectronLogger(App.name);

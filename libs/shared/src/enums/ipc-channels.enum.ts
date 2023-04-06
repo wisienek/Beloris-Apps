@@ -20,6 +20,7 @@ export enum IPCChannels {
   // upload files
   UPLOAD_PACKAGE = 'upload-package',
   UPLOAD_FILES = 'upload-files',
+  UPLOAD_PROGRESS = 'upload-progress',
   // Windows
   NOTIFICATION = 'notification',
 }

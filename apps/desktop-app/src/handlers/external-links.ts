@@ -1,9 +1,11 @@
 import { IpcMainEvent, shell, IpcMainInvokeEvent } from 'electron';
 import { IpcEventDto } from '@bella/dto';
-import { ElectronLogger } from '../utils';
+import { BaseHandler } from './base-handler';
 
-export class ExternalLinksHandler {
-  private readonly logger = new ElectronLogger(ExternalLinksHandler.name);
+export class ExternalLinksHandler extends BaseHandler {
+  constructor() {
+    super(ExternalLinksHandler.name);
+  }
 
   public async openExternalLink(event: IpcMainEvent, link: string): Promise<IpcEventDto<boolean>> {
     let replyMessage: IpcEventDto<boolean>;

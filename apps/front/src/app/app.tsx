@@ -20,8 +20,12 @@ export const App = () => {
     <>
       <ErrorBox />
       <OuterLayerDrawer>
-        <Route path="/" exact component={MainPage} />
-        <Route path="/settings" component={SettingsPage} />
+        <Route path="/">
+          <MainPage />
+        </Route>
+        <Route path="/settings">
+          <SettingsPage />
+        </Route>
         <Route path="/mods-wizard">
           <PackageEditorStateContextProvider>
             <PackageEditorPage />

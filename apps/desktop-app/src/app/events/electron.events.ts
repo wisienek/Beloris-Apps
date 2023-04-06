@@ -1,8 +1,3 @@
-/**
- * This module is responsible on handling all the inter process communications
- * between the frontend to the electron backend.
- */
-
 import { app, BrowserWindow, ipcMain, ipcRenderer } from 'electron';
 import { FileUploadDto, UploadPackageInfo } from '@bella/dto';
 import { VersionType } from '@bella/types';
@@ -18,7 +13,7 @@ import {
   uploaderHandler,
   externalLinksHandler,
   windowsHandler,
-} from '@bella/dp';
+} from '../../handlers';
 import { environment } from '../../environments/environment';
 
 export default class ElectronEvents {

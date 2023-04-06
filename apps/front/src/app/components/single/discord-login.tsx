@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Discord } from 'mdi-material-ui';
+import Discord from './assets/discord.svg';
 import { Fab, FormControl, Grid, Typography } from '@mui/material';
 import axios from 'axios';
 import Cookies from 'universal-cookie';
@@ -45,8 +45,10 @@ const DiscordLogin = () => {
         ) : (
           <FormControl variant="outlined" fullWidth>
             <Fab variant="extended" color="primary" aria-label="Zaloguj przez Discord" onClick={() => loginLink()}>
-              <Discord sx={{ mr: 3 }} />
-              <Typography variant="subtitle1">Zaloguj przez Discord</Typography>
+              <Discord />
+              <Typography sx={{ ml: 3 }} variant="subtitle1">
+                Zaloguj przez Discord
+              </Typography>
             </Fab>
           </FormControl>
         )}

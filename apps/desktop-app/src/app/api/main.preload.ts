@@ -35,7 +35,7 @@ const windowApi: WindowApi = {
         IpcEventDto<DownloaderFileDto>
       >,
 
-    uploadFiles: (version: VersionType, filesData: FileUploadDto[], setCurrentVersion?: boolean) =>
+    uploadFiles: (version, filesData, setCurrentVersion) =>
       ipcRenderer.invoke(IPCChannels.UPLOAD_FILES, version, filesData, setCurrentVersion) as Promise<
         IpcEventDto<DownloaderFileDto[]>
       >,

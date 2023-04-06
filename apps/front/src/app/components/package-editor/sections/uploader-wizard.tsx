@@ -1,30 +1,24 @@
 import { useContext } from 'react';
 import AssignmentTwoToneIcon from '@mui/icons-material/AssignmentTwoTone';
 import { Box, Button, Zoom } from '@mui/material';
+import { PackageEditorStateContext, PackageEditorStateValue } from './package-editor-state';
 import Checklist, { CheckListTask } from '../../combined/check-list';
 import { useVerifyPackage, useUploadFiles } from '../hooks';
 import Tooltip from '../../single/tooltip';
 import Title from '../../single/title';
-import {
-  PackageEditorStateContext,
-  PackageEditorStateValue,
-} from './package-editor-state';
 
 const UploaderWizard = () => {
-  const { version, isPackage, files } = useContext<PackageEditorStateValue>(
-    PackageEditorStateContext,
-  );
+  const { version, isPackage, files } = useContext<PackageEditorStateValue>(PackageEditorStateContext);
 
   const { toDo } = useVerifyPackage();
-  const { sending, uploadFiles, sent } = useUploadFiles();
+  const { sending, sendingProgress, uploadFiles, sent } = useUploadFiles();
 
   const getTasks = (): CheckListTask[] => {
     return [
       {
         name: 'wersja',
         label: 'Wybrana wersja',
-        checked:
-          !isNaN(version.major) && !isNaN(version.minor) && version.major > 0,
+        checked: !isNaN(version.major) && !isNaN(version.minor) && version.major > 0,
       },
       {
         name: 'pliki',
@@ -60,23 +54,14 @@ const UploaderWizard = () => {
         />
       </Box>
 
-      <Tooltip
-        title="Wysyła info i pliki do serwera"
-        arrow
-        TransitionComponent={Zoom}
-        placement="right"
-      >
+      <Tooltip title="Wysyła info i pliki do serwera" arrow TransitionComponent={Zoom} placement="right">
         <Button
           variant="contained"
           size="small"
           disabled={toDo.length > 0 || sending || sent}
           onClick={() => uploadFiles()}
         >
-          {sent
-            ? 'Wysłane...'
-            : sending
-            ? 'Przesyłam zmiany...'
-            : 'Prześlij zmiany'}
+          {sent ? 'Wysłane...' : sending ? 'Przesyłam zmiany...' : 'Prześlij zmiany'}
         </Button>
       </Tooltip>
     </>

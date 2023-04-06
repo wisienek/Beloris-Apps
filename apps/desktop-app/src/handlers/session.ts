@@ -1,5 +1,5 @@
 import { IpcEventDto, TokenDto } from '@bella/dto';
-import { handlerWrapper } from '../handler-wrapper';
+import { handlerWrapper } from './handler-wrapper';
 import { Store, StoreKeys } from '../store';
 
 export const getSession = async (): Promise<IpcEventDto<TokenDto>> => {

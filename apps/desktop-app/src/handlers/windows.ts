@@ -1,6 +1,6 @@
 import { Notification } from 'electron';
 import { IpcEventDto } from '@bella/dto';
-import { handlerWrapper } from '@bella/dp';
+import { handlerWrapper } from './handler-wrapper';
 import { ElectronLogger } from '../utils';
 
 export class WindowsHandler {

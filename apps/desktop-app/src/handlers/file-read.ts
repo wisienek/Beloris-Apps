@@ -8,7 +8,7 @@ import { AllowedUploaderFileExtensions, IpcFileMap, packerFiles } from '@bella/d
 import { getFileHash } from '@bella/core';
 import { FileAction } from '@bella/enums';
 import { getPackageName, getPackagePath } from '../utils';
-import { handlerWrapper } from '../handler-wrapper';
+import { handlerWrapper } from './handler-wrapper';
 import { readUserSettings } from './user-settings';
 
 export const openFileDialog = async (event, { fileType }: FileDialogInputDto): Promise<IpcEventDto<string>> => {

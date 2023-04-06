@@ -1,20 +1,23 @@
-import { AxiosInstance, AxiosResponse } from 'axios';
 import { existsSync, readFileSync } from 'fs';
+import { AxiosResponse } from 'axios';
 import * as FormData from 'form-data';
 import { resolve } from 'path';
 import { DownloaderFileDto, FileUploadDto, IpcEventDto, UploadPackageInfo } from '@bella/dto';
 import { VersionType } from '@bella/types';
-import { ApiRoutes } from '@bella/data';
-import { FileType } from '@bella/enums';
-import { ElectronLogger, getPackageName, getPackagePath, getInstance } from '../utils';
-import { handlerWrapper } from '../handler-wrapper';
-import { readUserSettings } from './user-settings';
-import { versionHandler } from './version';
 import { getFileHash } from '@bella/core';
+import { ApiRoutes } from '@bella/data';
+import { FileType, IPCChannels } from '@bella/enums';
+import { getPackageName, getPackagePath } from '../utils';
+import { handlerWrapper } from './handler-wrapper';
+import { readUserSettings } from './user-settings';
+import { BaseHandler } from './base-handler';
+import { versionHandler } from './version';
+import App from '../app/app';
 
-export class UploaderHandler {
-  private readonly logger = new ElectronLogger(UploaderHandler.name);
-  private readonly axiosInstance: AxiosInstance = getInstance();
+export class UploaderHandler extends BaseHandler {
+  constructor() {
+    super(UploaderHandler.name);
+  }
 
   public uploadPackage(
     version: VersionType,
@@ -153,6 +156,8 @@ export class UploaderHandler {
     });
 
     this.logger.debug(`File sent successfully!`).debug(data);
+
+    App.mainWindow.webContents.send(IPCChannels.UPLOAD_PROGRESS, dFileData);
 
     return data;
   }

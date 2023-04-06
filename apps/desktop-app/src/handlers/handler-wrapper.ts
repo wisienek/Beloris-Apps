@@ -1,5 +1,5 @@
 import { IpcEventDto } from '@bella/dto';
-import { ElectronLogger } from './utils';
+import { ElectronLogger } from '../utils';
 
 export const handlerWrapper = async <U>(
   fn: () => U | Promise<U>,

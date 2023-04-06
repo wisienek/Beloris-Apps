@@ -1,13 +1,14 @@
-import { AxiosInstance, AxiosResponse } from 'axios';
+import { AxiosResponse } from 'axios';
 import * as _ from 'lodash';
 import { CreateVersionDto, UpdateVersionDto, VersionDto } from '@bella/dto';
 import { VersionType } from '@bella/types';
 import { ApiRoutes } from '@bella/data';
-import { ElectronLogger, getInstance } from '../utils';
+import { BaseHandler } from './base-handler';
 
-class VersionHandler {
-  private readonly logger = new ElectronLogger(VersionHandler.name);
-  private readonly axiosInstance: AxiosInstance = getInstance();
+class VersionHandler extends BaseHandler {
+  constructor() {
+    super(VersionHandler.name);
+  }
 
   public async changeVersionAsCurrent(version: VersionType, isCurrent: boolean): Promise<VersionDto> {
     this.logger.log(`Updating current version to ${version.major}:${version.minor}`);

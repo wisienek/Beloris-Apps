@@ -1,12 +1,10 @@
 import { IpcMainEvent } from 'electron';
 import { UserSettings } from '@bella/schema';
 import { IpcEventDto } from '@bella/dto';
-import { handlerWrapper } from '../handler-wrapper';
+import { handlerWrapper } from './handler-wrapper';
 import { Store, StoreKeys } from '../store';
 
-export const readUserSettings = async (): Promise<
-  IpcEventDto<UserSettings>
-> => {
+export const readUserSettings = async (): Promise<IpcEventDto<UserSettings>> => {
   return await handlerWrapper(
     async () => {
       const settings = Store.get(StoreKeys.SETTINGS) as unknown as UserSettings;
