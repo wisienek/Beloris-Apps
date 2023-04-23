@@ -1,6 +1,6 @@
 import * as React from 'react';
-import Discord from './assets/discord.svg';
 import { Fab, FormControl, Grid, Typography } from '@mui/material';
+import { FaDiscord } from 'react-icons/fa';
 import axios from 'axios';
 import Cookies from 'universal-cookie';
 
@@ -45,7 +45,7 @@ const DiscordLogin = () => {
         ) : (
           <FormControl variant="outlined" fullWidth>
             <Fab variant="extended" color="primary" aria-label="Zaloguj przez Discord" onClick={() => loginLink()}>
-              <Discord />
+              <FaDiscord size={30} />
               <Typography sx={{ ml: 3 }} variant="subtitle1">
                 Zaloguj przez Discord
               </Typography>

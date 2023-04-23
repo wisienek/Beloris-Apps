@@ -1,12 +1,11 @@
-import { useEffect } from 'react';
 import { Route } from 'react-router-dom';
-
-import MainPage from './pages/main-page';
-import SettingsPage from './pages/settings-page';
-import { ErrorBox } from './components/combined/error-box';
+import { useEffect } from 'react';
+import PackageEditorStateContextProvider from './components/package-editor/sections/package-editor.state';
 import OuterLayerDrawer from './components/drawer-menu/sections/outer-layer-drawer';
+import { ErrorBox } from './components/combined/error-box';
 import PackageEditorPage from './pages/package-editor';
-import PackageEditorStateContextProvider from './components/package-editor/sections/package-editor-state';
+import SettingsPage from './pages/settings-page';
+import MainPage from './pages/main-page';
 import { useLogin } from './hooks';
 
 export const App = () => {
@@ -20,13 +19,13 @@ export const App = () => {
     <>
       <ErrorBox />
       <OuterLayerDrawer>
-        <Route path="/">
+        <Route path="/" exact>
           <MainPage />
         </Route>
         <Route path="/settings">
           <SettingsPage />
         </Route>
-        <Route path="/mods-wizard">
+        <Route path="/mods-wizard" exact>
           <PackageEditorStateContextProvider>
             <PackageEditorPage />
           </PackageEditorStateContextProvider>

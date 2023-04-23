@@ -14,15 +14,10 @@ const stepMap: IStep[] = [
   },
   {
     id: 2,
-    name: 'Wybierz pliki',
+    name: 'Wprowadź zmiany',
   },
   {
     id: 3,
-    name: 'Wprowadź zmiany',
-    isOptional: true,
-  },
-  {
-    id: 4,
     name: 'Podpisz i wyślij',
   },
 ];
@@ -46,55 +41,42 @@ export interface PackageEditorStateValue {
   handleCurrentVersionChange: () => void;
   isPackage: boolean;
   files: Array<FileUploadDto | UploadPackageInfo>;
-  setFiles: React.Dispatch<
-    React.SetStateAction<Array<FileUploadDto | UploadPackageInfo>>
-  >;
+  setFiles: React.Dispatch<React.SetStateAction<Array<FileUploadDto | UploadPackageInfo>>>;
 }
 
-export const PackageEditorStateContext =
-  React.createContext<PackageEditorStateValue>({
-    isStepSkipped: (step: number) => false,
-    activeStep: 0,
-    stepMap,
-    handleNext: () => null,
-    handleBack: () => null,
-    handleSkip: () => null,
-    handleReset: () => null,
-    version: { major: null, minor: null },
-    handleVersionChange: (event: any, version: 'major' | 'minor') => null,
-    handleVersionSelect: (event: any) => null,
-    versionHistory: undefined,
-    currentVersion: undefined,
-    isCurrentVersion: false,
-    handleCurrentVersionChange: () => null,
-    isPackage: false,
-    files: [],
-    setFiles: () => null,
-  });
+export const PackageEditorStateContext = React.createContext<PackageEditorStateValue>({
+  isStepSkipped: (step: number) => false,
+  activeStep: 0,
+  stepMap,
+  handleNext: () => null,
+  handleBack: () => null,
+  handleSkip: () => null,
+  handleReset: () => null,
+  version: { major: null, minor: null },
+  handleVersionChange: (event: any, version: 'major' | 'minor') => null,
+  handleVersionSelect: (event: any) => null,
+  versionHistory: undefined,
+  currentVersion: undefined,
+  isCurrentVersion: false,
+  handleCurrentVersionChange: () => null,
+  isPackage: false,
+  files: [],
+  setFiles: () => null,
+});
 
-const PackageEditorStateContextProvider = ({
-  children,
-}: {
-  children?: React.ReactNode;
-}) => {
+const PackageEditorStateContextProvider = ({ children }: { children?: React.ReactNode }) => {
   const { addError } = useContext(ErrorContext);
 
   const [activeStep, setActiveStep] = React.useState(1);
   const [skipped, setSkipped] = React.useState(new Set<number>());
 
-  const [version, setVersion] = React.useState<
-    Record<'major' | 'minor', number>
-  >({ major: 0, minor: 0 });
+  const [version, setVersion] = React.useState<Record<'major' | 'minor', number>>({ major: 0, minor: 0 });
 
-  const [isCurrentVersion, setIsCurrentVersion] =
-    React.useState<boolean>(false);
+  const [isCurrentVersion, setIsCurrentVersion] = React.useState<boolean>(false);
 
-  const [files, setFiles] =
-    React.useState<Array<FileUploadDto | UploadPackageInfo>>(null);
+  const [files, setFiles] = React.useState<Array<FileUploadDto | UploadPackageInfo>>(null);
 
-  const { data: versionHistory } = useFetch<VersionDto[]>(
-    ApiRoutes.VERSION_HISTORY,
-  );
+  const { data: versionHistory } = useFetch<VersionDto[]>(ApiRoutes.VERSION_HISTORY);
   const { data: currentVersion } = useFetch<VersionDto>(ApiRoutes.VERSION);
 
   const handleVersionChange = (e: any, type: 'major' | 'minor') => {
@@ -144,9 +126,7 @@ const PackageEditorStateContextProvider = ({
     }
 
     setActiveStep((prevActiveStep) =>
-      prevActiveStep === 2 && version.minor <= 1
-        ? prevActiveStep + 2
-        : prevActiveStep + 1,
+      prevActiveStep === 1 && version.minor <= 1 ? prevActiveStep + 2 : prevActiveStep + 1,
     );
     setSkipped(newSkipped);
   };
@@ -156,9 +136,7 @@ const PackageEditorStateContextProvider = ({
 
     if (activeStep - 1 >= min)
       setActiveStep((prevActiveStep) =>
-        activeStep === 4 && version.minor <= 1
-          ? prevActiveStep - 2
-          : prevActiveStep - 1,
+        activeStep === 4 && version.minor <= 1 ? prevActiveStep - 2 : prevActiveStep - 1,
       );
   };
 

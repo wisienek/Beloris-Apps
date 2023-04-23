@@ -94,7 +94,14 @@ function DashboardContent() {
               )}
             </Paper>
           )}
-          <LinearProgressWithLabel variant="determinate" value={50} />
+          <LinearProgressWithLabel
+            progressBarProps={{
+              variant: 'determinate',
+              value: 50,
+            }}
+            value={50}
+            label="Pobieram pliki..."
+          />
         </Grid>
       </Grid>
       <Copyright sx={{ pt: 4 }} />

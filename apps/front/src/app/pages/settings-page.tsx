@@ -1,18 +1,17 @@
-import * as React from 'react';
 import { Grid } from '@mui/material';
-
-import Title from '../components/single/title';
-import LocationSettings from '../components/combined/location-settings';
-import Label from '../components/single/label';
-import { SettingsContext } from '../settings/settings';
-import { ErrorContext } from '../components/combined/error-box';
-import { ErrorSeverity } from '../components/single/error-message';
-import DiscordLogin from '../components/single/discord-login';
+import { useContext } from 'react';
 import { IpcFileChoseEnum } from '@bella/enums';
+import LocationSettings from '../components/combined/location-settings';
+import { ErrorSeverity } from '../components/single/error-message';
+import { ErrorContext } from '../components/combined/error-box';
+import DiscordLogin from '../components/single/discord-login';
+import { SettingsContext } from '../settings/settings';
+import Title from '../components/single/title';
+import Label from '../components/single/label';
 
 const SettingsPage = () => {
-  const { settings, saveSettings } = React.useContext(SettingsContext);
-  const { addError } = React.useContext(ErrorContext);
+  const { settings, saveSettings } = useContext(SettingsContext);
+  const { addError } = useContext(ErrorContext);
 
   const handleFile = async (id: string) => {
     const response = await window.api.files.openFileDialog({
@@ -20,11 +19,7 @@ const SettingsPage = () => {
     });
 
     if (response.failed) {
-      addError(
-        ErrorSeverity.WARNING,
-        response?.error?.message ??
-          `Coś poszło nie tak przy wybieraniu folderu!`,
-      );
+      addError(ErrorSeverity.WARNING, response?.error?.message ?? `Coś poszło nie tak przy wybieraniu folderu!`);
       return;
     }
 

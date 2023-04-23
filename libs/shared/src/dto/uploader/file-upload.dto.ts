@@ -86,3 +86,8 @@ export class UploadPackageInfo extends IntersectionType(
 export class UpdateFileInfo extends PartialType(FileUploadDto) {}
 
 export class UpdatePackageFileInfo extends PartialType(UploadPackageInfo) {}
+
+// front
+export class FileToUploadDto extends FileUploadDto {
+  selected: boolean;
+}

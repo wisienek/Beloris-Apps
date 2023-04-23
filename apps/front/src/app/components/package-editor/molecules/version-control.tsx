@@ -11,7 +11,7 @@ import {
   Typography,
 } from '@mui/material';
 import { VersionType } from '@bella/types';
-import { PackageEditorStateContext, PackageEditorStateValue } from '../sections/package-editor-state';
+import { PackageEditorStateContext, PackageEditorStateValue } from '../sections/package-editor.state';
 import AntSwitch from '../../single/ant-switch';
 
 const VersionControl = () => {

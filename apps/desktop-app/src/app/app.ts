@@ -1,4 +1,4 @@
-import { BrowserWindow, screen, globalShortcut } from 'electron';
+import { BrowserWindow, screen, globalShortcut, session } from 'electron';
 import * as Sentry from '@sentry/electron';
 import { join, resolve } from 'path';
 import * as process from 'process';
@@ -59,6 +59,19 @@ export default class App {
   private static registerShortcuts() {
     globalShortcut.register('f5', () => App.mainWindow.reload());
     globalShortcut.register('CommandOrControl+R', () => App.mainWindow.reload());
+  }
+
+  private static registerExtensions() {
+    if (!App.isDevelopmentMode()) return;
+    const extensions: string[] = (process.env?.ELECTRON_EXTENSIONS as unknown as string)?.split(',') ?? [];
+    console.log(extensions, typeof extensions);
+
+    App.application
+      .whenReady()
+      .then(async () => {
+        await Promise.all(extensions.map((extensionPath) => session.defaultSession.loadExtension(extensionPath)));
+      })
+      .catch((error) => App.Logger.error(error));
   }
 
   private static onActivate() {
@@ -154,6 +167,8 @@ export default class App {
 
     App.BrowserWindow = browserWindow;
     App.application = app;
+
+    App.registerExtensions();
 
     const gotLock = app.requestSingleInstanceLock();
 

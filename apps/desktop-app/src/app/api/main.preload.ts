@@ -39,6 +39,10 @@ const windowApi: WindowApi = {
       ipcRenderer.invoke(IPCChannels.UPLOAD_FILES, version, filesData, setCurrentVersion) as Promise<
         IpcEventDto<DownloaderFileDto[]>
       >,
+
+    uploadFilesListener: (callback) => {
+      ipcRenderer.on(IPCChannels.UPLOAD_PROGRESS, (event, uploaded: DownloaderFileDto) => callback(uploaded));
+    },
   },
   utilities: {
     openExternalLink: (link: string) =>

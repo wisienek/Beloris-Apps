@@ -62,6 +62,8 @@ export interface WindowFilesApi {
     filesData: Array<FileUploadDto>,
     setCurrentVersion?: boolean,
   ) => Promise<IpcEventDto<DownloaderFileDto[]>>;
+
+  uploadFilesListener: (callback: Function) => void;
 }
 
 export interface WindowsApi {

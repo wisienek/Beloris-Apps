@@ -1,7 +1,7 @@
-import { ErrorSeverity } from '../../single/error-message';
-import { UploadPackageInfo } from '@bella/dto';
 import { useContext, useState } from 'react';
-import { PackageEditorStateContext, PackageEditorStateValue } from '../sections/package-editor-state';
+import { UploadPackageInfo } from '@bella/dto';
+import { PackageEditorStateContext, PackageEditorStateValue } from '../sections/package-editor.state';
+import { ErrorSeverity } from '../../single/error-message';
 import { ErrorContext } from '../../combined/error-box';
 
 export const usePackageCreator = () => {

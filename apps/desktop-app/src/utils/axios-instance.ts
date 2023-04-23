@@ -10,8 +10,6 @@ export const getInstance = () => {
     withCredentials: true,
   });
 
-  console.log(`Axios session:`, session);
-
   instance.interceptors.request.use((config) => {
     config.headers.common['Cookie'] = `${CookiesEnum.DISCORD_TOKEN}=${encodeURI(JSON.stringify(session))};`;
     return config;

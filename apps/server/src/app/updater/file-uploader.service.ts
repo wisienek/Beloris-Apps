@@ -165,6 +165,12 @@ export class FileUploaderService {
 
     if (fileRecord.hash !== hash) throw new FileHashConflictException(fileRecord.hash ?? 'null', hash);
 
+    // check if file is already uploaded
+    if (await this.isFileInS3(fileKey, hash)) {
+      this.logger.debug(`File ${fileKey} already in s3, skipping`);
+      return this.mapper.map(fileRecord, DownloaderFile, DownloaderFileDto);
+    }
+
     this.logger.debug(`Uploading ${isPackage ? 'bundle' : 'file'} ${fileRecord.name} with size: ${fileSize}Mb`);
     await this.awsService.upload(fileKey, fileBuffer, this.awsConfig.uploaderBucket, true);
     this.logger.debug(`Uploaded ${isPackage ? 'bundle' : 'file'} file: ${downloadPath}`);
@@ -178,6 +184,15 @@ export class FileUploaderService {
     });
 
     return this.mapper.map(saved, DownloaderFile, DownloaderFileDto);
+  }
+
+  private async isFileInS3(key: string, hash: string): Promise<boolean> {
+    const obj = await this.awsService.getObject(key, this.awsConfig.uploaderBucket);
+    if (!obj) return false;
+
+    const gotHash = getFileHash(obj);
+
+    return hash === gotHash;
   }
 
   public async createPackageData(major: number, fileData: UploadPackageInfo): Promise<DownloaderFileDto> {
@@ -248,9 +263,9 @@ export class FileUploaderService {
 
   public async clearUnusedFiles() {
     /*
-        TODO: Cron job
-        auto delete files that are  without records but inside s3
-     */
+				TODO: Cron job
+				auto delete files that are  without records but inside s3
+		 */
     return true;
   }
 }

@@ -1,15 +1,10 @@
 import { Box, Grid, Typography } from '@mui/material';
 import { useContext } from 'react';
 import WizardFile from '../atoms/wizard-file';
-import {
-  PackageEditorStateContext,
-  PackageEditorStateValue,
-} from '../sections/package-editor-state';
+import { PackageEditorStateContext, PackageEditorStateValue } from '../sections/package-editor.state';
 
 const FileMap = () => {
-  const { files } = useContext<PackageEditorStateValue>(
-    PackageEditorStateContext,
-  );
+  const { files } = useContext<PackageEditorStateValue>(PackageEditorStateContext);
 
   return (
     <Box
@@ -28,13 +23,7 @@ const FileMap = () => {
       >
         <Typography variant="h6">Wybrane pliki</Typography>
       </Box>
-      <Grid
-        container
-        direction="column"
-        justifyContent="center"
-        alignItems="stretch"
-        spacing={4}
-      >
+      <Grid container direction="column" justifyContent="center" alignItems="stretch" spacing={4}>
         {files.map((file) => (
           <WizardFile file={file} />
         ))}

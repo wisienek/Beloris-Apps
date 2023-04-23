@@ -1,50 +1,53 @@
-import { useContext } from 'react';
-
-import { EditFleOptions } from '@bella/dto';
-
-import {
-  PackageEditorStateContext,
-  PackageEditorStateValue,
-} from './package-editor-state';
-import { ErrorSeverity } from '../../single/error-message';
-import { ErrorContext } from '../../combined/error-box';
+import { Box, Button, Zoom } from '@mui/material';
+import { useContext, useEffect } from 'react';
+import { PackageEditorStateContext, PackageEditorStateValue } from './package-editor.state';
 import FileOptionsTableContainer from '../atoms/file-options-table';
+import { useFiles, usePackageCreator } from '../hooks';
+import Tooltip from '../../single/tooltip';
 
 const FileOptions = () => {
-  const { addError } = useContext(ErrorContext);
+  const { isPackage } = useContext<PackageEditorStateValue>(PackageEditorStateContext);
+  const { intelligentSearch, versionedFiles, selectFile, editFile, finishEditingFiles, accepted } = useFiles();
+  const { createPackage, isBuilding, isBuilt } = usePackageCreator();
 
-  const { isPackage, files, setFiles } = useContext<PackageEditorStateValue>(
-    PackageEditorStateContext,
-  );
-
-  const editFile = (savePath: string, options: EditFleOptions) => {
-    const fileIndex = files.findIndex((f) => f.savePath === savePath);
-
-    if (fileIndex < 0) {
-      addError(
-        ErrorSeverity.ERROR,
-        `Nie znaleziono pliku: ${savePath}`,
-        false,
-        null,
-        `Opcje pliku`,
-      );
-
-      return;
-    }
-
-    const newFiles = [...files];
-    const fileValues = Object.entries(options);
-    for (const [key, value] of fileValues) newFiles[fileIndex][key] = value;
-
-    setFiles(newFiles);
-  };
+  useEffect(() => {
+    intelligentSearch();
+  }, []);
 
   return isPackage ? (
-    <>Nie powinieneś tutaj byc 0.0</>
+    <Box sx={{ mt: 2, mb: 2 }}>
+      <Tooltip title="Buduje plik archiwum z obecnej paczki modów" arrow TransitionComponent={Zoom} placement="right">
+        <Button variant="contained" size="small" disabled={isBuilding || isBuilt} onClick={() => createPackage()}>
+          {isBuilding ? `Buduję paczkę...` : isBuilt ? `Zbudowano paczkę.` : `Zbuduj paczkę`}
+        </Button>
+      </Tooltip>
+    </Box>
   ) : (
-    <>
-      <FileOptionsTableContainer editFile={editFile} />
-    </>
+    <Box
+      sx={{
+        display: 'flex',
+        flexDirection: 'column',
+        justifyItems: 'center',
+        alignItems: 'center',
+        width: '100%',
+      }}
+    >
+      <FileOptionsTableContainer
+        editFile={editFile}
+        files={versionedFiles}
+        selectFile={selectFile}
+        stopActions={accepted}
+      />
+      <Button
+        variant="contained"
+        color="success"
+        onClick={() => finishEditingFiles()}
+        disabled={accepted}
+        sx={{ mt: 2 }}
+      >
+        Zaakceptuj
+      </Button>
+    </Box>
   );
 };
 

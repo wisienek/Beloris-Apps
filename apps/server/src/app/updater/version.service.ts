@@ -4,18 +4,9 @@ import { InjectMapper } from '@automapper/nestjs';
 import { Mapper } from '@automapper/core';
 import { Repository } from 'typeorm';
 import { Version } from '@bella/db';
-import {
-  CreateVersionDto,
-  DeleteVersionDto,
-  UpdateVersionDto,
-  VersionDto,
-} from '@bella/dto';
+import { CreateVersionDto, DeleteVersionDto, UpdateVersionDto, VersionDto } from '@bella/dto';
 import { FileUploaderService } from './file-uploader.service';
-import {
-  VersionConflictException,
-  VersionNotFoundException,
-  VersionNotUpdatableException,
-} from './errors';
+import { VersionConflictException, VersionNotFoundException, VersionNotUpdatableException } from './errors';
 
 @Injectable()
 export class VersionService {
@@ -28,10 +19,7 @@ export class VersionService {
     @InjectMapper() private mapper: Mapper,
   ) {}
 
-  public async getCurrentVersion(
-    map = true,
-    withFiles = true,
-  ): Promise<VersionDto | Version> {
+  public async getCurrentVersion(map = true, withFiles = true): Promise<VersionDto | Version> {
     const version = await this.versionRepository.findOne({
       relations: withFiles ? ['files'] : [],
       where: {
@@ -65,16 +53,13 @@ export class VersionService {
         major: 'DESC',
         minor: 'DESC',
       },
+      relations: ['files'],
     });
 
     return this.mapper.mapArray(history, Version, VersionDto);
   }
 
-  public async createVersion({
-    major,
-    minor,
-    isCurrent,
-  }: CreateVersionDto): Promise<VersionDto> {
+  public async createVersion({ major, minor, isCurrent }: CreateVersionDto): Promise<VersionDto> {
     const fromDb = await this.versionRepository.findOne({
       where: {
         major: major,
@@ -101,18 +86,12 @@ export class VersionService {
 
     const saved = await this.versionRepository.save(created);
 
-    this.logger.debug(
-      `Created version ${created.major}:${created.minor}, current: ${created.isCurrent}`,
-    );
+    this.logger.debug(`Created version ${created.major}:${created.minor}, current: ${created.isCurrent}`);
 
     return this.mapper.map(saved, Version, VersionDto);
   }
 
-  public async updateCurrentVersion(
-    major: number,
-    minor: number,
-    data: UpdateVersionDto,
-  ): Promise<VersionDto> {
+  public async updateCurrentVersion(major: number, minor: number, data: UpdateVersionDto): Promise<VersionDto> {
     const fromDb = await this.versionRepository.findOne({
       where: {
         major: major,
@@ -143,10 +122,7 @@ export class VersionService {
     return this.mapper.map(updated, Version, VersionDto);
   }
 
-  public async deleteVersion({
-    major,
-    minor,
-  }: DeleteVersionDto): Promise<VersionDto> {
+  public async deleteVersion({ major, minor }: DeleteVersionDto): Promise<VersionDto> {
     const fromDb = await this.versionRepository.findOne({
       where: {
         major: major,

@@ -1,8 +1,7 @@
 import { useState, useContext, useEffect } from 'react';
-import { ipcRenderer, IpcRendererEvent } from 'electron';
 import { DownloaderFileDto, FileUploadDto } from '@bella/dto';
 import { IPCChannels } from '@bella/enums';
-import { PackageEditorStateContext, PackageEditorStateValue } from '../sections/package-editor-state';
+import { PackageEditorStateContext, PackageEditorStateValue } from '../sections/package-editor.state';
 import { isFileData } from '../../../utils/file-data.guard';
 import { ErrorSeverity } from '../../single/error-message';
 import { ErrorContext } from '../../combined/error-box';
@@ -17,15 +16,18 @@ export const useUploadFiles = () => {
   });
   const [sent, setSent] = useState<boolean>(false);
 
-  const updateProgress = (event: IpcRendererEvent, uploaded: DownloaderFileDto) => {
-    const filtered = sendingProgress.uploading.filter((u) => u !== uploaded.name);
-    const newFinished = [...sendingProgress.finished, uploaded.name];
+  const updateProgress = (uploaded: DownloaderFileDto) => {
+    setSendingProgress((prev) => {
+      const filtered = prev.uploading.filter((u) => u !== uploaded.name);
+      const newFinished = [...prev.finished, uploaded.name];
+      console.log(`uploaded ${uploaded.name}`);
 
-    if (filtered.length === sendingProgress.uploading.length) {
-      console.error(`Uploading name not found [${sendingProgress.uploading.join(', ')}], ${uploaded.name}`);
-    }
+      if (filtered.length === prev.uploading.length) {
+        console.error(`Uploading name not found [${prev.uploading.join(', ')}], ${uploaded.name}`);
+      }
 
-    setSendingProgress({ uploading: filtered, finished: newFinished });
+      return { uploading: filtered, finished: newFinished };
+    });
   };
 
   const uploadFiles = async () => {
@@ -84,6 +86,7 @@ export const useUploadFiles = () => {
 
       console.log(
         `Sending ${files.length} files for version: ${version.major}.${version.minor}, shouldSetCurrent: ${isCurrentVersion}`,
+        files,
       );
       setSending(true);
 
@@ -123,11 +126,7 @@ export const useUploadFiles = () => {
   };
 
   useEffect(() => {
-    ipcRenderer.on(IPCChannels.UPLOAD_PROGRESS, updateProgress);
-
-    return () => {
-      ipcRenderer.removeListener(IPCChannels.UPLOAD_PROGRESS, updateProgress);
-    };
+    window.api.files.uploadFilesListener((data) => updateProgress(data));
   }, [IPCChannels.UPLOAD_PROGRESS]);
 
   return { sending, sendingProgress, uploadFiles, sent };

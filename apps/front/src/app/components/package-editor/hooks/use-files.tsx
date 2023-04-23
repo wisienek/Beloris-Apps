@@ -1,54 +1,74 @@
 import { useContext, useState } from 'react';
+import { EditFleOptions, FileToUploadDto, FileUploadDto } from '@bella/dto';
+import { PackageEditorStateContext, PackageEditorStateValue } from '../sections/package-editor.state';
 import { ErrorSeverity } from '../../single/error-message';
 import { ErrorContext } from '../../combined/error-box';
-import { PackageEditorStateContext, PackageEditorStateValue } from '../sections/package-editor-state';
-import { FileUploadDto } from '@bella/dto';
 
 export const useFiles = () => {
   const { addError } = useContext(ErrorContext);
-  const { files, setFiles } = useContext<PackageEditorStateValue>(PackageEditorStateContext);
-
-  const [filesMap, setFilesMap] = useState<Record<number, string>>({});
-  const [selectedFiles, setSelectedFiles] = useState<number[]>([]);
-
-  const mapFromFiles = (data: FileUploadDto[]) => {
-    return Object.fromEntries(new Map(data.map((f, i) => [i, f.savePath])));
-  };
+  const { setFiles, versionHistory, version } = useContext<PackageEditorStateValue>(PackageEditorStateContext);
+  const [versionedFiles, setVersionedFiles] = useState<FileToUploadDto[]>([]);
+  const [accepted, setAccepted] = useState<boolean>(false);
 
   const intelligentSearch = async () => {
     const filesFetch = await window.api.files.getDownloaderFiles();
 
     if (filesFetch.error) {
       addError(ErrorSeverity.ERROR, filesFetch?.error?.message, false, null, `Inteligentne szukanie plików`);
-
       return;
     }
 
-    setFiles(filesFetch.data);
-
-    const fetchedAndMappedFiles = mapFromFiles(filesFetch.data);
-
-    setFilesMap(fetchedAndMappedFiles);
+    setVersionedFiles(setSelectedFiles(filesFetch.data));
   };
 
-  const accept = () => {
-    if (!selectedFiles || selectedFiles?.length === 0) {
-      addError(ErrorSeverity.ERROR, `Brak plików do zaakceptowania!`, false);
-      return;
+  const setSelectedFiles = (files: FileUploadDto[]): FileToUploadDto[] =>
+    files.map((f) => ({ ...f, selected: isFileInHistory(f) }));
+
+  const isFileInHistory = (file: FileUploadDto): boolean => {
+    const searchedVersion = versionHistory.find((v) => v.major === version.major && v.minor === version.minor);
+    if (!searchedVersion) return false;
+
+    const foundFile = searchedVersion.files.find((f) => f.savePath === file.savePath);
+    return !!foundFile;
+  };
+
+  const selectFile = (file: FileToUploadDto): void => {
+    const tempFiles = [...versionedFiles];
+    const foundFile = tempFiles.find((f) => f.savePath === file.savePath);
+    if (!foundFile) return;
+
+    foundFile.selected = !foundFile.selected;
+    setVersionedFiles(tempFiles);
+  };
+
+  const editFile = (savePath: string, options: EditFleOptions) => {
+    const tempFiles = [...versionedFiles];
+    const foundFile = tempFiles.find((f) => f.savePath === savePath);
+    if (!foundFile) return;
+
+    const fileValues = Object.entries(options);
+    for (const [key, value] of fileValues) {
+      foundFile[key] = value;
     }
 
-    const filteredFiles = files.filter(
-      (file) => !('fileSize' in file) && selectedFiles.some((f) => filesMap[f] === file.savePath),
-    ) as FileUploadDto[];
-
-    const mappedNewFiles = { ...filesMap };
-    const keys = Object.keys(filesMap);
-
-    for (const i of keys) if (!selectedFiles.includes(Number(i))) delete mappedNewFiles[i];
-
-    setFiles(filteredFiles);
-    setFilesMap(mappedNewFiles);
+    setVersionedFiles(tempFiles);
   };
 
-  return { accept, filesMap, intelligentSearch, setSelectedFiles };
+  const finishEditingFiles = () => {
+    const finished = versionedFiles.filter((f) => f.selected);
+
+    setVersionedFiles(finished);
+    setFiles(
+      finished.map((f) => {
+        delete f.selected;
+        return f;
+      }),
+    );
+
+    setAccepted(true);
+
+    addError(ErrorSeverity.INFO, `Zaakceptowano pliki!`, true, null, `Edytor plików`);
+  };
+
+  return { versionedFiles, intelligentSearch, selectFile, editFile, finishEditingFiles, accepted };
 };
