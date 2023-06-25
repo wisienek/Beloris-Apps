@@ -31,19 +31,20 @@ export class ElectronLogger {
   };
 
   constructor(private readonly context: string) {
+    const date = new Date();
     const winstonLogger = winston.createLogger({
       level: 'debug',
       format: winston.format.combine(
         winston.format.timestamp({ format: 'YYYY-MM-DD HH:mm:ss' }),
         ElectronLogger.combineMessageAndSplat(),
         winston.format.printf(
-          (info) => `[ELECTRON] ${app.getVersion()} - ${info.timestamp} [${context}] ${info.level}: ${info.message}`,
-        ),
+          (info) => `[ELECTRON] ${app.getVersion()} - ${info.timestamp} [${context}] ${info.level}: ${info.message}`
+        )
       ),
       transports: [
         new winston.transports.File({
           level: 'debug',
-          filename: join(logDirPath, 'app.log'),
+          filename: join(logDirPath, `${date.getDate()}-${date.getMonth() + 1}-${date.getFullYear()}.log`),
           options: { flags: 'a' },
         }),
         ...(isDev ? [new winston.transports.Console()] : []),

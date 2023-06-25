@@ -6,7 +6,7 @@ import { DownloaderFileDto, FileUploadDto, IpcEventDto, UploadPackageInfo } from
 import { VersionType } from '@bella/types';
 import { getFileHash } from '@bella/core';
 import { ApiRoutes } from '@bella/data';
-import { FileType, IPCChannels } from '@bella/enums';
+import { FileAction, FileType, IPCChannels } from '@bella/enums';
 import { getPackageName, getPackagePath } from '../utils';
 import { handlerWrapper } from './handler-wrapper';
 import { readUserSettings } from './user-settings';
@@ -22,7 +22,7 @@ export class UploaderHandler extends BaseHandler {
   public uploadPackage(
     version: VersionType,
     packageData: UploadPackageInfo,
-    setCurrentVersion?: boolean,
+    setCurrentVersion?: boolean
   ): Promise<IpcEventDto<DownloaderFileDto>> {
     return handlerWrapper(
       async () => {
@@ -43,7 +43,7 @@ export class UploaderHandler extends BaseHandler {
         const { data: uploadedInfo }: AxiosResponse<DownloaderFileDto> = await this.axiosInstance({
           method: hasPackageFile ? 'patch' : 'post',
           url: hasPackageFile
-            ? ApiRoutes.PACKAGE_EDIT(version.major, version.minor, existingVersion.id)
+            ? ApiRoutes.PACKAGE_EDIT(version.major, version.minor, hasPackageFile.id)
             : ApiRoutes.PACKAGE(version.major, version.minor),
           data: packageData,
         });
@@ -69,14 +69,14 @@ export class UploaderHandler extends BaseHandler {
         return uploadedPackage;
       },
       this.logger,
-      `Error while uploading package`,
+      `Error while uploading package`
     );
   }
 
   public uploadFiles(
     version: VersionType,
     filesData: Array<FileUploadDto>,
-    setCurrentVersion?: boolean,
+    setCurrentVersion?: boolean
   ): Promise<IpcEventDto<Array<DownloaderFileDto>>> {
     return handlerWrapper(
       async () => {
@@ -113,24 +113,29 @@ export class UploaderHandler extends BaseHandler {
               url: fileDataPostUrl,
               data: fileData,
             }).then(
-              async ({ data }: AxiosResponse<DownloaderFileDto>) => await this.updateFileData(data, buffer, version),
-            ),
+              async ({ data }: AxiosResponse<DownloaderFileDto>) => await this.updateFileData(data, buffer, version)
+            )
           );
         }
 
         return await Promise.all(preparedRequests);
       },
       this.logger,
-      `Error while uploading package`,
+      `Error while uploading package`
     );
   }
 
   private async updateFileData(
     dFileData: DownloaderFileDto,
     buffer: Buffer,
-    version: VersionType,
+    version: VersionType
   ): Promise<DownloaderFileDto> {
     if (!dFileData.id) throw new Error(`Brak id pliku do przesłania!`);
+    if (dFileData.fileAction === FileAction.DELETE) {
+      this.logger.debug(`Delete action, skipping upload.`);
+      return dFileData;
+    }
+
     this.logger.debug(`Received data:`).debug(dFileData);
 
     const sendFileUrl = ApiRoutes.FILE_LIST_UPLOAD(version, dFileData.id);

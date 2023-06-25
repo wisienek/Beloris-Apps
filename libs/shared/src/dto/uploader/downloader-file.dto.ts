@@ -99,5 +99,5 @@ export class DownloaderFileDto {
   })
   @IsEnum(FileAction)
   @AutoMap()
-  fileAction: FileAction = FileAction.DOWNLOAD;
+  fileAction: FileAction;
 }

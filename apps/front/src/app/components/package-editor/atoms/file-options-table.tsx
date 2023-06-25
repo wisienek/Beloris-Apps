@@ -36,15 +36,15 @@ export interface FileOptionsContainerArgs {
   stopActions: boolean;
 }
 
-function FileOptionsTableContainer(args: FileOptionsContainerArgs) {
+function FileOptionsTableContainer({ editFile, files, selectFile, stopActions }: FileOptionsContainerArgs) {
   const renderRequired = (savePath: string, originalValue: boolean) => {
     return (
       <Checkbox
         defaultChecked={originalValue}
         onChange={() =>
-          args.stopActions
+          stopActions
             ? undefined
-            : args.editFile(savePath, {
+            : editFile(savePath, {
                 required: !originalValue,
               })
         }
@@ -62,13 +62,12 @@ function FileOptionsTableContainer(args: FileOptionsContainerArgs) {
           value={originalAction}
           label="Akcja pliku"
           onChange={(e) =>
-            args.stopActions
+            stopActions
               ? undefined
-              : args.editFile(savePath, {
+              : editFile(savePath, {
                   fileAction: e.target.value as FileAction,
                 })
-          }
-        >
+          }>
           <MenuItem value={FileAction.DOWNLOAD}>Pobierz</MenuItem>
           <MenuItem value={FileAction.MODIFY}>Modyfikuj</MenuItem>
           <MenuItem value={FileAction.DELETE}>Usuń</MenuItem>
@@ -82,7 +81,7 @@ function FileOptionsTableContainer(args: FileOptionsContainerArgs) {
       <Checkbox
         defaultChecked={item.selected}
         value={item.selected}
-        onChange={() => (args.stopActions ? undefined : args.selectFile(item))}
+        onChange={() => (stopActions ? undefined : selectFile(item))}
       />
     );
   };
@@ -124,18 +123,18 @@ function FileOptionsTableContainer(args: FileOptionsContainerArgs) {
         cell: (props) => renderRequired(props.row.original.savePath, props.getValue() as boolean),
       }),
     ],
-    [],
+    []
   );
 
   return (
     <>
-      {args.files.length === 0 ? (
+      {files.length === 0 ? (
         <>
           <Skeleton variant="text" />
           <Skeleton variant="rectangular" />
         </>
       ) : (
-        <FileOptionsTable columns={columns} data={args.files} {...args} />
+        <FileOptionsTable columns={columns} data={files} {...{ editFile, files, selectFile, stopActions }} />
       )}
     </>
   );
@@ -202,8 +201,7 @@ function FileOptionsTable({ columns, data }: FileOptionsTableArgs) {
               <TableCell
                 key={header.id}
                 variant="head"
-                align={['required', 'filesAction', 'selected'].includes(header.id) ? 'center' : 'left'}
-              >
+                align={['required', 'filesAction', 'selected'].includes(header.id) ? 'center' : 'left'}>
                 {header.isPlaceholder ? null : flexRender(header.column.columnDef.header, header.getContext())}
                 {header.column.getCanFilter() ? (
                   <div>
@@ -224,8 +222,7 @@ function FileOptionsTable({ columns, data }: FileOptionsTableArgs) {
                 key={cell.id}
                 align={['required', 'filesAction'].includes(cell.column.id) ? 'center' : 'left'}
                 padding={cell.column.id === 'required' ? 'checkbox' : 'normal'}
-                size={cell.column.id === 'required' ? 'small' : null}
-              >
+                size={cell.column.id === 'required' ? 'small' : null}>
                 {flexRender(cell.column.columnDef.cell, cell.getContext())}
               </TableCell>
             ))}

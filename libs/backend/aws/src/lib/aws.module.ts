@@ -1,9 +1,9 @@
 import { Module } from '@nestjs/common';
-import { AwsConfig, ConfigModuleInternal } from '@bella/config';
+import { AwsConfig, ConfigModuleInternal, ProjectConfig } from '@bella/config';
 import { S3Service } from './s3.service';
 
 @Module({
-  imports: [ConfigModuleInternal.forConfigs(AwsConfig)],
+  imports: [ConfigModuleInternal.forConfigs(AwsConfig, ProjectConfig)],
   providers: [S3Service],
   exports: [S3Service],
 })

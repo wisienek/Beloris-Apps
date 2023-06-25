@@ -1,10 +1,4 @@
-import {
-  BadRequestException,
-  CACHE_MANAGER,
-  Inject,
-  Injectable,
-  Logger,
-} from '@nestjs/common';
+import { BadRequestException, CACHE_MANAGER, Inject, Injectable, Logger } from '@nestjs/common';
 import * as DiscordOauth2 from 'discord-oauth2';
 import { Request, Response } from 'express';
 import { Cache } from 'cache-manager';
@@ -22,11 +16,7 @@ import { NoTokenException } from './errors';
 
 @Injectable()
 export class AuthService {
-  public static readonly UserScope = [
-    'identify',
-    'guilds',
-    'guilds.members.read',
-  ];
+  public static readonly UserScope = ['identify', 'guilds', 'guilds.members.read'];
 
   private static readonly userTTL = 1000 * 60 * 60;
 
@@ -36,7 +26,7 @@ export class AuthService {
   constructor(
     @Inject(CACHE_MANAGER) private cacheManager: Cache,
     private config: DiscordConfig,
-    private discordService: DiscordService,
+    private discordService: DiscordService
   ) {
     this.oauth = new DiscordOauth2({
       clientId: this.config.clientId,
@@ -54,10 +44,7 @@ export class AuthService {
     });
   }
 
-  public async validate(
-    request: Request,
-    response: Response,
-  ): Promise<DiscordOauth2.User> {
+  public async validate(request: Request, response: Response): Promise<DiscordOauth2.User> {
     if (!request.body || _.isEmpty(request.body) || !request.body.hash)
       throw new BadRequestException(`No request provided!`);
 
@@ -100,24 +87,16 @@ export class AuthService {
     return user;
   }
 
-  public async fetchMember(
-    token: TokenDto,
-    server: ServerListEnum,
-  ): Promise<DiscordOauth2.Member> {
+  public async fetchMember(token: TokenDto, server: ServerListEnum): Promise<DiscordOauth2.Member> {
     if (!token) throw new NoTokenException();
     if (!server) throw new BadRequestException(`No ServerID provided!`);
 
     const cacheKey = AuthService.getMemberCacheKey(token.access_token, server);
 
-    const fromCache: DiscordOauth2.Member = await this.cacheManager.get(
-      cacheKey,
-    );
+    const fromCache: DiscordOauth2.Member = await this.cacheManager.get(cacheKey);
     if (fromCache) return fromCache;
 
-    const fetchedMember = await this.oauth.getGuildMember(
-      token.access_token,
-      server,
-    );
+    const fetchedMember = await this.oauth.getGuildMember(token.access_token, server);
 
     await this.cacheManager.set(cacheKey, fetchedMember, token.expires_in);
 
@@ -126,17 +105,11 @@ export class AuthService {
 
   public async fetchMemberRoles(token: TokenDto, server: ServerListEnum) {
     const oauthMember = await this.fetchMember(token, server);
-    const guildMember = await this.discordService.getMember(
-      server,
-      oauthMember.user.id,
-    );
+    const guildMember = await this.discordService.getMember(server, oauthMember.user.id);
 
     return guildMember.roles.cache.map((role) => {
       const permissionsJson = role.permissions.toJSON();
-      const roleJson = role.toJSON() as unknown as Record<
-        keyof Role,
-        Role[keyof Role]
-      >;
+      const roleJson = role.toJSON() as unknown as Record<keyof Role, Role[keyof Role]>;
 
       return {
         ...roleJson,
@@ -148,11 +121,7 @@ export class AuthService {
   public async verify(token: TokenDto | Request): Promise<DiscordOauth2.User> {
     if (!token) return null;
 
-    return await this.fetchUser(
-      'headers' in token
-        ? AuthService.getTokenFromRequest(token as Request)
-        : token,
-    );
+    return await this.fetchUser('headers' in token ? AuthService.getTokenFromRequest(token as Request) : token);
   }
 
   public async verifyAccessToken(token: string) {
@@ -172,10 +141,7 @@ export class AuthService {
     return `${accessToken}/user`;
   }
 
-  private static getMemberCacheKey(
-    accessToken: string,
-    server: ServerListEnum,
-  ) {
+  private static getMemberCacheKey(accessToken: string, server: ServerListEnum) {
     return `${accessToken}/member/${server}`;
   }
 }

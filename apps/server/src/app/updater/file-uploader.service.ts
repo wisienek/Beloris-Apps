@@ -20,13 +20,13 @@ import {
 } from '@bella/dto';
 import { determineFileType, getBundleKey, getCFDownloadPath, getFileKey } from './utils';
 import {
+  CurrentVersionNotFoundException,
   FileConflictException,
   FileDataNotFoundException,
+  FileHashConflictException,
   FileNotFoundException,
   FileRecordNotFoundException,
   VersionNotFoundException,
-  FileHashConflictException,
-  CurrentVersionNotFoundException,
 } from './errors';
 
 @Injectable()
@@ -40,7 +40,7 @@ export class FileUploaderService {
     private readonly filesRepository: Repository<DownloaderFile>,
     private readonly awsService: S3Service,
     private readonly awsConfig: AwsConfig,
-    @InjectMapper() private mapper: Mapper,
+    @InjectMapper() private mapper: Mapper
   ) {}
 
   public async getFilesToUpdate(major: number, minor: number): Promise<FileListDto> {
@@ -102,7 +102,7 @@ export class FileUploaderService {
   }
 
   public async uploadFileData(major: number, minor: number, data: FileUploadDto): Promise<DownloaderFileDto> {
-    if (!data) throw new FileDataNotFoundException();
+    if (!data) throw new FileDataNotFoundException('');
 
     const existsInDB = await this.filesRepository.findOne({
       where: {
@@ -128,7 +128,7 @@ export class FileUploaderService {
 
   public async updateFileData(
     uuid: string,
-    updateData: UpdateFileInfo | UpdatePackageFileInfo,
+    updateData: UpdateFileInfo | UpdatePackageFileInfo
   ): Promise<DownloaderFileDto> {
     const foundData = await this.getFileForVersion(uuid);
 
@@ -145,16 +145,27 @@ export class FileUploaderService {
     minor: number,
     file: Express.Multer.File,
     uuid: string,
-    isPackage = false,
+    isPackage = false
   ): Promise<DownloaderFileDto> {
-    if (!file || !uuid) throw new FileNotFoundException();
+    if (!file || !uuid) {
+      this.logger.debug(`No file or uuid in request!`);
+      throw new FileNotFoundException();
+    }
 
     const fileRecord = await this.filesRepository.findOne({
       where: {
         id: uuid,
       },
     });
-    if (!fileRecord) throw new FileRecordNotFoundException(uuid);
+    if (!fileRecord) {
+      this.logger.debug(`No fileRecord for ${uuid}`);
+      throw new FileRecordNotFoundException(uuid);
+    }
+
+    if (fileRecord.fileAction === FileAction.DELETE) {
+      this.logger.debug(`Uploaded file has action delete - skipping! (${fileRecord.id})`);
+      return this.mapper.map(fileRecord, DownloaderFile, DownloaderFileDto);
+    }
 
     const fileBuffer: Buffer = file.buffer;
     const hash: string = getFileHash(fileBuffer);
@@ -163,7 +174,10 @@ export class FileUploaderService {
     const downloadPath = getCFDownloadPath(fileKey, this.awsConfig.cfDistribution);
     const fileType = determineFileType(file);
 
-    if (fileRecord.hash !== hash) throw new FileHashConflictException(fileRecord.hash ?? 'null', hash);
+    if (fileRecord.hash !== hash) {
+      this.logger.debug(`File hash is different - expected: ${fileRecord.hash}, got: ${hash}`);
+      throw new FileHashConflictException(fileRecord.hash ?? 'null', hash);
+    }
 
     // check if file is already uploaded
     if (await this.isFileInS3(fileKey, hash)) {
@@ -187,12 +201,16 @@ export class FileUploaderService {
   }
 
   private async isFileInS3(key: string, hash: string): Promise<boolean> {
-    const obj = await this.awsService.getObject(key, this.awsConfig.uploaderBucket);
-    if (!obj) return false;
+    try {
+      const obj = await this.awsService.getObject(key, this.awsConfig.uploaderBucket);
+      if (!obj) return false;
 
-    const gotHash = getFileHash(obj);
+      const gotHash = getFileHash(obj);
 
-    return hash === gotHash;
+      return hash === gotHash;
+    } catch (err) {
+      return false;
+    }
   }
 
   public async createPackageData(major: number, fileData: UploadPackageInfo): Promise<DownloaderFileDto> {
@@ -224,7 +242,7 @@ export class FileUploaderService {
     });
 
     this.logger.debug(
-      `Created new Package record: ${savedRecord.downloadPath}, ${savedRecord.hash}, primary ${major}: ${savedRecord.isPrimaryBundle}`,
+      `Created new Package record: ${savedRecord.downloadPath}, ${savedRecord.hash}, primary ${major}: ${savedRecord.isPrimaryBundle}`
     );
 
     if (savedRecord && oldBundle) await this.filesRepository.remove(oldBundle);
@@ -236,7 +254,7 @@ export class FileUploaderService {
     const foundFile = await this.filesRepository.findOne({
       where: { id },
     });
-    if (!foundFile) throw new FileDataNotFoundException();
+    if (!foundFile) throw new FileDataNotFoundException(id);
 
     return foundFile;
   }

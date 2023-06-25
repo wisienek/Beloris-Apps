@@ -1,64 +1,66 @@
 {
-  "root": true,
-  "ignorePatterns": [
-    "**/*"
-  ],
-  "plugins": [
-    "@nrwl/nx"
-  ],
-  "overrides": [
-    {
-      "files": [
-        "*.ts",
-        "*.tsx",
-        "*.js",
-        "*.jsx"
-      ],
-      "rules": {
-        "@nrwl/nx/enforce-module-boundaries": [
-          "error",
-          {
-            "enforceBuildableLibDependency": true,
-            "allow": [],
-            "depConstraints": [
-              {
-                "sourceTag": "*",
-                "onlyDependOnLibsWithTags": [
-                  "*"
-                ]
-              }
-            ]
-          }
-        ]
-      }
-    },
-    {
-      "files": [
-        "*.ts",
-        "*.tsx"
-      ],
-      "extends": [
-        "plugin:@nrwl/nx/typescript",
-        "eslint:recommended",
-        "plugin:@typescript-eslint/recommended"
-      ],
-      "parser": "@typescript-eslint/parser",
-      "plugins": [
-        "@typescript-eslint/eslint-plugin"
-      ],
-      "rules": {
-        "@typescript-eslint/no-explicit-any": "off"
-      }
-    },
-    {
-      "files": [
-        "*.js",
-        "*.jsx"
-      ],
-      "extends": [
-        "plugin:@nrwl/nx/javascript"
-      ],
-      "rules": {}
-    }
-  ]
+	"root": true,
+	"ignorePatterns": [
+		"**/*"
+	],
+	"plugins": [
+		"@nrwl/nx"
+	],
+	"overrides": [
+		{
+			"files": [
+				"*.ts",
+				"*.tsx",
+				"*.js",
+				"*.jsx"
+			],
+			"rules": {
+				"@nrwl/nx/enforce-module-boundaries": [
+					"error",
+					{
+						"enforceBuildableLibDependency": true,
+						"allow": [],
+						"depConstraints": [
+							{
+								"sourceTag": "*",
+								"onlyDependOnLibsWithTags": [
+									"*"
+								]
+							}
+						]
+					}
+				]
+			}
+		},
+		{
+			"files": [
+				"*.ts",
+				"*.tsx"
+			],
+			"extends": [
+				"plugin:@nrwl/nx/typescript",
+				"eslint:recommended",
+				"plugin:@typescript-eslint/recommended",
+				"plugin:prettier/recommended"
+			],
+			"parser": "@typescript-eslint/parser",
+			"plugins": [
+				"@typescript-eslint/eslint-plugin"
+			],
+			"rules": {
+				"@typescript-eslint/no-explicit-any": "off",
+				"curly": "error"
+			}
+		},
+		{
+			"files": [
+				"*.js",
+				"*.jsx"
+			],
+			"extends": [
+				"plugin:@nrwl/nx/javascript"
+			],
+			"rules": {}
+		}
+	]
 }

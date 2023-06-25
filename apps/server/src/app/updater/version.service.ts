@@ -16,7 +16,7 @@ export class VersionService {
     @InjectRepository(Version)
     private readonly versionRepository: Repository<Version>,
     private readonly fileUploaderService: FileUploaderService,
-    @InjectMapper() private mapper: Mapper,
+    @InjectMapper() private mapper: Mapper
   ) {}
 
   public async getCurrentVersion(map = true, withFiles = true): Promise<VersionDto | Version> {
@@ -34,7 +34,7 @@ export class VersionService {
     major: number,
     minor: number,
     map = true,
-    withFiles = true,
+    withFiles = true
   ): Promise<VersionDto | Version> {
     const version = await this.versionRepository.findOne({
       relations: withFiles ? ['files'] : [],

@@ -4,6 +4,6 @@ export const packerFiles: string[] = [
   'mods',
   'moreplayermodels',
   'patchouli_books',
-  'resourcepacks',
+  // 'resourcepacks',
   'servers.dat',
 ];

@@ -74,7 +74,7 @@ const PackageEditorStateContextProvider = ({ children }: { children?: React.Reac
 
   const [isCurrentVersion, setIsCurrentVersion] = React.useState<boolean>(false);
 
-  const [files, setFiles] = React.useState<Array<FileUploadDto | UploadPackageInfo>>(null);
+  const [files, setFiles] = React.useState<Array<FileUploadDto | UploadPackageInfo>>([]);
 
   const { data: versionHistory } = useFetch<VersionDto[]>(ApiRoutes.VERSION_HISTORY);
   const { data: currentVersion } = useFetch<VersionDto>(ApiRoutes.VERSION);
@@ -114,7 +114,7 @@ const PackageEditorStateContextProvider = ({ children }: { children?: React.Reac
         `Aby przejśc dalej musisz wybrac pliki / zbudowac paczkę`,
         false,
         null,
-        `Brak plików!`,
+        `Brak plików!`
       );
       return;
     }
@@ -126,7 +126,7 @@ const PackageEditorStateContextProvider = ({ children }: { children?: React.Reac
     }
 
     setActiveStep((prevActiveStep) =>
-      prevActiveStep === 1 && version.minor <= 1 ? prevActiveStep + 2 : prevActiveStep + 1,
+      prevActiveStep === 1 && version.minor <= 1 ? prevActiveStep + 2 : prevActiveStep + 1
     );
     setSkipped(newSkipped);
   };
@@ -136,7 +136,7 @@ const PackageEditorStateContextProvider = ({ children }: { children?: React.Reac
 
     if (activeStep - 1 >= min)
       setActiveStep((prevActiveStep) =>
-        activeStep === 4 && version.minor <= 1 ? prevActiveStep - 2 : prevActiveStep - 1,
+        activeStep === 4 && version.minor <= 1 ? prevActiveStep - 2 : prevActiveStep - 1
       );
   };
 
@@ -179,8 +179,7 @@ const PackageEditorStateContextProvider = ({ children }: { children?: React.Reac
         isPackage: version.minor <= 1,
         files,
         setFiles,
-      }}
-    >
+      }}>
       {children}
     </PackageEditorStateContext.Provider>
   );

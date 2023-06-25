@@ -15,7 +15,7 @@ export class DiscordService extends Client {
     @Inject(forwardRef(() => EventManager))
     public readonly eventManager: EventManager,
     public readonly commandManager: CommandManager,
-    private config: DiscordConfig,
+    private config: DiscordConfig
   ) {
     super({
       intents: [
@@ -46,11 +46,7 @@ export class DiscordService extends Client {
     return await guild.members.fetch(memberId);
   }
 
-  public async hasRole(
-    server: ServerListEnum,
-    roleId: string,
-    memberId: string,
-  ) {
+  public async hasRole(server: ServerListEnum, roleId: string, memberId: string) {
     const guild = await this.guilds.fetch(server);
     if (!guild) return false;
 
@@ -63,14 +59,8 @@ export class DiscordService extends Client {
     return member.roles.cache.has(roleId);
   }
 
-  public async hasAllRoles(
-    server: ServerListEnum,
-    roles: string[],
-    memberId: string,
-  ) {
-    return roles.every(
-      async (role) => await this.hasRole(server, role, memberId),
-    );
+  public async hasAllRoles(server: ServerListEnum, roles: string[], memberId: string) {
+    return roles.every(async (role) => await this.hasRole(server, role, memberId));
   }
 
   private setupEvents() {
@@ -80,10 +70,10 @@ export class DiscordService extends Client {
   }
 
   private async setupCommands() {
-    this.logger.debug(`Registering commands on servers ...!`);
+    this.logger.debug(`Registering commands on servers!`);
     await this.guilds.fetch();
 
-    this.logger.debug(`in ${this.guilds.cache.size} guilds ...`);
+    this.logger.debug(`in ${this.guilds.cache.size} guilds`);
 
     const promises = [];
 

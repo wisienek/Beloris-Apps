@@ -10,23 +10,19 @@ export interface VersionMenuArgs {
   isSameVersion: boolean;
 }
 
-const VersionMenu = ({
-  isLoading,
-  chooserToggle,
-  isSameVersion,
-}: VersionMenuArgs) => {
+const VersionMenu = ({ isLoading, chooserToggle, isSameVersion }: VersionMenuArgs) => {
   const { settings } = useContext<SettingsContextValue>(SettingsContext);
 
   return (
     <Grid container direction="column" spacing={2} columns={1}>
       <Grid item alignItems="center" justifyContent="center">
-        {settings?.downloadTo?.modpackFolder &&
-        settings?.downloadTo?.mcFolder ? (
+        {settings?.downloadTo?.modpackFolder && settings?.downloadTo?.mcFolder ? (
           <Button
             variant="contained"
             color="success"
             disabled={isLoading || isSameVersion}
             fullWidth
+            // TODO: onClick -> download files
           >
             Pobierz
           </Button>
@@ -44,16 +40,10 @@ const VersionMenu = ({
           variant="contained"
           color="secondary"
           disabled={
-            isLoading ||
-            isSameVersion ||
-            !(
-              settings?.downloadTo?.modpackFolder ||
-              settings?.downloadTo?.mcFolder
-            )
+            isLoading || isSameVersion || !(settings?.downloadTo?.modpackFolder || settings?.downloadTo?.mcFolder)
           }
           fullWidth
-          onClick={chooserToggle}
-        >
+          onClick={chooserToggle}>
           Edytuj pliki
         </Button>
       </Grid>

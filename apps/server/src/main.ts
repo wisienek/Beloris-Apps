@@ -3,11 +3,7 @@ import { NestFactory, Reflector } from '@nestjs/core';
 import * as cookieParser from 'cookie-parser';
 import * as session from 'express-session';
 import * as passport from 'passport';
-import {
-  ClassSerializerInterceptor,
-  Logger,
-  ValidationPipe,
-} from '@nestjs/common';
+import { ClassSerializerInterceptor, Logger, ValidationPipe } from '@nestjs/common';
 import { getStaticConfig, ServerConfig } from '@bella/config';
 import { AppModule } from './app/app.module';
 
@@ -19,11 +15,7 @@ async function bootstrap() {
 
   app.setGlobalPrefix(serverConfig.globalPrefix);
   app.enableCors({
-    origin: [
-      'http://localhost:3000',
-      'http://localhost:4200',
-      'http://127.0.0.1:4200',
-    ],
+    origin: ['http://localhost:3000', 'http://localhost:4200', 'http://127.0.0.1:4200'],
     credentials: true,
   });
   app.use(cookieParser());
@@ -33,7 +25,7 @@ async function bootstrap() {
       whitelist: true,
       enableDebugMessages: true,
       forbidNonWhitelisted: true,
-    }),
+    })
   );
   app.use(
     session({
@@ -43,7 +35,7 @@ async function bootstrap() {
       secret: serverConfig.cookieSecret,
       resave: false,
       saveUninitialized: false,
-    }),
+    })
   );
   app.use(passport.initialize());
   app.use(passport.session());
@@ -61,8 +53,8 @@ async function bootstrap() {
 
   await app.listen(serverConfig.port);
   Logger.log(
-    `🚀 Application is running on: http://localhost:${serverConfig.port}/${serverConfig.globalPrefix}`,
-    AppModule.name,
+    `Application is running on: http://localhost:${serverConfig.port}/${serverConfig.globalPrefix}`,
+    AppModule.name
   );
 }
 

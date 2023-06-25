@@ -1,21 +1,7 @@
 import { ApiOkResponse, ApiTags } from '@nestjs/swagger';
-import {
-  Body,
-  Controller,
-  Delete,
-  Get,
-  Param,
-  ParseIntPipe,
-  Patch,
-  Post,
-} from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, ParseIntPipe, Patch, Post } from '@nestjs/common';
 import { DCAdminServerRoles } from '@bella/enums';
-import {
-  CreateVersionDto,
-  DeleteVersionDto,
-  UpdateVersionDto,
-  VersionDto,
-} from '@bella/dto';
+import { CreateVersionDto, DeleteVersionDto, UpdateVersionDto, VersionDto } from '@bella/dto';
 import { VersionService } from './version.service';
 import { Auth } from '../auth';
 
@@ -54,7 +40,7 @@ export class VersionController {
   async updateVersion(
     @Param('major', ParseIntPipe) major: number,
     @Param('minor', ParseIntPipe) minor: number,
-    @Body() data: UpdateVersionDto,
+    @Body() data: UpdateVersionDto
   ) {
     return await this.versionService.updateCurrentVersion(major, minor, data);
   }
@@ -80,10 +66,7 @@ export class VersionController {
   }
 
   @Get(':major/:minor')
-  async getVersion(
-    @Param('major', ParseIntPipe) major: number,
-    @Param('minor', ParseIntPipe) minor: number,
-  ) {
+  async getVersion(@Param('major', ParseIntPipe) major: number, @Param('minor', ParseIntPipe) minor: number) {
     return await this.versionService.getSpecificVersion(major, minor);
   }
 }

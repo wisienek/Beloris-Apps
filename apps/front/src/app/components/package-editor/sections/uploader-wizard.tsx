@@ -1,4 +1,4 @@
-import { useContext } from 'react';
+import { useContext, useMemo } from 'react';
 import AssignmentTwoToneIcon from '@mui/icons-material/AssignmentTwoTone';
 import { Box, Button, Zoom } from '@mui/material';
 import { PackageEditorStateContext, PackageEditorStateValue } from './package-editor.state';
@@ -9,30 +9,31 @@ import Tooltip from '../../single/tooltip';
 import Title from '../../single/title';
 
 const UploaderWizard = () => {
-  const { version, isPackage, files } = useContext<PackageEditorStateValue>(PackageEditorStateContext);
+  const { version, isPackage } = useContext<PackageEditorStateValue>(PackageEditorStateContext);
 
   const { toDo } = useVerifyPackage();
   const { sending, sendingProgress, uploadFiles, sent } = useUploadFiles();
 
-  const getTasks = (): CheckListTask[] => {
-    return [
-      {
-        name: 'wersja',
-        label: 'Wybrana wersja',
-        checked: !isNaN(version.major) && !isNaN(version.minor) && version.major > 0,
-      },
-      {
-        name: 'pliki',
-        label: 'Przesłane pliki',
-        checked: isPackage ? true : files?.length > 0,
-      },
-      {
-        name: 'zmiany',
-        label: 'Wprowadzone zmiany',
-        checked: true,
-      },
-    ];
-  };
+  const getTasks = (): CheckListTask[] =>
+    useMemo(() => {
+      return [
+        {
+          name: 'wersja',
+          label: 'Wybrana wersja',
+          checked: !isNaN(version.major) && !isNaN(version.minor) && version.major > 0,
+        },
+        {
+          name: 'zmiany',
+          label: 'Wprowadzone zmiany',
+          checked: true,
+        },
+        {
+          name: 'pliki',
+          label: 'Przesłane pliki',
+          checked: sent,
+        },
+      ];
+    }, [version, sent]);
 
   return (
     <>
@@ -42,8 +43,7 @@ const UploaderWizard = () => {
         sx={{
           width: '100%',
           pb: 2,
-        }}
-      >
+        }}>
         <Checklist
           contents={[
             {
@@ -64,7 +64,7 @@ const UploaderWizard = () => {
             value={Math.max(
               (sendingProgress.finished.length / (sendingProgress.finished.length + sendingProgress.uploading.length)) *
                 100,
-              0,
+              0
             )}
           />
         </Box>
@@ -80,9 +80,8 @@ const UploaderWizard = () => {
           onClick={() => uploadFiles()}
           sx={{
             mt: 3,
-          }}
-        >
-          {sent ? 'Wysłane...' : sending ? 'Przesyłam zmiany...' : 'Prześlij zmiany'}
+          }}>
+          {sent ? 'Pliki przesłane!.' : sending ? 'Przesyłam zmiany...' : 'Prześlij zmiany'}
         </Button>
       </Tooltip>
     </>

@@ -45,7 +45,7 @@ interface Filters {
 
 type FileActionType = typeof FileAction[keyof typeof FileAction];
 
-const getStatusLabel = (status: FileActionType): JSX.Element => {
+const getStatusLabel = (status = FileAction.DOWNLOAD): JSX.Element => {
   const map: Record<FileAction, { text: string; element: JSX.Element }> = {
     [FileAction.DELETE]: {
       text: 'Usuń',

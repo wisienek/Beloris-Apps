@@ -18,7 +18,8 @@ export const useFiles = () => {
       return;
     }
 
-    setVersionedFiles(setSelectedFiles(filesFetch.data));
+    const mappedFiles = setSelectedFiles(filesFetch.data);
+    setVersionedFiles([...mappedFiles]);
   };
 
   const setSelectedFiles = (files: FileUploadDto[]): FileToUploadDto[] =>
@@ -33,36 +34,39 @@ export const useFiles = () => {
   };
 
   const selectFile = (file: FileToUploadDto): void => {
-    const tempFiles = [...versionedFiles];
-    const foundFile = tempFiles.find((f) => f.savePath === file.savePath);
-    if (!foundFile) return;
+    setVersionedFiles((prevVersionedFiles) => {
+      const tempFiles = [...prevVersionedFiles];
+      const foundFile = tempFiles.find((f) => f.savePath === file.savePath);
+      if (!foundFile) return prevVersionedFiles;
 
-    foundFile.selected = !foundFile.selected;
-    setVersionedFiles(tempFiles);
+      foundFile.selected = !foundFile.selected;
+      return tempFiles;
+    });
   };
 
   const editFile = (savePath: string, options: EditFleOptions) => {
-    const tempFiles = [...versionedFiles];
-    const foundFile = tempFiles.find((f) => f.savePath === savePath);
-    if (!foundFile) return;
+    setVersionedFiles((prevVersionedFiles) => {
+      const tempFiles = [...prevVersionedFiles];
+      const foundFile = tempFiles.find((f) => f.savePath === savePath);
+      if (!foundFile) return prevVersionedFiles;
 
-    const fileValues = Object.entries(options);
-    for (const [key, value] of fileValues) {
-      foundFile[key] = value;
-    }
+      const fileValues = Object.entries(options);
+      for (const [key, value] of fileValues) {
+        foundFile[key] = value;
+      }
 
-    setVersionedFiles(tempFiles);
+      return tempFiles;
+    });
   };
 
   const finishEditingFiles = () => {
     const finished = versionedFiles.filter((f) => f.selected);
-
     setVersionedFiles(finished);
     setFiles(
       finished.map((f) => {
         delete f.selected;
         return f;
-      }),
+      })
     );
 
     setAccepted(true);

@@ -6,7 +6,7 @@ import { useFiles, usePackageCreator } from '../hooks';
 import Tooltip from '../../single/tooltip';
 
 const FileOptions = () => {
-  const { isPackage } = useContext<PackageEditorStateValue>(PackageEditorStateContext);
+  const { isPackage, version } = useContext<PackageEditorStateValue>(PackageEditorStateContext);
   const { intelligentSearch, versionedFiles, selectFile, editFile, finishEditingFiles, accepted } = useFiles();
   const { createPackage, isBuilding, isBuilt } = usePackageCreator();
 
@@ -17,7 +17,11 @@ const FileOptions = () => {
   return isPackage ? (
     <Box sx={{ mt: 2, mb: 2 }}>
       <Tooltip title="Buduje plik archiwum z obecnej paczki modów" arrow TransitionComponent={Zoom} placement="right">
-        <Button variant="contained" size="small" disabled={isBuilding || isBuilt} onClick={() => createPackage()}>
+        <Button
+          variant="contained"
+          size="small"
+          disabled={isBuilding || isBuilt}
+          onClick={() => createPackage(version)}>
           {isBuilding ? `Buduję paczkę...` : isBuilt ? `Zbudowano paczkę.` : `Zbuduj paczkę`}
         </Button>
       </Tooltip>
@@ -30,8 +34,7 @@ const FileOptions = () => {
         justifyItems: 'center',
         alignItems: 'center',
         width: '100%',
-      }}
-    >
+      }}>
       <FileOptionsTableContainer
         editFile={editFile}
         files={versionedFiles}
@@ -43,8 +46,7 @@ const FileOptions = () => {
         color="success"
         onClick={() => finishEditingFiles()}
         disabled={accepted}
-        sx={{ mt: 2 }}
-      >
+        sx={{ mt: 2 }}>
         Zaakceptuj
       </Button>
     </Box>

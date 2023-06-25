@@ -19,11 +19,11 @@ function DashboardContent() {
   const filesToDownloadFetch = useFetch<FileListDto>(
     ApiRoutes.GET_UPDATE_FILES(
       settings?.version?.currentVersion?.major ?? 0,
-      settings?.version?.currentVersion?.minor ?? 0,
+      settings?.version?.currentVersion?.minor ?? 0
     ),
     {
       depends: [!!settings],
-    },
+    }
   );
 
   const isSameVersion = useMemo<boolean>(() => {
@@ -43,7 +43,7 @@ function DashboardContent() {
       : setFilesToDownload([...filesToDownload, file]);
   };
 
-  const toggleFileContainer = () => setChoseFilesOpen(!choseFilesOpen);
+  const toggleFileContainer = () => setChoseFilesOpen((prev) => !prev);
 
   return (
     <Container
@@ -53,8 +53,7 @@ function DashboardContent() {
         mb: 4,
         marginTop: 'auto',
         marginBottom: 'auto',
-      }}
-    >
+      }}>
       {settings?.version?.currentVersion?.major === 0 && <NoVersionModal />}
 
       <Grid container spacing={3}>
@@ -78,8 +77,7 @@ function DashboardContent() {
                 display: 'flex',
                 flexDirection: 'column',
                 marginBottom: '1rem',
-              }}
-            >
+              }}>
               {filesToDownloadFetch.isLoading ? (
                 <Skeleton variant="rectangular" />
               ) : (
