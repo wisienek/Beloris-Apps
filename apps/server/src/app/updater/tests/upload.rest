@@ -1,0 +1,8 @@
+POST http://localhost:3333/api/uploader/1/1/package
+Content-Type: application/json
+
+{
+  "name": "bundle",
+  "savePath": "/",
+  "required":  true
+}

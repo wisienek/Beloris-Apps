@@ -1,0 +1,78 @@
+version: '3.7'
+
+networks:
+  bella-net:
+    name: bella-net
+    driver: bridge
+
+services:
+  mysql_game:
+    container_name: game_db
+    image: mysql:8.0-oracle
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: ${GAME_DB_DATABASE}
+      MYSQL_USER: ${GAME_DB_USERNAME}
+      MYSQL_PASSWORD: ${GAME_DB_PASSWORD}
+    ports:
+      - ${GAME_DB_PORT}:3306
+    volumes:
+      - ./.docker/game_db:/var/lib/mysql
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+
+  minio:
+    container_name: bucket_manager
+    image: quay.io/minio/minio:latest
+    platform: linux/x86_64
+    environment:
+      MINIO_ROOT_USER: ${MINIO_ROOT_USER}
+      MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD}
+      MINIO_ACCESS_KEY: ${MINIO_ACCESS_KEY}
+      MINIO_SECRET_KEY: ${MINIO_SECRET_KEY}
+      MINIO_REGION_NAME: ${MINIO_REGION_NAME}
+      MINIO_CONFIG_ENV_FILE: ".env"
+    command: server --console-address ":9001" /mnt/data
+    volumes:
+      - ./.docker/minio:/mnt/data
+      - type: bind
+        source: ./minio
+        target: /etc/config_env
+    ports:
+      - '${MINIO_PORT_CONSOLE}:9001'
+      - '${MINIO_PORT_HOST}:9000'
+    healthcheck:
+      test: [ "CMD", "curl", "-f", 'http://localhost:9001/minio/health/live' ]
+      interval: 30s
+      timeout: 20s
+      retries: 3
+
+  redis:
+    container_name: bella_redis
+    image: redis:6
+    ports:
+      - '6379:6379'
+
+  # FLARUM
+
+  flarum_db:
+    image: mariadb:10.5
+    container_name: flarum_db
+    command:
+      - "mysqld"
+      - "--character-set-server=utf8mb4"
+      - "--collation-server=utf8mb4_unicode_ci"
+    volumes:
+      - ./.docker/flarum_db:/var/lib/mysql
+    environment:
+      TZ: ${TZ}
+      MYSQL_ALLOW_EMPTY_PASSWORD: "yes"
+      MYSQL_DATABASE: ${FLARUM_DB_DATABASE}
+      MYSQL_USER: ${FLARUM_DB_USER}
+      MYSQL_PASSWORD: ${FLARUM_DB_PASSWORD}
+    ports:
+      - ${FLARUM_DB_PORT}:3306
+    networks:
+      - bella-net
+    restart: always

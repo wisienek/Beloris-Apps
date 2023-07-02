@@ -18,7 +18,7 @@
         "assets": ["apps/front/src/favicon.ico", "apps/front/src/assets"],
         "styles": [],
         "scripts": [],
-        "webpackConfig": "@nrwl/react/plugins/webpack"
+        "webpackConfig": "apps/front/webpack.config.js"
       },
       "configurations": {
         "production": {
@@ -42,7 +42,8 @@
       "options": {
         "buildTarget": "front:build",
         "hmr": true,
-        "proxyConfig": "apps/front/proxy.conf.json"
+        "proxyConfig": "apps/front/proxy.conf.json",
+        "webpackConfig": "apps/front/webpack.config.js"
       },
       "configurations": {
         "production": {

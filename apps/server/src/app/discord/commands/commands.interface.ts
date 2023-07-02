@@ -21,6 +21,6 @@ export interface Command {
   aliases?: string[];
   permission?: PermissionResolvable;
   onlyFor?: string[];
-  run: ({ args, client, message }: CommandRunArguments) => void;
+  run: (cmdArguments: CommandRunArguments) => void;
   resolve: () => ChatInputApplicationCommandData;
 }

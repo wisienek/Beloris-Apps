@@ -45,7 +45,7 @@ export class TokenDto {
   @IsString()
   token_type: string;
 
-  constructor(data: any) {
+  constructor(data: Partial<TokenDto>) {
     Object.assign(this, data);
   }
 }

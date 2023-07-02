@@ -1,0 +1,32 @@
+{
+  "root": "libs/backend/aws",
+  "sourceRoot": "libs/backend/aws/src",
+  "targets": {
+    "lint": {
+      "executor": "@nrwl/linter:eslint",
+      "outputs": [
+        "{options.outputFile}"
+      ],
+      "options": {
+        "lintFilePatterns": [
+          "libs/backend/aws/**/*.ts"
+        ]
+      }
+    },
+    "test": {
+      "executor": "@nrwl/jest:jest",
+      "outputs": [
+        "coverage/libs/backend/aws"
+      ],
+      "options": {
+        "jestConfig": "libs/backend/aws/jest.config.js",
+        "passWithNoTests": true
+      }
+    }
+  },
+  "tags": [
+    "backend",
+    "be",
+    "aws"
+  ]
+}

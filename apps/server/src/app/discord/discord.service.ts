@@ -1,9 +1,9 @@
 import { Client, Intents } from 'discord.js';
-import { ConfigService } from '@nestjs/config';
 import { forwardRef, Inject, Injectable, Logger } from '@nestjs/common';
 
-import { BotConfiguration } from '@bella/config';
-import { ServerListEnum } from '@bella/shared';
+import { ServerListEnum } from '@bella/enums';
+import { DiscordConfig } from '@bella/config';
+
 import { EventManager } from './events';
 import { CommandManager } from './commands';
 
@@ -12,10 +12,10 @@ export class DiscordService extends Client {
   private readonly logger = new Logger(DiscordService.name);
 
   constructor(
-    private readonly config: ConfigService,
     @Inject(forwardRef(() => EventManager))
     public readonly eventManager: EventManager,
-    public readonly commandManager: CommandManager // private readonly commandManager: CommandManager,
+    public readonly commandManager: CommandManager,
+    private config: DiscordConfig
   ) {
     super({
       intents: [
@@ -29,7 +29,7 @@ export class DiscordService extends Client {
       ],
     });
 
-    this.login((this.config.get('bot') as BotConfiguration).secret).then(async () => {
+    this.login(config.clientSecret).then(async () => {
       const invite = this.generateInvite({
         scopes: ['applications.commands', 'bot', 'email', 'identify', 'guilds'],
         permissions: ['ADMINISTRATOR'],
@@ -46,11 +46,7 @@ export class DiscordService extends Client {
     return await guild.members.fetch(memberId);
   }
 
-  public async hasRole(
-    server: ServerListEnum,
-    roleId: string,
-    memberId: string
-  ) {
+  public async hasRole(server: ServerListEnum, roleId: string, memberId: string) {
     const guild = await this.guilds.fetch(server);
     if (!guild) return false;
 
@@ -63,14 +59,8 @@ export class DiscordService extends Client {
     return member.roles.cache.has(roleId);
   }
 
-  public async hasAllRoles(
-    server: ServerListEnum,
-    roles: string[],
-    memberId: string
-  ) {
-    return roles.every(
-      async (role) => await this.hasRole(server, role, memberId)
-    );
+  public async hasAllRoles(server: ServerListEnum, roles: string[], memberId: string) {
+    return roles.every(async (role) => await this.hasRole(server, role, memberId));
   }
 
   private setupEvents() {
@@ -80,10 +70,10 @@ export class DiscordService extends Client {
   }
 
   private async setupCommands() {
-    this.logger.debug(`Registering commands on servers ...!`);
+    this.logger.debug(`Registering commands on servers!`);
     await this.guilds.fetch();
 
-    this.logger.debug(`in ${this.guilds.cache.size} guilds ...`);
+    this.logger.debug(`in ${this.guilds.cache.size} guilds`);
 
     const promises = [];
 
@@ -95,7 +85,7 @@ export class DiscordService extends Client {
       });
     });
 
-    await Promise.all(promises).catch(er => this.logger.error(er));
+    await Promise.all(promises).catch((er) => this.logger.error(er));
 
     this.logger.debug(`Finished registering commands !`);
   }

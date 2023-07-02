@@ -34,13 +34,27 @@ npm-debug.log
 yarn-error.log
 testem.log
 /typings
+logs
+apps/**/test
+libs/**/test
+tools/**/test
 
 # System Files
 .DS_Store
 Thumbs.db
 
-.env
-.env.test
+.data/
+*.env
 .docker/
 ormconfig.json
 *.js.map
+
+*.pem
+
+# terraform
+/**/*.pkvars*
+/**/*.tfvars*
+infrastructure/**/test
+.terraform
+*.tfstate*
+.terraform.lock.hcl

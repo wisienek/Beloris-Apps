@@ -1,55 +1,35 @@
-import styled from 'styled-components';
-import NxWelcome from './nx-welcome';
+import { Route, Routes } from "react-router-dom";
+import { useEffect } from "react";
+import PackageEditorStateContextProvider from "./components/package-editor/sections/package-editor.state";
+import OuterLayerDrawer from "./components/drawer-menu/sections/outer-layer-drawer";
+import { ErrorBox } from "./components/combined/error-box";
+import { DownloaderProvider } from "./components/context";
+import PackageEditorPage from "./pages/package-editor";
+import SettingsPage from "./pages/settings-page";
+import MainPage from "./pages/main-page";
+import { useLogin } from "./hooks";
 
-import { Route, Link } from 'react-router-dom';
+export const App = () => {
+	const { login } = useLogin();
 
-const StyledApp = styled.div`
-  // Your style here
-`;
+	useEffect(() => {
+		login();
+	}, []);
 
-export function App() {
-  return (
-    <StyledApp>
-      <NxWelcome title="front" />
-
-      {/* START: routes */}
-      {/* These routes and navigation have been generated for you */}
-      {/* Feel free to move and update them to fit your needs */}
-      <br />
-      <hr />
-      <br />
-      <div role="navigation">
-        <ul>
-          <li>
-            <Link to="/">Home</Link>
-          </li>
-          <li>
-            <Link to="/page-2">Page 2</Link>
-          </li>
-        </ul>
-      </div>
-      <Route
-        path="/"
-        exact
-        render={() => (
-          <div>
-            This is the generated root route.{' '}
-            <Link to="/page-2">Click here for page 2.</Link>
-          </div>
-        )}
-      />
-      <Route
-        path="/page-2"
-        exact
-        render={() => (
-          <div>
-            <Link to="/">Click here to go back to root page.</Link>
-          </div>
-        )}
-      />
-      {/* END: routes */}
-    </StyledApp>
-  );
-}
+	return (
+		<DownloaderProvider>
+			<ErrorBox />
+			<OuterLayerDrawer>
+				<Routes>
+					<Route path="/" element={<MainPage />} />
+					<Route path="/settings" element={<SettingsPage />} />
+					<Route path="/mods-wizard" element={<PackageEditorStateContextProvider>
+						<PackageEditorPage />
+					</PackageEditorStateContextProvider>} />
+				</Routes>
+			</OuterLayerDrawer>
+		</DownloaderProvider>
+	);
+};
 
 export default App;
