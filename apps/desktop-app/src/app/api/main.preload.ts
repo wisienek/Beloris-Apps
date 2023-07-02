@@ -4,12 +4,14 @@ import { IPCChannels } from '@bella/enums';
 import { VersionType } from '@bella/types';
 import {
   DownloaderFileDto,
+  DownloaderProgressDto,
   FileDialogInputDto,
   FileUploadDto,
   IpcEventDto,
   PackageDataDto,
   TokenDto,
   UploadPackageInfo,
+  VersionDto,
 } from '@bella/dto';
 
 const windowApi: WindowApi = {
@@ -20,6 +22,8 @@ const windowApi: WindowApi = {
   settings: {
     getUserSettings: () => ipcRenderer.invoke(IPCChannels.GET_USER_SETTINGS),
     saveUserSettings: (data: Partial<UserSettings>) => ipcRenderer.invoke(IPCChannels.SAVE_USER_SETTINGS, data),
+    settingsUpdatedEvent: (callback) =>
+      ipcRenderer.on(IPCChannels.SETTINGS_UPDATED, (event, settings: UserSettings) => callback(settings)),
   },
   files: {
     openFileDialog: (data: FileDialogInputDto) => ipcRenderer.invoke(IPCChannels.OPEN_FILE_DIALOG, data),
@@ -42,6 +46,16 @@ const windowApi: WindowApi = {
 
     uploadFilesListener: (callback) => {
       ipcRenderer.on(IPCChannels.UPLOAD_PROGRESS, (event, uploaded: DownloaderFileDto) => callback(uploaded));
+    },
+
+    downloadFiles: (files: DownloaderFileDto[], latestVersion: VersionDto) =>
+      ipcRenderer.invoke(IPCChannels.DOWNLOAD_FILES, files, latestVersion),
+
+    prepareDownloadFiles: (versions: VersionDto[]) =>
+      ipcRenderer.invoke(IPCChannels.DOWNLOAD_PREPARE_FILES, versions) as Promise<DownloaderFileDto[]>,
+
+    downloadFilesListener: (callback) => {
+      ipcRenderer.on(IPCChannels.DOWNLOAD_PROGRESS, (event, downloaded: DownloaderProgressDto) => callback(downloaded));
     },
   },
   utilities: {

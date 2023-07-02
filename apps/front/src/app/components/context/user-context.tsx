@@ -1,4 +1,4 @@
-import * as React from 'react';
+import { createContext, ReactNode, useContext, useEffect, useState } from 'react';
 import * as _ from 'lodash';
 import axios from 'axios';
 import { GuildMember, Role } from 'discord.js';
@@ -21,7 +21,7 @@ export interface UserContextValue {
   belorisAdminRoles: Role[];
 }
 
-export const UserContext = React.createContext<UserContextValue>({
+export const UserContext = createContext<UserContextValue>({
   user: null,
   verifyUser: (user: User) => null,
   logout: () => null,
@@ -31,18 +31,15 @@ export const UserContext = React.createContext<UserContextValue>({
   belorisAdminRoles: null,
 });
 
-export const UserProvider = ({ children }: { children?: React.ReactNode }) => {
-  const { addError } = React.useContext(ErrorContext);
-  const [user, setUser] = React.useState<User>(null);
+export const UserProvider = ({ children }: { children?: ReactNode }) => {
+  const { addError } = useContext(ErrorContext);
+  const [user, setUser] = useState<User>(null);
 
-  const [belorisMember, setBelorisMember] = React.useState<GuildMember>(null);
-  const [belorisAdminMember, setBelorisAdminMember] =
-    React.useState<GuildMember>(null);
+  const [belorisMember, setBelorisMember] = useState<GuildMember>(null);
+  const [belorisAdminMember, setBelorisAdminMember] = useState<GuildMember>(null);
 
-  const [belorisMemberRoles, setBelorisMemberRoles] =
-    React.useState<Role[]>(null);
-  const [belorisAdminRoles, setBelorisAdminRoles] =
-    React.useState<Role[]>(null);
+  const [belorisMemberRoles, setBelorisMemberRoles] = useState<Role[]>(null);
+  const [belorisAdminRoles, setBelorisAdminRoles] = useState<Role[]>(null);
 
   const verifyUser = (data: User) => {
     if (!user || !_.isEqual(user, data)) setUser({ ...data });
@@ -64,53 +61,35 @@ export const UserProvider = ({ children }: { children?: React.ReactNode }) => {
     addError(ErrorSeverity.INFO, message, true);
   };
 
-  React.useEffect(() => {
+  useEffect(() => {
     (async () => {
       try {
         if (user) {
           console.log(`Trying to fetch members`);
 
-          const { data: fetchedBelorisMember } = await axios.get(
-            ApiRoutes.MEMBER_Main,
-            { withCredentials: true },
-          );
-          const { data: fetchedBelorisAdminMember } = await axios.get(
-            ApiRoutes.MEMBER_ADMIN,
-            { withCredentials: true },
-          );
+          const { data: fetchedBelorisMember } = await axios.get(ApiRoutes.MEMBER_Main, { withCredentials: true });
+          const { data: fetchedBelorisAdminMember } = await axios.get(ApiRoutes.MEMBER_ADMIN, {
+            withCredentials: true,
+          });
 
           if (fetchedBelorisAdminMember) {
             setBelorisAdminMember(fetchedBelorisAdminMember);
 
-            const { data: adminRoles } = await axios.get(
-              ApiRoutes.MEMBER_ADMIN_ROLES,
-              { withCredentials: true },
-            );
+            const { data: adminRoles } = await axios.get(ApiRoutes.MEMBER_ADMIN_ROLES, { withCredentials: true });
 
             if (adminRoles) setBelorisAdminRoles(adminRoles);
 
-            addError(
-              ErrorSeverity.INFO,
-              `Załadowano dane z serwera adminów`,
-              true,
-            );
+            addError(ErrorSeverity.INFO, `Załadowano dane z serwera adminów`, true);
           }
 
           if (fetchedBelorisMember) {
             setBelorisMember(fetchedBelorisMember);
 
-            const { data: mainRoles } = await axios.get(
-              ApiRoutes.MEMBER_Main_ROLES,
-              { withCredentials: true },
-            );
+            const { data: mainRoles } = await axios.get(ApiRoutes.MEMBER_Main_ROLES, { withCredentials: true });
 
             if (mainRoles) setBelorisMemberRoles(mainRoles);
 
-            addError(
-              ErrorSeverity.INFO,
-              `Załadowano dane z serwera DC Beloris`,
-              true,
-            );
+            addError(ErrorSeverity.INFO, `Załadowano dane z serwera DC Beloris`, true);
           }
         }
       } catch (error) {
@@ -129,8 +108,7 @@ export const UserProvider = ({ children }: { children?: React.ReactNode }) => {
         belorisAdminMember,
         belorisMemberRoles,
         belorisAdminRoles,
-      }}
-    >
+      }}>
       {children}
     </UserContext.Provider>
   );

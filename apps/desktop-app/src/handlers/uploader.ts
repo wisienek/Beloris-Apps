@@ -147,7 +147,7 @@ export class UploaderHandler extends BaseHandler {
     const splitPath = dFileData.savePath.split('/');
     const fileNameWithExt = splitPath[splitPath.length - 1];
 
-    this.logger.debug(`updatefileData uploading file:`, dFileData, fileNameWithExt);
+    this.logger.debug(`updateFileData uploading file:`, dFileData, fileNameWithExt);
 
     formData.append('file', buffer, fileNameWithExt);
 

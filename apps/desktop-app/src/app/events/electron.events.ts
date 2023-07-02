@@ -1,5 +1,5 @@
 import { app, BrowserWindow, ipcMain, ipcRenderer } from 'electron';
-import { FileUploadDto, UploadPackageInfo } from '@bella/dto';
+import { DownloaderFileDto, FileUploadDto, UploadPackageInfo, VersionDto } from '@bella/dto';
 import { VersionType } from '@bella/types';
 import { IPCChannels } from '@bella/enums';
 import {
@@ -13,8 +13,10 @@ import {
   uploaderHandler,
   externalLinksHandler,
   windowsHandler,
+  downloaderHandler,
 } from '../../handlers';
 import { environment } from '../../environments/environment';
+import { UserSettings } from '@bella/schema';
 
 export default class ElectronEvents {
   static bootstrapElectronEvents(): Electron.IpcMain {
@@ -32,7 +34,7 @@ ipcMain.handle(IPCChannels.GET_APP_VERSION, () => {
 
 // settings
 ipcMain.handle(IPCChannels.GET_USER_SETTINGS, readUserSettings);
-ipcMain.handle(IPCChannels.SAVE_USER_SETTINGS, saveUserSettings);
+ipcMain.handle(IPCChannels.SAVE_USER_SETTINGS, (_, data: Partial<UserSettings>) => saveUserSettings(data));
 ipcMain.handle(IPCChannels.OPEN_FILE_DIALOG, openFileDialog);
 
 // windows
@@ -65,16 +67,23 @@ ipcMain.handle(IPCChannels.LIST_DOWNLOADER_FILES, getDownloaderFiles);
 ipcMain.handle(IPCChannels.BUILD_PACKAGE, buildPackage);
 
 // uploader
-
 ipcMain.handle(
   IPCChannels.UPLOAD_PACKAGE,
   (_, version: VersionType, packageData: UploadPackageInfo, setCurrentVersion?: boolean) =>
-    uploaderHandler.uploadPackage(version, packageData, setCurrentVersion),
+    uploaderHandler.uploadPackage(version, packageData, setCurrentVersion)
 );
 ipcMain.handle(
   IPCChannels.UPLOAD_FILES,
   (_, version: VersionType, filesData: Array<FileUploadDto>, setCurrentVersion?: boolean) =>
-    uploaderHandler.uploadFiles(version, filesData, setCurrentVersion),
+    uploaderHandler.uploadFiles(version, filesData, setCurrentVersion)
+);
+
+// downloader
+ipcMain.handle(IPCChannels.DOWNLOAD_PREPARE_FILES, (_, versions: VersionDto[]) =>
+  downloaderHandler.prepareFilesToDownload(versions)
+);
+ipcMain.handle(IPCChannels.DOWNLOAD_FILES, (_, files: DownloaderFileDto[], latestVersion: VersionDto) =>
+  downloaderHandler.downloadFiles(files, latestVersion)
 );
 
 // Handle App termination

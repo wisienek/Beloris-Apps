@@ -27,7 +27,7 @@ import { DownloaderFileDto, FileListDto } from '@bella/dto';
 import { FileAction } from '@bella/enums';
 
 interface FileTableV2WrapperProps {
-  filesdto: FileListDto;
+  filesdto: DownloaderFileDto[];
   filesToDownload: DownloaderFileDto[];
   setFilesToDownload: (files: DownloaderFileDto[]) => void;
   toggleFileToDownload: (event: React.ChangeEvent, file: DownloaderFileDto) => void;
@@ -84,10 +84,13 @@ function FileTableV2Container({
   setFilesToDownload,
   toggleFileToDownload,
 }: FileTableV2WrapperProps) {
-  const rows = React.useMemo(() => filesdto ?? { version: null, files: [] }, [filesdto]);
+  const rows = React.useMemo(
+    () => (filesdto?.length > 0 ? { version: null, files: filesdto } : { version: null, files: [] }),
+    [filesdto]
+  );
 
   React.useEffect(() => {
-    setFilesToDownload(filesdto?.files ?? []);
+    setFilesToDownload(filesdto ?? []);
   }, [filesdto]);
 
   return (

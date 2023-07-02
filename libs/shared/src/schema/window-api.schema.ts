@@ -8,6 +8,7 @@ import {
   PackageDataDto,
   TokenDto,
   UploadPackageInfo,
+  VersionDto,
 } from '../dto';
 
 type Platform =
@@ -32,6 +33,7 @@ export interface WindowSettingsApi {
   getUserSettings: () => Promise<IpcEventDto<UserSettings>>;
 
   saveUserSettings: (data: Partial<UserSettings>) => Promise<IpcEventDto<boolean>>;
+  settingsUpdatedEvent: (callback: Function) => void;
 }
 
 export interface WindowUtilitiesApi {
@@ -54,16 +56,22 @@ export interface WindowFilesApi {
   uploadPackage: (
     version: VersionType,
     packageData: UploadPackageInfo,
-    setCurrentVersion?: boolean,
+    setCurrentVersion?: boolean
   ) => Promise<IpcEventDto<DownloaderFileDto>>;
 
   uploadFiles: (
     version: VersionType,
     filesData: Array<FileUploadDto>,
-    setCurrentVersion?: boolean,
+    setCurrentVersion?: boolean
   ) => Promise<IpcEventDto<DownloaderFileDto[]>>;
 
   uploadFilesListener: (callback: Function) => void;
+
+  prepareDownloadFiles: (versions: VersionDto[]) => Promise<DownloaderFileDto[]>;
+
+  downloadFiles: (files: DownloaderFileDto[], latestVersion: VersionDto) => Promise<void>;
+
+  downloadFilesListener: (callback: Function) => void;
 }
 
 export interface WindowsApi {

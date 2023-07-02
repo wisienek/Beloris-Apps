@@ -16,7 +16,7 @@ const AvatarSuccess = styled(Avatar)(
       width: ${theme.spacing(8)};
       height: ${theme.spacing(8)};
       box-shadow: ${theme.colors.shadows.info};
-`,
+`
 );
 
 const ThemedGrid = styled(Grid)(({ theme }) => ({
@@ -34,8 +34,6 @@ export interface VersionDetailsArgs {
   downloadedVersion: UserVersion;
   fetchedFilesToDownload: DownloaderFileDto[];
   isSameVersion: boolean;
-  error: Error;
-  isLoading: boolean;
 }
 
 interface ComponentBoxArgs {
@@ -53,15 +51,13 @@ const ComponentBox = (args: ComponentBoxArgs) => {
       sx={{
         px: 2,
       }}
-      alignItems="center"
-    >
+      alignItems="center">
       <AvatarSuccess
         sx={{
           mr: 2,
         }}
         theme={theme}
-        variant="rounded"
-      >
+        variant="rounded">
         <args.icon />
       </AvatarSuccess>
       <Box>
@@ -79,67 +75,33 @@ const VersionDetails = ({
   fetchedFilesToDownload,
   downloadedVersion,
   isSameVersion,
-  error,
-  isLoading,
 }: VersionDetailsArgs) => {
-  const synthesizeVersionDate = (date: Date) =>
-    DateTime.fromJSDate(date).setLocale('pl').toFormat('dd LLL yyyy');
+  const synthesizeVersionDate = (date: Date) => DateTime.fromJSDate(date).setLocale('pl').toFormat('dd LLL yyyy');
 
   return (
-    <ThemedGrid
-      container
-      direction="row"
-      alignItems="stretch"
-      alignSelf="stretch"
-      marginTop="auto"
-      marginBottom="auto"
-    >
+    <ThemedGrid container direction="row" alignItems="stretch" alignSelf="stretch" marginTop="auto" marginBottom="auto">
       <Grid item>
-        {isLoading ?? error ? (
-          <></>
-        ) : (
-          <ComponentBox
-            primaryText={`Wersja ${downloadedVersion?.major ?? 0}.${
-              downloadedVersion?.minor ?? 0
-            }`}
-            secondaryText={
-              isSameVersion
-                ? 'Aktualna'
-                : `Nowa: ${fetchedVersion.major}.${fetchedVersion.minor}`
-            }
-            icon={() => {
-              return isSameVersion ? (
-                <CloudDoneIcon fontSize="large" />
-              ) : (
-                <DownloadIcon fontSize="large" />
-              );
-            }}
-          />
-        )}
+        <ComponentBox
+          primaryText={`Wersja ${downloadedVersion?.major ?? 0}.${downloadedVersion?.minor ?? 0}`}
+          secondaryText={isSameVersion ? 'Aktualna' : `Nowa: ${fetchedVersion?.major}.${fetchedVersion?.minor}`}
+          icon={() => {
+            return isSameVersion ? <CloudDoneIcon fontSize="large" /> : <DownloadIcon fontSize="large" />;
+          }}
+        />
       </Grid>
       <Grid item>
-        {isLoading ?? error ? (
-          <></>
-        ) : (
-          <ComponentBox
-            primaryText={`${fetchedFilesToDownload.length}`}
-            secondaryText="Zmian"
-            icon={() => <InsertDriveFileIcon fontSize="large" />}
-          />
-        )}
+        <ComponentBox
+          primaryText={`${fetchedFilesToDownload.length}`}
+          secondaryText="Zmian"
+          icon={() => <InsertDriveFileIcon fontSize="large" />}
+        />
       </Grid>
       <Grid item>
-        {isLoading ?? error ? (
-          <></>
-        ) : (
-          <ComponentBox
-            primaryText={synthesizeVersionDate(
-              new Date(fetchedVersion.updatedAt),
-            )}
-            secondaryText="Ostatnia zmiana"
-            icon={() => <CalendarMonthIcon fontSize="large" />}
-          />
-        )}
+        <ComponentBox
+          primaryText={synthesizeVersionDate(new Date(fetchedVersion?.updatedAt))}
+          secondaryText="Ostatnia zmiana"
+          icon={() => <CalendarMonthIcon fontSize="large" />}
+        />
       </Grid>
     </ThemedGrid>
   );

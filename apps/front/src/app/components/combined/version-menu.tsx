@@ -2,16 +2,19 @@ import SettingsIcon from '@mui/icons-material/Settings';
 import { Button, Grid } from '@mui/material';
 import { Link } from 'react-router-dom';
 import { useContext } from 'react';
+import { DownloaderFileDto } from '@bella/dto';
 import { SettingsContext, SettingsContextValue } from '../../settings/settings';
+import { DownloaderContext } from '../context';
 
 export interface VersionMenuArgs {
-  isLoading: boolean;
   chooserToggle: () => void;
   isSameVersion: boolean;
+  filesToDownload: DownloaderFileDto[];
 }
 
-const VersionMenu = ({ isLoading, chooserToggle, isSameVersion }: VersionMenuArgs) => {
+const VersionMenu = ({ chooserToggle, isSameVersion, filesToDownload }: VersionMenuArgs) => {
   const { settings } = useContext<SettingsContextValue>(SettingsContext);
+  const { downloadFiles } = useContext(DownloaderContext);
 
   return (
     <Grid container direction="column" spacing={2} columns={1}>
@@ -20,10 +23,9 @@ const VersionMenu = ({ isLoading, chooserToggle, isSameVersion }: VersionMenuArg
           <Button
             variant="contained"
             color="success"
-            disabled={isLoading || isSameVersion}
+            disabled={isSameVersion}
             fullWidth
-            // TODO: onClick -> download files
-          >
+            onClick={() => downloadFiles(filesToDownload)}>
             Pobierz
           </Button>
         ) : (
@@ -39,9 +41,7 @@ const VersionMenu = ({ isLoading, chooserToggle, isSameVersion }: VersionMenuArg
           startIcon={<SettingsIcon />}
           variant="contained"
           color="secondary"
-          disabled={
-            isLoading || isSameVersion || !(settings?.downloadTo?.modpackFolder || settings?.downloadTo?.mcFolder)
-          }
+          disabled={isSameVersion || !(settings?.downloadTo?.modpackFolder || settings?.downloadTo?.mcFolder)}
           fullWidth
           onClick={chooserToggle}>
           Edytuj pliki
